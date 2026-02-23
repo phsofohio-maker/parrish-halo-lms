@@ -11,7 +11,10 @@
     "typecheck": "tsc --noEmit",
     "deploy": "npm run build:quick && firebase deploy --only hosting",
     "deploy:all": "npm run build:quick && firebase deploy",
-    "deploy:functions": "firebase deploy --only functions"
+    "deploy:functions": "firebase deploy --only functions",
+    "seed": "npx tsx scripts/seed/seedAll.ts",
+    "seed:users": "npx tsx scripts/seed/seedUsers.ts",
+    "seed:course": "npx tsx scripts/seed/seedCourse.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -29,10 +32,12 @@
     "@types/node": "^22.19.11",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.24",
-    "jest": "^25.0.0",
+    "firebase-admin": "^13.6.1",
+    "jest": "^30.2.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.2.0",
-    "ts-jest": "^27.0.3",
+    "ts-jest": "^29.4.6",
+    "tsx": "^4.21.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }
