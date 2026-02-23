@@ -12,9 +12,9 @@
     "deploy": "npm run build:quick && firebase deploy --only hosting",
     "deploy:all": "npm run build:quick && firebase deploy",
     "deploy:functions": "firebase deploy --only functions",
-    "seed": "npx tsx scripts/seed/seedAll.ts",
-    "seed:users": "npx tsx scripts/seed/seedUsers.ts",
-    "seed:course": "npx tsx scripts/seed/seedCourse.ts"
+    "seed": "npx tsx --tsconfig scripts/seed/tsconfig.json scripts/seed/seedAll.ts",
+    "seed:users": "npx tsx --tsconfig scripts/seed/tsconfig.json scripts/seed/seedUsers.ts",
+    "seed:course": "npx tsx --tsconfig scripts/seed/tsconfig.json scripts/seed/seedCourse.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",
