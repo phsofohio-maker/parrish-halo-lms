@@ -127,7 +127,8 @@ service cloud.firestore {
     
     match /enrollments/{enrollmentId} {
       allow read: if isAuthenticated() && (
-        resource.data.userId == request.auth.uid || 
+        resource == null ||
+        resource.data.userId == request.auth.uid ||
         hasAnyRole(['admin', 'instructor'])
       );
       allow create: if (
@@ -153,7 +154,8 @@ service cloud.firestore {
     
     match /progress/{progressId} {
       allow read: if isAuthenticated() && (
-        resource.data.userId == request.auth.uid || 
+        resource == null ||
+        resource.data.userId == request.auth.uid ||
         hasAnyRole(['admin', 'instructor'])
       );
 

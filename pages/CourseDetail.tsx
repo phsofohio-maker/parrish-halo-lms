@@ -51,11 +51,12 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
   const [error, setError] = useState<string | null>(null);
   
   // Enrollment state
-  const { 
-    enrollment, 
-    isEnrolled, 
+  const {
+    enrollment,
+    isEnrolled,
     enroll,
-    isLoading: enrollmentLoading 
+    isLoading: enrollmentLoading,
+    error: enrollmentError
   } = useEnrollment(courseId);
   
   // Progress (only fetch if enrolled)
@@ -353,7 +354,13 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                   <p className="text-slate-600 mb-4">
                     Enroll in this course to track your progress and earn CE credits.
                   </p>
-                  <Button 
+                  {enrollmentError && (
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                      <p className="text-sm text-red-700">{enrollmentError}</p>
+                    </div>
+                  )}
+                  <Button
                     className="w-full"
                     onClick={handleEnroll}
                     disabled={enrollmentLoading}

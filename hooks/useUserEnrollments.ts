@@ -189,7 +189,10 @@ export const useEnrollment = (courseId: string): UseSingleEnrollmentReturn => {
       setError('Must be logged in to enroll');
       return false;
     }
-    
+
+    setIsLoading(true);
+    setError(null);
+
     try {
       await createEnrollment(
         user.uid,
@@ -203,6 +206,8 @@ export const useEnrollment = (courseId: string): UseSingleEnrollmentReturn => {
       const message = err instanceof Error ? err.message : 'Failed to enroll';
       setError(message);
       return false;
+    } finally {
+      setIsLoading(false);
     }
   }, [user, courseId, fetchEnrollment]);
 
