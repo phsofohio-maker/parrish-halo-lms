@@ -102,7 +102,7 @@ export interface CorrectionLogBlockData {
 export interface ObjSubjItem {
   id: string;
   text: string;
-  category: 'objective' | 'subjective';
+  category: "objective" | "subjective";
 }
 
 export interface ObjSubjValidatorBlockData {
@@ -370,7 +370,7 @@ export interface Cohort {
 // LICENSE & COMPLIANCE
 // ============================================
 
-export type LicenseStatus = 'valid' | 'expiring_soon' | 'expired' | 'not_set';
+export type LicenseStatus = "valid" | "expiring_soon" | "expired" | "not_set";
 
 /** Course categories that require a valid license to access */
-export const LICENSE_REQUIRED_CATEGORIES: CourseCategory[] = ['hospice', 'clinical_skills'];
+export const LICENSE_REQUIRED_CATEGORIES: CourseCategory[] = ["hospice", "clinical_skills"];
