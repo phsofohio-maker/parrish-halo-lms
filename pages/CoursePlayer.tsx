@@ -35,6 +35,8 @@ import { QuizQuestion } from '../functions/src/types'; // Ensure QuizQuestion is
 
 // Services for module fetching and enrollment updates
 import { getModuleWithBlocks } from '../services/courseService';
+import { enterGrade } from '../services/gradeService';
+import { calculateAndSaveCourseGrade } from '../services/courseGradeService';
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { auditService } from '../services/auditService';
@@ -226,10 +228,69 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
           `Module ${moduleData.title} submitted for instructor review (contains short-answer questions)`
         );
       } else if (enrollment) {
-        // Auto-graded only — persist answers for record-keeping
+        // Auto-graded only — persist answers, enter grade, and calculate course grade
         const enrollmentRef = doc(db, 'enrollments', enrollment.id);
+
+        // Calculate overall score from all quiz/assessment blocks
+        let totalScore = 0;
+        let scoredBlockCount = 0;
+        let allPassed = true;
+
+        for (const block of moduleData.blocks) {
+          if (block.type === 'quiz') {
+            const { score, passed } = calculateQuizScore(block);
+            totalScore += score;
+            scoredBlockCount++;
+            if (!passed) allPassed = false;
+          }
+          if (block.type === 'obj_subj_validator') {
+            const data = block.data as ObjSubjValidatorBlockData;
+            const userAnswers = (answers[block.id]?.[0] || {}) as Record<string, string>;
+            const result = gradeObjSubjBlock(data, userAnswers, moduleData.passingScore || 80);
+            totalScore += result.score;
+            scoredBlockCount++;
+            if (!result.passed) allPassed = false;
+          }
+        }
+
+        const overallScore = scoredBlockCount > 0 ? Math.round(totalScore / scoredBlockCount) : 0;
+        const passingScore = moduleData.passingScore || 80;
+
+        // 1. Enter the grade into the grades collection (audit-logged)
+        try {
+          await enterGrade(
+            user.uid,
+            courseId,
+            moduleId,
+            overallScore,
+            passingScore,
+            user.uid,
+            user.displayName || 'Learner',
+            'Auto-graded submission'
+          );
+        } catch (gradeErr) {
+          console.warn('Grade entry failed (non-blocking):', gradeErr);
+        }
+
+        // 2. Calculate and save the course-level grade
+        try {
+          await calculateAndSaveCourseGrade(
+            user.uid,
+            courseId,
+            user.uid,
+            user.displayName || 'Learner'
+          );
+        } catch (courseGradeErr) {
+          console.warn('Course grade calculation failed (non-blocking):', courseGradeErr);
+        }
+
+        // 3. Update enrollment with score, answers, and status
         await updateDoc(enrollmentRef, {
           quizAnswers: answers,
+          score: overallScore,
+          status: allPassed ? 'completed' : 'in_progress',
+          progress: allPassed ? 100 : (enrollment.progress ?? 0),
+          ...(allPassed ? { completedAt: serverTimestamp() } : {}),
           updatedAt: serverTimestamp(),
         });
       }

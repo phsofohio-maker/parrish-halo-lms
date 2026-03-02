@@ -23,6 +23,7 @@ import {
   CheckCircle,
   XCircle,
   Filter,
+  Clock,
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { cn, formatDate } from '../../utils';
@@ -329,18 +330,14 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
                 <React.Fragment key={entry.enrollment.id}>
                   <tr
                     className="hover:bg-slate-50/50 cursor-pointer transition-colors"
-                    onClick={() => entry.courseGrade && toggleExpand(entry.enrollment.userId)}
+                    onClick={() => toggleExpand(entry.enrollment.userId)}
                   >
                     {/* Expand Arrow */}
                     <td className="px-4 py-4">
-                      {entry.courseGrade ? (
-                        expandedUserId === entry.enrollment.userId ? (
-                          <ChevronDown className="h-4 w-4 text-brand-500" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4 text-slate-400" />
-                        )
+                      {expandedUserId === entry.enrollment.userId ? (
+                        <ChevronDown className="h-4 w-4 text-brand-500" />
                       ) : (
-                        <span className="h-4 w-4 block" />
+                        <ChevronRight className="h-4 w-4 text-slate-400" />
                       )}
                     </td>
 
@@ -415,10 +412,18 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
                   </tr>
 
                   {/* Expanded GradeBreakdown */}
-                  {expandedUserId === entry.enrollment.userId && entry.courseGrade && (
+                  {expandedUserId === entry.enrollment.userId && (
                     <tr>
                       <td colSpan={7} className="px-8 py-6 bg-slate-50">
-                        <GradeBreakdown calculation={entry.courseGrade} />
+                        {entry.courseGrade ? (
+                          <GradeBreakdown calculation={entry.courseGrade} />
+                        ) : (
+                          <div className="text-center py-8 text-slate-400">
+                            <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                            <p className="font-medium text-slate-500">Grade Not Yet Calculated</p>
+                            <p className="text-xs mt-1">This learner's course grade will appear here once their assessments are graded.</p>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   )}
