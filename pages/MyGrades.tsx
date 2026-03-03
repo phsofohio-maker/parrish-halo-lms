@@ -15,7 +15,7 @@ import { GradeBreakdown } from '../components/grades/GradeBreakdown';
 import { formatDate, cn } from '../utils';
 import { useAuth } from '../contexts/AuthContext';
 import { getUserEnrollments } from '../services/enrollmentService';
-import { getCourses } from '../services/courseService';
+import { getPublishedCourses } from '../services/courseService';
 import { getSavedCourseGrade } from '../services/courseGradeService';
 
 export const MyGrades: React.FC = () => {
@@ -35,7 +35,7 @@ export const MyGrades: React.FC = () => {
     try {
       const [fetchedEnrollments, fetchedCourses] = await Promise.all([
         getUserEnrollments(user.uid),
-        getCourses(),
+        getPublishedCourses(),
       ]);
       setEnrollments(fetchedEnrollments);
       setCourses(fetchedCourses);

@@ -50,7 +50,9 @@ import {
     status: doc.data().status ?? 'not_started',
     enrolledAt: doc.data().enrolledAt?.toDate?.()?.toISOString(),
     completedAt: doc.data().completedAt?.toDate?.()?.toISOString(),
-    lastAccessedAt: ''
+    lastAccessedAt: doc.data().updatedAt?.toDate?.()?.toISOString() ?? '',
+    score: doc.data().score,
+    quizAnswers: doc.data().quizAnswers,
   });
   
   // ============================================

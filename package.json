@@ -14,7 +14,10 @@
     "deploy:functions": "firebase deploy --only functions",
     "seed": "npx tsx --tsconfig scripts/seed/tsconfig.json scripts/seed/seedAll.ts",
     "seed:users": "npx tsx --tsconfig scripts/seed/tsconfig.json scripts/seed/seedUsers.ts",
-    "seed:course": "npx tsx --tsconfig scripts/seed/tsconfig.json scripts/seed/seedCourse.ts"
+    "seed:course": "npx tsx --tsconfig scripts/seed/tsconfig.json scripts/seed/seedCourse.ts",
+    "unseed": "npx tsx --tsconfig scripts/seed/tsconfig.json scripts/seed/unseed.ts",
+    "unseed:full": "npx tsx --tsconfig scripts/seed/tsconfig.json scripts/seed/unseed.ts --full",
+    "reseed": "npm run unseed:full && npm run seed"
   },
   "dependencies": {
     "clsx": "^2.1.1",
