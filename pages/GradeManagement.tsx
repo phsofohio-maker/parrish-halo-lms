@@ -162,7 +162,11 @@ export const GradeManagement: React.FC = () => {
           enrolledAt: data.enrolledAt?.toDate?.()?.toISOString() ?? '',
           lastAccessedAt: data.updatedAt?.toDate?.()?.toISOString() ?? '',
           score: data.score,
-          quizAnswers: data.quizAnswers,
+          quizAnswers: (() => {
+            const raw = data.quizAnswers;
+            if (typeof raw === 'string') { try { return JSON.parse(raw); } catch { return {}; } }
+            return raw;
+          })(),
         };
 
         // Resolve user name

@@ -52,7 +52,11 @@ import {
     completedAt: doc.data().completedAt?.toDate?.()?.toISOString(),
     lastAccessedAt: doc.data().updatedAt?.toDate?.()?.toISOString() ?? '',
     score: doc.data().score,
-    quizAnswers: doc.data().quizAnswers,
+    quizAnswers: (() => {
+      const raw = doc.data().quizAnswers;
+      if (typeof raw === 'string') { try { return JSON.parse(raw); } catch { return {}; } }
+      return raw;
+    })(),
   });
   
   // ============================================

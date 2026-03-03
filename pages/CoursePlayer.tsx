@@ -216,7 +216,7 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
         const enrollmentRef = doc(db, 'enrollments', enrollment.id);
         await updateDoc(enrollmentRef, {
           status: 'needs_review',
-          quizAnswers: answers,
+          quizAnswers: JSON.stringify(answers),
           updatedAt: serverTimestamp(),
         });
 
@@ -286,7 +286,7 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
 
         // 3. Update enrollment with score, answers, and status
         await updateDoc(enrollmentRef, {
-          quizAnswers: answers,
+          quizAnswers: JSON.stringify(answers),
           score: overallScore,
           status: allPassed ? 'completed' : 'in_progress',
           progress: allPassed ? 100 : (enrollment.progress ?? 0),
