@@ -87,10 +87,24 @@ import {
   // ============================================
   
   /**
-   * Fetches all courses (respects security rules)
+   * Fetches all courses (admin/instructor only — no status filter)
    */
   export const getCourses = async (): Promise<Course[]> => {
     const q = query(collection(db, COURSES_COLLECTION), orderBy('title'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(docToCourse);
+  };
+
+  /**
+   * Fetches published courses only (safe for staff users).
+   * Firestore rules require status == 'published' for non-admin reads.
+   */
+  export const getPublishedCourses = async (): Promise<Course[]> => {
+    const q = query(
+      collection(db, COURSES_COLLECTION),
+      where('status', '==', 'published'),
+      orderBy('title')
+    );
     const snapshot = await getDocs(q);
     return snapshot.docs.map(docToCourse);
   };

@@ -185,7 +185,12 @@ service cloud.firestore {
       );
       // Schema validation retained here: score bounds are a compliance requirement
       // that cannot be trusted to client-side code alone.
-      allow create: if hasAnyRole(['admin', 'instructor']) &&
+      // Auto-graded submissions: staff can create grades for themselves.
+      // Instructor/admin: can create grades for any user.
+      allow create: if (
+        hasAnyRole(['admin', 'instructor']) ||
+        (isAuthenticated() && request.resource.data.userId == request.auth.uid)
+      ) &&
         hasRequiredFields(['userId', 'moduleId', 'score', 'passingScore', 'gradedBy']) &&
         isValidGradeScore(request.resource.data.score) &&
         isValidGradeScore(request.resource.data.passingScore) &&
@@ -206,7 +211,12 @@ service cloud.firestore {
         resource.data.userId == request.auth.uid ||
         hasAnyRole(['admin', 'instructor'])
       );
-      allow create, update: if hasAnyRole(['admin', 'instructor']) &&
+      // Auto-graded submissions: staff can create/update their own course grades.
+      // Instructor/admin: can create/update for any user.
+      allow create, update: if (
+        hasAnyRole(['admin', 'instructor']) ||
+        (isAuthenticated() && request.resource.data.userId == request.auth.uid)
+      ) &&
         hasRequiredFields(['userId', 'courseId', 'overallScore', 'overallPassed']) &&
         isValidGradeScore(request.resource.data.overallScore);
       allow delete: if false;

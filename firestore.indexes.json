@@ -62,6 +62,14 @@
       ]
     },
     {
+      "collectionGroup": "courses",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "title", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "course_grades",
       "queryScope": "COLLECTION",
       "fields": [
