@@ -123,10 +123,10 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <Loader2 className="h-10 w-10 text-brand-600 animate-spin mx-auto" />
-          <p className="mt-4 text-slate-600 font-medium">Loading course...</p>
+          <Loader2 className="h-10 w-10 text-primary-600 animate-spin mx-auto" />
+          <p className="mt-4 text-gray-600 font-medium">Loading course...</p>
         </div>
       </div>
     );
@@ -135,11 +135,11 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
   // Error state
   if (error || !course) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-8">
-        <div className="bg-white rounded-xl border border-red-200 p-8 max-w-md text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
+        <div className="bg-white rounded-lg border border-red-200 p-8 max-w-md text-center">
           <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-slate-900 mb-2">Failed to Load</h2>
-          <p className="text-slate-600 mb-6">{error || 'Course not found'}</p>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Failed to Load</h2>
+          <p className="text-gray-600 mb-6">{error || 'Course not found'}</p>
           <Button onClick={onBack} variant="outline">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Go Back
@@ -153,13 +153,13 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
 
   return (
     <LicenseGate courseCategory={course.category}>
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200">
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-6 py-6">
           <button
             onClick={onBack}
-            className="flex items-center gap-2 text-slate-500 hover:text-slate-700 mb-4 text-sm"
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-4 text-sm"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Catalog
@@ -168,7 +168,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
           <div className="flex gap-6">
             {/* Thumbnail */}
             {course.thumbnailUrl && (
-              <div className="hidden md:block w-48 h-32 rounded-lg overflow-hidden bg-slate-100 shrink-0">
+              <div className="hidden md:block w-48 h-32 rounded-lg overflow-hidden bg-gray-100 shrink-0">
                 <img 
                   src={course.thumbnailUrl} 
                   alt={course.title}
@@ -180,7 +180,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
             {/* Info */}
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-brand-100 text-brand-700">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-primary-100 text-primary-700">
                   {course.category}
                 </span>
                 {course.status === 'draft' && (
@@ -190,10 +190,10 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                 )}
               </div>
               
-              <h1 className="text-2xl font-bold text-slate-900 mb-2">{course.title}</h1>
-              <p className="text-slate-600 mb-4">{course.description}</p>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">{course.title}</h1>
+              <p className="text-gray-600 mb-4">{course.description}</p>
               
-              <div className="flex items-center gap-6 text-sm text-slate-500">
+              <div className="flex items-center gap-6 text-sm text-gray-500">
                 <span className="flex items-center gap-1">
                   <BookOpen className="h-4 w-4" />
                   {modules.length} Modules
@@ -202,7 +202,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                   <Clock className="h-4 w-4" />
                   {totalMinutes} min
                 </span>
-                <span className="flex items-center gap-1 text-brand-600 font-medium">
+                <span className="flex items-center gap-1 text-primary-600 font-medium">
                   <Award className="h-4 w-4" />
                   {course.ceCredits} CE Credits
                 </span>
@@ -217,12 +217,12 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
         <div className="grid md:grid-cols-3 gap-8">
           {/* Module List */}
           <div className="md:col-span-2 space-y-4">
-            <h2 className="text-lg font-bold text-slate-900">Course Modules</h2>
+            <h2 className="text-lg font-bold text-gray-900">Course Modules</h2>
             
             {modules.length === 0 ? (
-              <div className="bg-white rounded-lg border border-slate-200 p-8 text-center">
-                <BookOpen className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500">No modules available yet.</p>
+              <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+                <BookOpen className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500">No modules available yet.</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -236,8 +236,8 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                       className={cn(
                         "bg-white rounded-lg border p-4 flex items-center gap-4 transition-all",
                         status === 'locked' 
-                          ? "border-slate-200 opacity-60" 
-                          : "border-slate-200 hover:border-brand-300 hover:shadow-sm cursor-pointer",
+                          ? "border-gray-200 opacity-60" 
+                          : "border-gray-200 hover:border-primary-300 hover:shadow-sm cursor-pointer",
                         status === 'completed' && "border-green-200 bg-green-50/50"
                       )}
                       onClick={() => status !== 'locked' && handleStartModule(module.id)}
@@ -246,9 +246,9 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                       <div className={cn(
                         "h-10 w-10 rounded-full flex items-center justify-center shrink-0",
                         status === 'completed' && "bg-green-100 text-green-600",
-                        status === 'in_progress' && "bg-brand-100 text-brand-600",
-                        status === 'available' && "bg-slate-100 text-slate-600",
-                        status === 'locked' && "bg-slate-100 text-slate-400"
+                        status === 'in_progress' && "bg-primary-100 text-primary-600",
+                        status === 'available' && "bg-gray-100 text-gray-600",
+                        status === 'locked' && "bg-gray-100 text-gray-400"
                       )}>
                         {status === 'completed' ? (
                           <CheckCircle className="h-5 w-5" />
@@ -261,14 +261,14 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                       
                       {/* Module Info */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-slate-900 truncate">
+                        <h3 className="font-medium text-gray-900 truncate">
                           {module.title}
                         </h3>
-                        <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
+                        <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
                           <span>{module.estimatedMinutes || 0} min</span>
                           <span>Pass: {module.passingScore}%</span>
                           {progress && progress.overallProgress > 0 && (
-                            <span className="text-brand-600 font-medium">
+                            <span className="text-primary-600 font-medium">
                               {progress.overallProgress}% complete
                             </span>
                           )}
@@ -310,7 +310,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
           {/* Sidebar */}
           <div className="space-y-4">
             {/* Enrollment Card */}
-            <div className="bg-white rounded-lg border border-slate-200 p-6">
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
               {isEnrolled ? (
                 <>
                   <div className="flex items-center gap-2 text-green-600 mb-4">
@@ -321,16 +321,16 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                   {/* Progress */}
                   <div className="mb-4">
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-slate-600">Progress</span>
-                      <span className="font-medium text-slate-900">{overallPercent}%</span>
+                      <span className="text-gray-600">Progress</span>
+                      <span className="font-medium text-gray-900">{overallPercent}%</span>
                     </div>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-brand-500 transition-all"
+                        className="h-full bg-primary-500 transition-all"
                         style={{ width: `${overallPercent}%` }}
                       />
                     </div>
-                    <p className="text-xs text-slate-500 mt-2">
+                    <p className="text-xs text-gray-500 mt-2">
                       {completedModules} of {modules.length} modules completed
                     </p>
                   </div>
@@ -353,7 +353,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                 </>
               ) : (
                 <>
-                  <p className="text-slate-600 mb-4">
+                  <p className="text-gray-600 mb-4">
                     Enroll in this course to track your progress and earn CE credits.
                   </p>
                   {enrollmentError && (
@@ -384,24 +384,24 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
             </div>
             
             {/* Course Info Card */}
-            <div className="bg-white rounded-lg border border-slate-200 p-6">
-              <h3 className="font-medium text-slate-900 mb-3">Course Details</h3>
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h3 className="font-medium text-gray-900 mb-3">Course Details</h3>
               <dl className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <dt className="text-slate-500">Category</dt>
-                  <dd className="text-slate-900 capitalize">{course.category}</dd>
+                  <dt className="text-gray-500">Category</dt>
+                  <dd className="text-gray-900 capitalize">{course.category}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-slate-500">Modules</dt>
-                  <dd className="text-slate-900">{modules.length}</dd>
+                  <dt className="text-gray-500">Modules</dt>
+                  <dd className="text-gray-900">{modules.length}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-slate-500">Duration</dt>
-                  <dd className="text-slate-900">{totalMinutes} min</dd>
+                  <dt className="text-gray-500">Duration</dt>
+                  <dd className="text-gray-900">{totalMinutes} min</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-slate-500">CE Credits</dt>
-                  <dd className="text-slate-900 font-medium text-brand-600">{course.ceCredits}</dd>
+                  <dt className="text-gray-500">CE Credits</dt>
+                  <dd className="text-gray-900 font-medium text-primary-600">{course.ceCredits}</dd>
                 </div>
               </dl>
             </div>

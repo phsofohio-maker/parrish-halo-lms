@@ -336,11 +336,11 @@ export const RemediationQueue: React.FC = () => {
 
   if (!hasRole || !hasRole(['admin', 'instructor'])) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-8">
-        <div className="bg-white rounded-xl border border-red-200 p-8 max-w-md text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
+        <div className="bg-white rounded-lg border border-red-200 p-8 max-w-md text-center">
           <Shield className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-slate-900 mb-2">Access Denied</h2>
-          <p className="text-slate-600">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Access Denied</h2>
+          <p className="text-gray-600">
             Remediation management is restricted to administrators and instructors.
           </p>
         </div>
@@ -363,11 +363,11 @@ export const RemediationQueue: React.FC = () => {
       {/* Page Header */}
       <div className="flex justify-between items-end mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <AlertTriangle className="h-6 w-6 text-amber-500" />
             Remediation Queue
           </h1>
-          <p className="text-slate-500 mt-1">
+          <p className="text-gray-500 mt-1">
             Review and manage learner retry requests after repeated assessment failures.
           </p>
         </div>
@@ -384,7 +384,7 @@ export const RemediationQueue: React.FC = () => {
             Refresh
           </Button>
 
-          <div className="flex bg-white border border-slate-200 rounded-lg p-1">
+          <div className="flex bg-white border border-gray-200 rounded-lg p-1">
             {([
               { key: 'pending' as const, label: 'Pending' },
               { key: 'approved' as const, label: 'Approved' },
@@ -397,8 +397,8 @@ export const RemediationQueue: React.FC = () => {
                 className={cn(
                   'px-4 py-1.5 text-xs font-bold rounded-md transition-all',
                   filter === tab.key
-                    ? 'bg-brand-600 text-white'
-                    : 'text-slate-500 hover:text-brand-600'
+                    ? 'bg-primary-100 text-primary-800 font-semibold'
+                    : 'text-gray-500 hover:text-primary-600'
                 )}
               >
                 {tab.label}
@@ -435,23 +435,23 @@ export const RemediationQueue: React.FC = () => {
       )}
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-4 font-semibold text-slate-700">Staff Member</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">Module</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">Reason</th>
-              <th className="px-6 py-4 font-semibold text-slate-700 text-center">Attempts</th>
-              <th className="px-6 py-4 font-semibold text-slate-700 text-center">Status</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">Requested</th>
-              <th className="px-6 py-4 font-semibold text-slate-700 text-right">Actions</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Staff Member</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Module</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Reason</th>
+              <th className="px-6 py-4 font-semibold text-gray-700 text-center">Attempts</th>
+              <th className="px-6 py-4 font-semibold text-gray-700 text-center">Status</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Requested</th>
+              <th className="px-6 py-4 font-semibold text-gray-700 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-gray-100">
             {isLoading ? (
               <tr>
-                <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
+                <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
                   <Loader2 className="h-5 w-5 animate-spin inline mr-2" />
                   Loading remediation requests...
                 </td>
@@ -459,7 +459,7 @@ export const RemediationQueue: React.FC = () => {
             ) : requests.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-6 py-12 text-center">
-                  <div className="text-slate-400">
+                  <div className="text-gray-400">
                     <Shield className="h-10 w-10 mx-auto mb-3 opacity-40" />
                     <p className="font-medium">No remediation requests</p>
                     <p className="text-xs mt-1">
@@ -473,31 +473,31 @@ export const RemediationQueue: React.FC = () => {
             ) : (
               requests.map(req => (
                 <React.Fragment key={req.id}>
-                  <tr className="hover:bg-slate-50/50">
+                  <tr className="hover:bg-gray-50/50">
                     {/* Staff Member */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center">
-                          <User className="h-4 w-4 text-slate-400" />
+                        <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
+                          <User className="h-4 w-4 text-gray-400" />
                         </div>
                         <div>
-                          <div className="font-bold text-slate-900">{req.userName}</div>
-                          <div className="text-xs text-slate-400">{req.userEmail || req.userId}</div>
+                          <div className="font-bold text-gray-900">{req.userName}</div>
+                          <div className="text-xs text-gray-400">{req.userEmail || req.userId}</div>
                         </div>
                       </div>
                     </td>
 
                     {/* Module */}
                     <td className="px-6 py-4">
-                      <div className="font-medium text-slate-700">{req.moduleTitle}</div>
-                      <div className="text-xs text-slate-400 flex items-center gap-1">
+                      <div className="font-medium text-gray-700">{req.moduleTitle}</div>
+                      <div className="text-xs text-gray-400 flex items-center gap-1">
                         <BookOpen className="h-3 w-3" />
                         {req.courseTitle}
                       </div>
                     </td>
 
                     {/* Reason */}
-                    <td className="px-6 py-4 text-slate-600 text-xs max-w-[200px]">
+                    <td className="px-6 py-4 text-gray-600 text-xs max-w-[200px]">
                       {req.reason}
                       {req.denialReason && (
                         <p className="text-red-500 mt-1 font-medium">
@@ -514,7 +514,7 @@ export const RemediationQueue: React.FC = () => {
                           ? 'bg-red-100 text-red-700'
                           : req.attemptCount >= 3
                             ? 'bg-amber-100 text-amber-700'
-                            : 'bg-slate-100 text-slate-600'
+                            : 'bg-gray-100 text-gray-600'
                       )}>
                         {req.attemptCount}
                       </span>
@@ -526,7 +526,7 @@ export const RemediationQueue: React.FC = () => {
                     </td>
 
                     {/* Requested */}
-                    <td className="px-6 py-4 text-slate-500 font-mono text-xs">
+                    <td className="px-6 py-4 text-gray-500 font-mono text-xs">
                       {req.requestedAt ? formatDate(req.requestedAt) : '--'}
                     </td>
 
@@ -563,7 +563,7 @@ export const RemediationQueue: React.FC = () => {
                           </Button>
                         </div>
                       ) : (
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-gray-400">
                           {req.resolvedAt ? formatDate(req.resolvedAt) : ''}
                         </span>
                       )}
@@ -580,7 +580,7 @@ export const RemediationQueue: React.FC = () => {
                               Denial Reason (required — logged in audit trail)
                             </label>
                             <textarea
-                              className="w-full p-2.5 border border-red-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-red-300 bg-white text-slate-700"
+                              className="w-full p-2.5 border border-red-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-red-300 bg-white text-gray-700"
                               rows={2}
                               placeholder="Explain why remediation is being denied..."
                               value={denyReason}

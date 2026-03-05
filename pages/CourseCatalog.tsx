@@ -28,8 +28,8 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({ onNavigate }) => {
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8 flex justify-between items-start">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Course Catalog</h1>
-          <p className="text-slate-500 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900">Course Catalog</h1>
+          <p className="text-gray-500 mt-1">
             Browse and enroll in available clinical training modules.
           </p>
         </div>
@@ -58,23 +58,23 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({ onNavigate }) => {
       {/* Loading State */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 text-brand-600 animate-spin" />
+          <Loader2 className="h-8 w-8 text-primary-600 animate-spin" />
         </div>
       ) : courses.length === 0 ? (
         <div className="text-center py-20">
-          <BookOpen className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <p className="text-slate-500">No courses available yet.</p>
+          <BookOpen className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+          <p className="text-gray-500">No courses available yet.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courses.map(course => (
             <div 
               key={course.id} 
-              className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all flex flex-col h-full cursor-pointer"
+              className="group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-sm transition-all flex flex-col h-full cursor-pointer"
               onClick={() => handleViewCourse(course.id)}
             >
               {/* Thumbnail */}
-              <div className="h-40 bg-slate-100 relative overflow-hidden">
+              <div className="h-40 bg-gray-100 relative overflow-hidden">
                 {course.thumbnailUrl ? (
                   <img 
                     src={course.thumbnailUrl} 
@@ -82,11 +82,11 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({ onNavigate }) => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-500 to-brand-700">
+                  <div className="w-full h-full flex items-center justify-center bg-primary-800">
                     <BookOpen className="h-12 w-12 text-white/50" />
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+
                 <div className="absolute bottom-3 left-3 flex items-center gap-2">
                   <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-sm border border-white/30 text-white">
                     {course.category}
@@ -101,27 +101,27 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({ onNavigate }) => {
               
               {/* Content */}
               <div className="p-5 flex-1 flex flex-col">
-                <h3 className="font-bold text-lg text-slate-900 mb-2 leading-tight group-hover:text-brand-600 transition-colors">
+                <h3 className="font-bold text-lg text-gray-900 mb-2 leading-tight group-hover:text-primary-600 transition-colors">
                   {course.title}
                 </h3>
-                <p className="text-sm text-slate-500 mb-4 line-clamp-2 flex-1">
+                <p className="text-sm text-gray-500 mb-4 line-clamp-2 flex-1">
                   {course.description || 'No description'}
                 </p>
                 
                 <div className="space-y-3 mt-auto">
-                  <div className="flex items-center gap-4 text-xs text-slate-500 border-t border-slate-100 pt-3">
+                  <div className="flex items-center gap-4 text-xs text-gray-500 border-t border-gray-100 pt-3">
                     <div className="flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5" />
                       <span>{course.modules?.length || 0} modules</span>
                     </div>
-                    <div className="flex items-center gap-1 text-brand-600 font-medium">
+                    <div className="flex items-center gap-1 text-primary-600 font-medium">
                       <Award className="h-3.5 w-3.5" />
                       <span>{course.ceCredits} CEU</span>
                     </div>
                   </div>
                   
                   <Button 
-                    className="w-full justify-between group-hover:bg-brand-700" 
+                    className="w-full justify-between"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleViewCourse(course.id);

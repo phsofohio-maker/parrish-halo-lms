@@ -34,7 +34,7 @@ const getActionColor = (actionType: string): string => {
   if (actionType.includes('LOGIN') || actionType.includes('LOGOUT'))
     return 'bg-purple-100 text-purple-700 border-purple-200';
   if (actionType.includes('GRADE')) return 'bg-amber-100 text-amber-700 border-amber-200';
-  return 'bg-slate-100 text-slate-700 border-slate-200';
+  return 'bg-gray-100 text-gray-700 border-gray-200';
 };
 
 export const AuditLogs: React.FC = () => {
@@ -77,11 +77,11 @@ export const AuditLogs: React.FC = () => {
   // Check admin access
   if (!hasRole(['admin'])) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-8">
-        <div className="bg-white rounded-xl border border-red-200 p-8 max-w-md text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
+        <div className="bg-white rounded-lg border border-red-200 p-8 max-w-md text-center">
           <Shield className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-slate-900 mb-2">Access Denied</h2>
-          <p className="text-slate-600">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Access Denied</h2>
+          <p className="text-gray-600">
             You do not have permission to view audit logs. This page is restricted to administrators.
           </p>
         </div>
@@ -110,11 +110,11 @@ export const AuditLogs: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-start mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <Shield className="h-6 w-6 text-brand-600" />
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <Shield className="h-6 w-6 text-primary-600" />
             System Audit Trail
           </h1>
-          <p className="text-slate-500 mt-2 max-w-2xl">
+          <p className="text-gray-500 mt-2 max-w-2xl">
             Immutable record of all critical actions within the Harmony LMS platform. Used for
             compliance verification and legal defensibility.
           </p>
@@ -126,23 +126,23 @@ export const AuditLogs: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6 flex flex-wrap gap-4">
+      <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6 flex flex-wrap gap-4">
         <div className="flex-1 min-w-[200px] relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search by user, details, or target..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm bg-white text-slate-900"
+            className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm bg-white text-gray-900"
           />
         </div>
         <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-slate-400" />
+          <Filter className="h-4 w-4 text-gray-400" />
           <select
             value={filterAction}
             onChange={(e) => setFilterAction(e.target.value)}
-            className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm bg-white text-slate-900"
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none text-sm bg-white text-gray-900"
           >
             <option value="">All Actions</option>
             {actionTypes.map((type) => (
@@ -167,15 +167,15 @@ export const AuditLogs: React.FC = () => {
 
       {/* Loading State */}
       {isLoading ? (
-        <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-          <Loader2 className="h-8 w-8 text-brand-600 animate-spin mx-auto" />
-          <p className="mt-4 text-slate-500">Loading audit logs...</p>
+        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <Loader2 className="h-8 w-8 text-primary-600 animate-spin mx-auto" />
+          <p className="mt-4 text-gray-500">Loading audit logs...</p>
         </div>
       ) : filteredLogs.length === 0 ? (
-        <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-          <FileText className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <p className="text-slate-500 font-medium">No audit logs found</p>
-          <p className="text-sm text-slate-400 mt-1">
+        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+          <p className="text-gray-500 font-medium">No audit logs found</p>
+          <p className="text-sm text-gray-400 mt-1">
             {searchTerm || filterAction
               ? 'Try adjusting your filters'
               : 'Logs will appear here as actions are performed'}
@@ -183,39 +183,39 @@ export const AuditLogs: React.FC = () => {
         </div>
       ) : (
         /* Logs Table */
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
           <table className="w-full">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Timestamp
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Actor
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Action
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Details
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-gray-100">
               {filteredLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-50 transition-colors">
+                <tr key={log.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                      <Clock className="h-3.5 w-3.5 text-slate-400" />
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Clock className="h-3.5 w-3.5 text-gray-400" />
                       {formatDate(log.timestamp)}
                     </div>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="h-7 w-7 rounded-full bg-slate-100 flex items-center justify-center">
-                        <User className="h-3.5 w-3.5 text-slate-500" />
+                      <div className="h-7 w-7 rounded-full bg-gray-100 flex items-center justify-center">
+                        <User className="h-3.5 w-3.5 text-gray-500" />
                       </div>
-                      <span className="text-sm font-medium text-slate-900">{log.actorName}</span>
+                      <span className="text-sm font-medium text-gray-900">{log.actorName}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3">
@@ -229,7 +229,7 @@ export const AuditLogs: React.FC = () => {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <p className="text-sm text-slate-600 max-w-md truncate" title={log.details}>
+                    <p className="text-sm text-gray-600 max-w-md truncate" title={log.details}>
                       {log.details}
                     </p>
                   </td>
@@ -241,7 +241,7 @@ export const AuditLogs: React.FC = () => {
       )}
 
       {/* Log Count */}
-      <div className="mt-4 text-sm text-slate-500 text-right">
+      <div className="mt-4 text-sm text-gray-500 text-right">
         Showing {filteredLogs.length} of {logs.length} records
       </div>
     </div>

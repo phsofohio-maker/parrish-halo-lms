@@ -65,10 +65,10 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <Loader2 className="h-10 w-10 text-brand-600 animate-spin mx-auto" />
-          <p className="mt-4 text-slate-600 font-medium">Loading module...</p>
+          <Loader2 className="h-10 w-10 text-primary-600 animate-spin mx-auto" />
+          <p className="mt-4 text-gray-600 font-medium">Loading module...</p>
         </div>
       </div>
     );
@@ -77,11 +77,11 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
   // Error state
   if (error && !module) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-8">
-        <div className="bg-white rounded-xl border border-red-200 p-8 max-w-md text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
+        <div className="bg-white rounded-lg border border-red-200 p-8 max-w-md text-center">
           <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-slate-900 mb-2">Failed to Load</h2>
-          <p className="text-slate-600 mb-6">{error}</p>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Failed to Load</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
           <Button onClick={onBack} variant="outline">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Go Back
@@ -94,21 +94,21 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
   if (!module) return null;
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={onBack}
-                className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-700 transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-700 transition-colors"
               >
                 <ArrowLeft className="h-5 w-5" />
               </button>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-lg font-bold text-slate-900">
+                  <h1 className="text-lg font-bold text-gray-900">
                     {module.title || 'Untitled Module'}
                   </h1>
                   {isDirty && (
@@ -117,7 +117,7 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-gray-500">
                   {module.blocks.length} block{module.blocks.length !== 1 ? 's' : ''}
                   {' · '}
                   {module.estimatedMinutes} min
@@ -164,26 +164,26 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
       {/* Content */}
       <div className="max-w-5xl mx-auto px-6 py-8">
         {/* Module Metadata */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6 mb-8 shadow-sm">
-          <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">
+        <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8 shadow-sm">
+          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">
             Module Settings
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Title
               </label>
               <input
                 type="text"
                 value={module.title}
                 onChange={(e) => updateModuleMetadata({ title: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-900 bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-gray-900 bg-white"
                 placeholder="Module title"
               />
             </div>
             <div className="flex gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Passing Score
                 </label>
                 <div className="flex items-center">
@@ -193,15 +193,15 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
                     onChange={(e) =>
                       updateModuleMetadata({ passingScore: parseInt(e.target.value) || 0 })
                     }
-                    className="w-20 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 bg-white"
+                    className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none text-gray-900 bg-white"
                     min="0"
                     max="100"
                   />
-                  <span className="ml-2 text-slate-500">%</span>
+                  <span className="ml-2 text-gray-500">%</span>
                 </div>
               </div>
               <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Duration
                 </label>
                 <div className="flex items-center">
@@ -211,10 +211,10 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
                     onChange={(e) =>
                       updateModuleMetadata({ estimatedMinutes: parseInt(e.target.value) || 0 })
                     }
-                    className="w-20 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 bg-white"
+                    className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none text-gray-900 bg-white"
                     min="0"
                   />
-                  <span className="ml-2 text-slate-500">min</span>
+                  <span className="ml-2 text-gray-500">min</span>
                 </div>
               </div>
             </div>
@@ -224,10 +224,10 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
         {/* Block List */}
         <div className="space-y-4">
           {module.blocks.length === 0 ? (
-            <div className="text-center py-16 border-2 border-dashed border-slate-300 rounded-xl bg-white">
-              <FileText className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500 font-medium mb-2">This module has no content yet</p>
-              <p className="text-sm text-slate-400">Add a block below to get started</p>
+            <div className="text-center py-16 border-2 border-dashed border-gray-300 rounded-lg bg-white">
+              <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500 font-medium mb-2">This module has no content yet</p>
+              <p className="text-sm text-gray-400">Add a block below to get started</p>
             </div>
           ) : (
             module.blocks.map((block) => (
@@ -243,7 +243,7 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
 
         {/* Add Block Menu */}
         <div className="mt-8 flex justify-center">
-          <div className="bg-white p-1.5 rounded-full shadow-lg border border-slate-200 flex gap-2 overflow-x-auto max-w-full">
+          <div className="bg-white p-1.5 rounded-full shadow-lg border border-gray-200 flex gap-2 overflow-x-auto max-w-full">
             {[
               { type: 'heading' as BlockType, label: 'Heading' },
               { type: 'text' as BlockType, label: 'Text' },
@@ -254,15 +254,15 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
               <button
                 key={item.type}
                 onClick={() => addBlock(item.type)}
-                className="px-4 py-2 rounded-full hover:bg-slate-100 text-sm font-medium text-slate-700 flex items-center gap-2 transition-colors whitespace-nowrap"
+                className="px-4 py-2 rounded-full hover:bg-gray-100 text-sm font-medium text-gray-700 flex items-center gap-2 transition-colors whitespace-nowrap"
               >
-                <Plus className="h-3 w-3 text-slate-400" />
+                <Plus className="h-3 w-3 text-gray-400" />
                 {item.label}
               </button>
             ))}
 
             {/* Clinical Alert Divider */}
-            <div className="w-px bg-slate-200 mx-1 my-2" />
+            <div className="w-px bg-gray-200 mx-1 my-2" />
             <button
               onClick={() => addBlock('text', 'callout')}
               className="px-4 py-2 rounded-full hover:bg-amber-50 text-sm font-medium text-amber-700 flex items-center gap-2 transition-colors whitespace-nowrap"

@@ -58,11 +58,11 @@ export const GradeBreakdown: React.FC<GradeBreakdownProps> = ({
   showWeights = true,
 }) => {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="bg-slate-900 px-6 py-4 flex justify-between items-center">
+      <div className="bg-gray-900 px-6 py-4 flex justify-between items-center">
         <h3 className="text-white font-bold text-sm">Module Grade Breakdown</h3>
-        <span className="text-slate-400 text-xs font-medium">
+        <span className="text-gray-400 text-xs font-medium">
           {calculation.gradedModules}/{calculation.totalModules} modules graded
         </span>
       </div>
@@ -70,27 +70,27 @@ export const GradeBreakdown: React.FC<GradeBreakdownProps> = ({
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-3 font-semibold text-slate-700">Module</th>
-              <th className="px-6 py-3 font-semibold text-slate-700 text-center">Score</th>
+              <th className="px-6 py-3 font-semibold text-gray-700">Module</th>
+              <th className="px-6 py-3 font-semibold text-gray-700 text-center">Score</th>
               {showWeights && (
                 <>
-                  <th className="px-6 py-3 font-semibold text-slate-700 text-center">Weight</th>
-                  <th className="px-6 py-3 font-semibold text-slate-700 text-center">Weighted</th>
+                  <th className="px-6 py-3 font-semibold text-gray-700 text-center">Weight</th>
+                  <th className="px-6 py-3 font-semibold text-gray-700 text-center">Weighted</th>
                 </>
               )}
-              <th className="px-6 py-3 font-semibold text-slate-700 text-center">Critical</th>
-              <th className="px-6 py-3 font-semibold text-slate-700 text-center">Status</th>
+              <th className="px-6 py-3 font-semibold text-gray-700 text-center">Critical</th>
+              <th className="px-6 py-3 font-semibold text-gray-700 text-center">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-gray-100">
             {calculation.moduleBreakdown.map((mod: ModuleScore) => (
               <tr
                 key={mod.moduleId}
                 className={cn(
-                  'hover:bg-slate-50/50 transition-colors',
-                  mod.isCritical && 'bg-slate-50/30'
+                  'hover:bg-gray-50/50 transition-colors',
+                  mod.isCritical && 'bg-gray-50/30'
                 )}
               >
                 {/* Module Name */}
@@ -99,9 +99,9 @@ export const GradeBreakdown: React.FC<GradeBreakdownProps> = ({
                     {mod.isCritical && (
                       <Shield className="h-4 w-4 text-amber-500 shrink-0" />
                     )}
-                    <span className="font-medium text-slate-900">{mod.moduleTitle}</span>
+                    <span className="font-medium text-gray-900">{mod.moduleTitle}</span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-gray-400 mt-0.5">
                     Passing: {mod.passingScore}%
                   </p>
                 </td>
@@ -111,12 +111,12 @@ export const GradeBreakdown: React.FC<GradeBreakdownProps> = ({
                   <span className={cn(
                     'font-bold',
                     mod.score === null
-                      ? 'text-slate-400'
+                      ? 'text-gray-400'
                       : mod.passed
                         ? 'text-green-600'
                         : mod.passed === false
                           ? 'text-red-600'
-                          : 'text-slate-700'
+                          : 'text-gray-700'
                   )}>
                     {getScoreDisplay(mod.score)}
                   </span>
@@ -125,10 +125,10 @@ export const GradeBreakdown: React.FC<GradeBreakdownProps> = ({
                 {/* Weight */}
                 {showWeights && (
                   <>
-                    <td className="px-6 py-4 text-center text-slate-500 font-mono text-xs">
+                    <td className="px-6 py-4 text-center text-gray-500 font-mono text-xs">
                       {mod.weight}%
                     </td>
-                    <td className="px-6 py-4 text-center font-mono text-xs font-bold text-slate-700">
+                    <td className="px-6 py-4 text-center font-mono text-xs font-bold text-gray-700">
                       {getWeightedDisplay(mod.weightedScore)}
                     </td>
                   </>
@@ -142,7 +142,7 @@ export const GradeBreakdown: React.FC<GradeBreakdownProps> = ({
                       Required
                     </span>
                   ) : (
-                    <Minus className="h-4 w-4 text-slate-300 mx-auto" />
+                    <Minus className="h-4 w-4 text-gray-300 mx-auto" />
                   )}
                 </td>
 
@@ -169,7 +169,7 @@ export const GradeBreakdown: React.FC<GradeBreakdownProps> = ({
       </div>
 
       {/* Summary Footer */}
-      <div className="border-t border-slate-200 bg-slate-50 px-6 py-4">
+      <div className="border-t border-gray-200 bg-gray-50 px-6 py-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
           {/* Overall Score + Progress Ring */}
           <div className="flex items-center gap-6">
@@ -187,14 +187,14 @@ export const GradeBreakdown: React.FC<GradeBreakdownProps> = ({
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[10px] font-bold text-slate-700">
+                <span className="text-[10px] font-bold text-gray-700">
                   {calculation.completionPercent}%
                 </span>
               </div>
             </div>
 
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Overall Score</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Overall Score</p>
               <p className={cn(
                 'text-2xl font-bold',
                 calculation.overallPassed ? 'text-green-600' : 'text-red-600'
@@ -220,7 +220,7 @@ export const GradeBreakdown: React.FC<GradeBreakdownProps> = ({
           {/* Critical Modules Status */}
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Critical Modules</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Critical Modules</p>
               <p className={cn(
                 'text-sm font-bold',
                 calculation.allCriticalModulesPassed ? 'text-green-600' : 'text-red-600'

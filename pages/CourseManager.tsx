@@ -183,13 +183,13 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
     <div className="p-8 max-w-7xl mx-auto">
       {/* Delete Confirmation Modal */}
       {confirmDeleteId && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6 animate-in zoom-in duration-200">
+        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 animate-in zoom-in duration-200">
             <div className="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 mb-4 mx-auto">
               <AlertCircle className="h-6 w-6" />
             </div>
-            <h3 className="text-lg font-bold text-center text-slate-900 mb-2">Delete Course?</h3>
-            <p className="text-sm text-slate-500 text-center mb-6">
+            <h3 className="text-lg font-bold text-center text-gray-900 mb-2">Delete Course?</h3>
+            <p className="text-sm text-gray-500 text-center mb-6">
               This action cannot be undone. All modules and data for this course will be permanently removed.
             </p>
             <div className="flex gap-3">
@@ -203,11 +203,11 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
       {/* Header */}
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <Layers className="h-6 w-6 text-brand-600" />
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <Layers className="h-6 w-6 text-primary-600" />
             Curriculum Manager
           </h1>
-          <p className="text-slate-500 mt-1">Design courses, configure CE credits, and manage module publishing.</p>
+          <p className="text-gray-500 mt-1">Design courses, configure CE credits, and manage module publishing.</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={refetch} disabled={isLoading} className="gap-1.5">
@@ -230,14 +230,14 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
       )}
 
       {/* Course Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center gap-4">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
             <input
               type="text"
               placeholder="Search by title or category..."
-              className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+              className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             />
@@ -245,51 +245,51 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
         </div>
 
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-4 font-semibold text-slate-700">Course Detail</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">Category</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">CE Units</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">Status</th>
-              <th className="px-6 py-4 font-semibold text-slate-700 text-right">Actions</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Course Detail</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Category</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">CE Units</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Status</th>
+              <th className="px-6 py-4 font-semibold text-gray-700 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-gray-100">
             {isLoading ? (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
+                <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
                   <Loader2 className="h-5 w-5 animate-spin inline mr-2" />
                   Loading courses...
                 </td>
               </tr>
             ) : courses.filter(c => c.title.toLowerCase().includes(filter.toLowerCase())).length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-slate-400 italic">
+                <td colSpan={5} className="px-6 py-12 text-center text-gray-400 italic">
                   {filter ? 'No courses match your search.' : 'No courses yet. Create one to get started.'}
                 </td>
               </tr>
             ) : (
               courses.filter(c => c.title.toLowerCase().includes(filter.toLowerCase())).map(course => (
-                <tr key={course.id} className="hover:bg-slate-50/50 transition-colors group">
+                <tr key={course.id} className="hover:bg-gray-50/50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       {course.thumbnailUrl ? (
-                        <img src={course.thumbnailUrl} className="h-10 w-16 rounded object-cover bg-slate-100" />
+                        <img src={course.thumbnailUrl} className="h-10 w-16 rounded object-cover bg-gray-100" />
                       ) : (
-                        <div className="h-10 w-16 rounded bg-slate-100" />
+                        <div className="h-10 w-16 rounded bg-gray-100" />
                       )}
                       <div>
-                        <div className="font-bold text-slate-900">{course.title}</div>
-                        <div className="text-xs text-slate-500">{course.modules?.length || 0} Modules</div>
+                        <div className="font-bold text-gray-900">{course.title}</div>
+                        <div className="text-xs text-gray-500">{course.modules?.length || 0} Modules</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2 py-1 rounded capitalize">
+                    <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded capitalize">
                       {(course.category || '').replace('_', ' ')}
                     </span>
                   </td>
-                  <td className="px-6 py-4 font-mono font-bold text-brand-700">
+                  <td className="px-6 py-4 font-mono font-bold text-primary-700">
                     {course.ceCredits.toFixed(1)}
                   </td>
                   <td className="px-6 py-4">
@@ -299,7 +299,7 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
                         Published
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1.5 text-slate-400 font-medium text-xs">
+                      <span className="flex items-center gap-1.5 text-gray-400 font-medium text-xs">
                         <Lock className="h-3 w-3" />
                         Draft
                       </span>
@@ -326,7 +326,7 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
                       </Button>
                       <button
                         onClick={() => setConfirmDeleteId(course.id)}
-                        className="p-2 text-slate-400 hover:text-red-600"
+                        className="p-2 text-gray-400 hover:text-red-600"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

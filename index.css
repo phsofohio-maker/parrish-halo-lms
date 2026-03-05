@@ -1,22 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 
-  /* Brand — Clinical Blue */
-  --color-brand-50: #f0f9ff;
-  --color-brand-100: #e0f2fe;
-  --color-brand-500: #0ea5e9;
-  --color-brand-600: #0284c7;
-  --color-brand-700: #0369a1;
-  --color-brand-800: #075985;
-  --color-brand-900: #0c4a6e;
+  /* Primary Green Scale — Clinical Emerald */
+  --color-primary-50: #F0FBF5;
+  --color-primary-100: #DCF7E9;
+  --color-primary-200: #B6F0D3;
+  --color-primary-300: #86E4B6;
+  --color-primary-400: #4FD493;
+  --color-primary-500: #1DB86F;
+  --color-primary-600: #159A61;
+  --color-primary-700: #0F7B4F;
+  --color-primary-800: #0B6637;
+  --color-primary-900: #064E2B;
 
   /* Semantic */
-  --color-success-500: #22c55e;
-  --color-success-600: #16a34a;
+  --color-success-500: #0F7B4F;
+  --color-success-600: #0B6637;
   --color-warning-500: #f59e0b;
-  --color-warning-600: #d97706;
+  --color-warning-600: #D97706;
   --color-critical-500: #ef4444;
-  --color-critical-600: #dc2626;
+  --color-critical-600: #DC2626;
+  --color-info-500: #3B82F6;
+  --color-info-600: #2563EB;
+
+  /* Shadows — Clinical, subtle */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
 }

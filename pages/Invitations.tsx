@@ -56,17 +56,17 @@ export const Invitations: React.FC = () => {
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <UserPlus className="h-6 w-6 text-brand-600" />
+        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <UserPlus className="h-6 w-6 text-primary-600" />
           Staff Onboarding
         </h1>
-        <p className="text-slate-500 mt-1">Invite your clinical team members to the Harmony training portal.</p>
+        <p className="text-gray-500 mt-1">Invite your clinical team members to the Harmony training portal.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Invite Form */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm relative overflow-hidden">
             {showSuccess && (
                 <div className="absolute inset-0 bg-green-600 flex flex-col items-center justify-center text-white z-10 animate-in fade-in duration-300">
                     <CheckCircle2 className="h-12 w-12 mb-2" />
@@ -74,21 +74,21 @@ export const Invitations: React.FC = () => {
                 </div>
             )}
             
-            <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                <Send className="h-4 w-4 text-brand-500" />
+            <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <Send className="h-4 w-4 text-primary-500" />
                 Send New Invite
             </h2>
             
             <form onSubmit={handleSendInvite} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Email Address</label>
+                <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Email Address</label>
                 <div className="relative">
-                    <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-300" />
+                    <Mail className="absolute left-3 top-2.5 h-4 w-4 text-gray-300" />
                     <input 
                         type="email" 
                         required
                         placeholder="e.g. nurse@harmony.health"
-                        className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-md text-sm outline-none focus:ring-2 focus:ring-brand-500 transition-all"
+                        className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-2 focus:ring-primary-500 transition-all"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
@@ -96,9 +96,9 @@ export const Invitations: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Assign Role</label>
+                <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Assign Role</label>
                 <select 
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-2 focus:ring-primary-500 bg-white"
                     value={role}
                     onChange={(e) => setRole(e.target.value as UserRoleType)}
                 >
@@ -110,11 +110,11 @@ export const Invitations: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Department (Optional)</label>
+                <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Department (Optional)</label>
                 <input 
                     type="text" 
                     placeholder="e.g. Hospice Unit 4"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm outline-none focus:ring-2 focus:ring-primary-500"
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
                 />
@@ -126,17 +126,17 @@ export const Invitations: React.FC = () => {
             </form>
           </div>
 
-          <div className="bg-slate-900 p-6 rounded-xl text-white shadow-lg">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-xs">
              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-brand-500 rounded-lg">
-                    <Upload className="h-5 w-5" />
+                <div className="p-2 bg-primary-100 rounded-lg">
+                    <Upload className="h-5 w-5 text-primary-700" />
                 </div>
-                <h3 className="font-bold">Bulk Onboarding</h3>
+                <h3 className="font-bold text-gray-900">Bulk Onboarding</h3>
              </div>
-             <p className="text-sm text-slate-400 leading-relaxed mb-6">
+             <p className="text-sm text-gray-600 leading-relaxed mb-6">
                 Uploading a CSV of clinical staff allows for mass enrollment and automated department assignment.
              </p>
-             <Button variant="outline" className="w-full border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white border-dashed">
+             <Button variant="outline" className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 border-dashed">
                 Upload CSV File
              </Button>
           </div>
@@ -144,37 +144,37 @@ export const Invitations: React.FC = () => {
 
         {/* Pending Invites List */}
         <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                    <h2 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Pending & Expired Invites</h2>
-                    <span className="text-[10px] font-bold text-slate-400">{invitations.length} Total</span>
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                    <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Pending & Expired Invites</h2>
+                    <span className="text-[10px] font-bold text-gray-400">{invitations.length} Total</span>
                 </div>
 
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-gray-100">
                     {invitations.length === 0 ? (
-                        <div className="p-12 text-center text-slate-400 italic">No pending invitations.</div>
+                        <div className="p-12 text-center text-gray-400 italic">No pending invitations.</div>
                     ) : (
                         invitations.map(invite => (
-                            <div key={invite.id} className="p-5 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                            <div key={invite.id} className="p-5 flex items-center justify-between hover:bg-gray-50 transition-colors">
                                 <div className="flex items-center gap-4">
                                     <div className={cn(
                                         "h-10 w-10 rounded-full flex items-center justify-center",
-                                        invite.status === 'expired' ? "bg-red-50 text-red-500" : "bg-brand-50 text-brand-600"
+                                        invite.status === 'expired' ? "bg-red-50 text-red-500" : "bg-primary-50 text-primary-600"
                                     )}>
                                         <Mail className="h-5 w-5" />
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <p className="font-bold text-slate-900 text-sm">{invite.email}</p>
+                                            <p className="font-bold text-gray-900 text-sm">{invite.email}</p>
                                             <span className={cn(
                                                 "text-[8px] font-black uppercase px-1.5 py-0.5 rounded border",
-                                                invite.status === 'expired' ? "bg-red-50 text-red-600 border-red-100" : "bg-brand-50 text-brand-600 border-brand-100"
+                                                invite.status === 'expired' ? "bg-red-50 text-red-600 border-red-100" : "bg-primary-50 text-primary-600 border-primary-100"
                                             )}>
                                                 {invite.status}
                                             </span>
                                         </div>
-                                        <div className="text-[10px] text-slate-500 flex items-center gap-2 mt-0.5">
-                                            <span className="font-bold text-brand-700 capitalize">{invite.role}</span>
+                                        <div className="text-[10px] text-gray-500 flex items-center gap-2 mt-0.5">
+                                            <span className="font-bold text-primary-700 capitalize">{invite.role}</span>
                                             {invite.department && <span>• {invite.department}</span>}
                                             <span>• Sent {formatDate(invite.sentAt)}</span>
                                         </div>
@@ -183,14 +183,14 @@ export const Invitations: React.FC = () => {
                                 <div className="flex items-center gap-2">
                                     <button 
                                         onClick={() => handleResend(invite.id)}
-                                        className="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-md transition-all"
+                                        className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-md transition-all"
                                         title="Resend Invitation"
                                     >
                                         <RefreshCw className="h-4 w-4" />
                                     </button>
                                     <button 
                                         onClick={() => handleCancel(invite.id)}
-                                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-all"
+                                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-all"
                                         title="Cancel Invite"
                                     >
                                         <X className="h-4 w-4" />
@@ -202,11 +202,11 @@ export const Invitations: React.FC = () => {
                 </div>
             </div>
             
-            <div className="mt-6 bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-4">
-                <Shield className="h-6 w-6 text-blue-600 shrink-0" />
+            <div className="mt-6 bg-white border border-gray-200 border-l-4 border-l-info-600 rounded-lg p-4 flex gap-4 shadow-xs">
+                <Shield className="h-6 w-6 text-gray-500 shrink-0" />
                 <div>
-                    <h4 className="text-sm font-bold text-blue-900">Compliance Warning</h4>
-                    <p className="text-xs text-blue-700 leading-relaxed mt-1">
+                    <h4 className="text-sm font-bold text-gray-900">Compliance Warning</h4>
+                    <p className="text-xs text-gray-600 leading-relaxed mt-1">
                         Invitations expire after 72 hours. To maintain organizational security, ensure staff complete their profile setup immediately upon receipt of the clinical onboarding email.
                     </p>
                 </div>

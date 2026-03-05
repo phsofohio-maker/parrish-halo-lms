@@ -45,10 +45,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate }) => {
       {/* Header */}
       <div className="mb-8 flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">
+          <h1 className="text-3xl font-bold text-gray-900">
             Welcome back, {user.displayName}
           </h1>
-          <p className="text-slate-500 mt-2">
+          <p className="text-gray-500 mt-2">
             Here is your compliance overview for {new Date().toLocaleDateString()}
           </p>
         </div>
@@ -62,33 +62,33 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate }) => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="h-12 w-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-xs flex items-center gap-4">
+          <div className="h-12 w-12 rounded-full bg-primary-50 flex items-center justify-center text-primary-700">
             <Clock className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-sm text-slate-500 font-medium">Pending Courses</p>
-            <p className="text-2xl font-bold text-slate-900">
+            <p className="text-sm text-gray-500 font-medium">Pending Courses</p>
+            <p className="text-2xl font-bold text-gray-900">
               {isLoading ? '—' : courses.filter((c) => c.status !== 'archived').length}
             </p>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="h-12 w-12 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-xs flex items-center gap-4">
+          <div className="h-12 w-12 rounded-full bg-primary-50 flex items-center justify-center text-primary-700">
             <Award className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-sm text-slate-500 font-medium">CE Credits Earned</p>
-            <p className="text-2xl font-bold text-slate-900">0.0</p>
+            <p className="text-sm text-gray-500 font-medium">CE Credits Earned</p>
+            <p className="text-2xl font-bold text-gray-900">0.0</p>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="h-12 w-12 rounded-full bg-orange-50 flex items-center justify-center text-orange-600">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-xs flex items-center gap-4">
+          <div className="h-12 w-12 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
             <AlertTriangle className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-sm text-slate-500 font-medium">Compliance Alerts</p>
-            <p className="text-2xl font-bold text-slate-900">0</p>
+            <p className="text-sm text-gray-500 font-medium">Compliance Alerts</p>
+            <p className="text-2xl font-bold text-gray-900">0</p>
           </div>
         </div>
       </div>
@@ -96,8 +96,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate }) => {
       {/* Grade Summary Cards */}
       {courseGrades.length > 0 && (
         <div className="mb-10">
-          <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-            <GraduationCap className="h-4 w-4 text-brand-500" />
+          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <GraduationCap className="h-4 w-4 text-primary-500" />
             Your Course Grades
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -119,7 +119,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate }) => {
       {/* Course List Section */}
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold text-slate-800">
+          <h2 className="text-xl font-bold text-gray-800">
             {canAuthor ? 'All Courses' : 'Assigned Training'}
           </h2>
           <div className="flex gap-2">
@@ -155,23 +155,23 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate }) => {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="bg-white rounded-xl border border-slate-200 h-64 animate-pulse"
+                className="bg-white rounded-lg border border-gray-200 h-64 animate-pulse"
               >
-                <div className="h-32 bg-slate-100" />
+                <div className="h-32 bg-gray-100" />
                 <div className="p-4 space-y-3">
-                  <div className="h-4 bg-slate-100 rounded w-3/4" />
-                  <div className="h-3 bg-slate-100 rounded w-full" />
-                  <div className="h-3 bg-slate-100 rounded w-1/2" />
+                  <div className="h-4 bg-gray-100 rounded w-3/4" />
+                  <div className="h-3 bg-gray-100 rounded w-full" />
+                  <div className="h-3 bg-gray-100 rounded w-1/2" />
                 </div>
               </div>
             ))}
           </div>
         ) : courses.length === 0 ? (
           /* Empty State */
-          <div className="bg-white rounded-xl border-2 border-dashed border-slate-200 p-12 text-center">
-            <BookOpen className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-            <p className="text-slate-500 font-medium mb-2">No courses available</p>
-            <p className="text-sm text-slate-400 mb-6">
+          <div className="bg-white rounded-lg border-2 border-dashed border-gray-200 p-12 text-center">
+            <BookOpen className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500 font-medium mb-2">No courses available</p>
+            <p className="text-sm text-gray-400 mb-6">
               {canAuthor
                 ? 'Create your first course to get started'
                 : 'Courses will appear here when assigned'}
@@ -189,11 +189,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate }) => {
             {courses.map((course) => (
               <div
                 key={course.id}
-                className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-md transition-all cursor-pointer"
+                className="group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-sm transition-all cursor-pointer"
                 onClick={() => onNavigate('/course', { courseId: course.id })}
               >
                 {/* Thumbnail */}
-                <div className="h-32 bg-slate-100 relative overflow-hidden">
+                <div className="h-32 bg-gray-100 relative overflow-hidden">
                   {course.thumbnailUrl ? (
                     <img
                       src={course.thumbnailUrl}
@@ -201,11 +201,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate }) => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-500 to-brand-700">
+                    <div className="w-full h-full flex items-center justify-center bg-primary-800">
                       <BookOpen className="h-8 w-8 text-white/50" />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                   <div className="absolute bottom-3 left-3 flex items-center gap-2">
                     <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-sm border border-white/30 text-white">
                       {course.category}
@@ -220,15 +219,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate }) => {
 
                 {/* Content */}
                 <div className="p-4">
-                  <h3 className="font-bold text-slate-900 mb-1 line-clamp-1 group-hover:text-brand-600 transition-colors">
+                  <h3 className="font-bold text-gray-900 mb-1 line-clamp-1 group-hover:text-primary-600 transition-colors">
                     {course.title}
                   </h3>
-                  <p className="text-sm text-slate-500 mb-4 line-clamp-2 min-h-[40px]">
+                  <p className="text-sm text-gray-500 mb-4 line-clamp-2 min-h-[40px]">
                     {course.description || 'No description'}
                   </p>
 
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 text-xs text-slate-400">
+                    <div className="flex items-center gap-3 text-xs text-gray-400">
                       <span className="flex items-center gap-1">
                         <BookOpen className="h-3 w-3" />
                         {course.modules?.length || 0} modules

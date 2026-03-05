@@ -41,7 +41,7 @@ export const ObjSubjPlayer: React.FC<ObjSubjPlayerProps> = ({
   const allAnswered = items.length > 0 && answeredCount === items.length;
 
   return (
-    <div className="my-8 border border-purple-200 rounded-xl overflow-hidden bg-white shadow-sm">
+    <div className="my-8 border border-purple-200 rounded-lg overflow-hidden bg-white shadow-sm">
       <div className="bg-purple-50 px-6 py-4 border-b border-purple-100 flex justify-between items-center">
         <h3 className="font-bold text-purple-900 flex items-center gap-2">
           <Eye className="h-5 w-5 text-purple-600" />
@@ -53,7 +53,7 @@ export const ObjSubjPlayer: React.FC<ObjSubjPlayerProps> = ({
       </div>
 
       <div className="p-6">
-        <p className="text-xs text-slate-500 italic mb-6">
+        <p className="text-xs text-gray-500 italic mb-6">
           Classify each clinical data item as <strong>Objective</strong> (measurable, observable) or <strong>Subjective</strong> (patient-reported, opinion-based).
         </p>
 
@@ -66,13 +66,13 @@ export const ObjSubjPlayer: React.FC<ObjSubjPlayerProps> = ({
                 key={item.id}
                 className={cn(
                   "border rounded-lg p-4 transition-all",
-                  selected ? "border-purple-200 bg-purple-50/30" : "border-slate-200"
+                  selected ? "border-purple-200 bg-purple-50/30" : "border-gray-200"
                 )}
               >
                 <div className="flex items-start gap-4">
-                  <span className="text-xs font-bold text-slate-400 mt-1 shrink-0">{idx + 1}.</span>
+                  <span className="text-xs font-bold text-gray-400 mt-1 shrink-0">{idx + 1}.</span>
                   <div className="flex-1">
-                    <p className="text-sm text-slate-800 font-medium leading-relaxed mb-3">{item.text}</p>
+                    <p className="text-sm text-gray-800 font-medium leading-relaxed mb-3">{item.text}</p>
                     <div className="flex gap-3">
                       <button
                         onClick={() => handleSelect(item.id, 'objective')}
@@ -80,7 +80,7 @@ export const ObjSubjPlayer: React.FC<ObjSubjPlayerProps> = ({
                           "flex-1 py-2.5 px-4 rounded-lg border text-sm font-medium transition-all flex items-center justify-center gap-2",
                           selected === 'objective'
                             ? "bg-blue-50 border-blue-400 text-blue-800 ring-1 ring-blue-400"
-                            : "bg-white border-slate-200 text-slate-600 hover:border-blue-300 hover:bg-blue-50/50"
+                            : "bg-white border-gray-200 text-gray-600 hover:border-blue-300 hover:bg-blue-50/50"
                         )}
                       >
                         <Eye className="h-4 w-4" />
@@ -93,7 +93,7 @@ export const ObjSubjPlayer: React.FC<ObjSubjPlayerProps> = ({
                           "flex-1 py-2.5 px-4 rounded-lg border text-sm font-medium transition-all flex items-center justify-center gap-2",
                           selected === 'subjective'
                             ? "bg-purple-50 border-purple-400 text-purple-800 ring-1 ring-purple-400"
-                            : "bg-white border-slate-200 text-slate-600 hover:border-purple-300 hover:bg-purple-50/50"
+                            : "bg-white border-gray-200 text-gray-600 hover:border-purple-300 hover:bg-purple-50/50"
                         )}
                       >
                         <MessageSquare className="h-4 w-4" />

@@ -53,8 +53,8 @@ export const GradeSummaryCard: React.FC<GradeSummaryCardProps> = ({
     <div
       onClick={onClick}
       className={cn(
-        'bg-white rounded-xl border border-slate-200 shadow-sm p-5 transition-all',
-        onClick && 'cursor-pointer hover:shadow-md hover:border-brand-200 group'
+        'bg-white rounded-lg border border-gray-200 shadow-sm p-5 transition-all',
+        onClick && 'cursor-pointer hover:shadow-md hover:border-primary-200 group'
       )}
     >
       <div className="flex items-start gap-4">
@@ -95,7 +95,7 @@ export const GradeSummaryCard: React.FC<GradeSummaryCardProps> = ({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <h4 className="font-bold text-slate-900 text-sm truncate group-hover:text-brand-600 transition-colors">
+              <h4 className="font-bold text-gray-900 text-sm truncate group-hover:text-primary-600 transition-colors">
                 {courseTitle}
               </h4>
               <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -125,21 +125,21 @@ export const GradeSummaryCard: React.FC<GradeSummaryCardProps> = ({
             </div>
 
             {onClick && (
-              <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-brand-500 transition-colors shrink-0 mt-1" />
+              <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-primary-500 transition-colors shrink-0 mt-1" />
             )}
           </div>
 
           {/* Critical Modules */}
           <div className="flex items-center gap-1.5 mt-3">
-            <Shield className="h-3.5 w-3.5 text-slate-400" />
+            <Shield className="h-3.5 w-3.5 text-gray-400" />
             <span className={cn(
               'text-xs font-medium',
               courseGrade.allCriticalModulesPassed ? 'text-green-600' : 'text-red-600'
             )}>
               {courseGrade.criticalModulesPassed}/{courseGrade.totalCriticalModules} critical passed
             </span>
-            <span className="text-slate-300 mx-1">|</span>
-            <span className="text-xs text-slate-400">
+            <span className="text-gray-300 mx-1">|</span>
+            <span className="text-xs text-gray-400">
               {courseGrade.gradedModules}/{courseGrade.totalModules} modules graded
             </span>
           </div>

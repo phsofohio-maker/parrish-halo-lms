@@ -37,10 +37,10 @@ import { Button } from './components/ui/Button';
 import { Loader2, AlertCircle } from 'lucide-react';
 
 const LoadingScreen: React.FC = () => (
-  <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+  <div className="min-h-screen bg-gray-50 flex items-center justify-center">
     <div className="text-center">
-      <Loader2 className="h-12 w-12 text-brand-600 animate-spin mx-auto" />
-      <p className="mt-4 text-slate-500 font-medium">Loading...</p>
+      <Loader2 className="h-12 w-12 text-primary-600 animate-spin mx-auto" />
+      <p className="mt-4 text-gray-500 font-medium">Loading...</p>
     </div>
   </div>
 );
@@ -81,10 +81,10 @@ const AppContent: React.FC = () => {
   if (currentPath === '/course') {
     if (!routeContext.courseId) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center">
-            <AlertCircle className="h-10 w-10 text-slate-400 mx-auto mb-4" />
-            <p className="text-slate-600 mb-4">No course selected.</p>
+            <AlertCircle className="h-10 w-10 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600 mb-4">No course selected.</p>
             <Button onClick={() => setCurrentPath('/courses')}>
               Go to Catalog
             </Button>
@@ -106,10 +106,10 @@ const AppContent: React.FC = () => {
   if (currentPath === '/player') {
     if (!routeContext.courseId || !routeContext.moduleId) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center">
-            <AlertCircle className="h-10 w-10 text-slate-400 mx-auto mb-4" />
-            <p className="text-slate-600 mb-4">No module selected.</p>
+            <AlertCircle className="h-10 w-10 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600 mb-4">No module selected.</p>
             <Button onClick={() => setCurrentPath('/courses')}>
               Go to Catalog
             </Button>
@@ -184,14 +184,14 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-gray-50">
       <Sidebar
         user={user}
         currentPath={currentPath}
         onNavigate={handleNavigate}
         onLogout={handleLogout}
       />
-      <main className="flex-1 ml-64">
+      <main className="flex-1 ml-[260px]">
         {renderPage()}
       </main>
     </div>

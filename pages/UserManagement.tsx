@@ -103,28 +103,28 @@ export const UserManagement: React.FC = () => {
     const availableCourses = courses.filter(c => !userEnrollmentIds.includes(c.id));
 
     return (
-      <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 animate-in zoom-in duration-200">
-          <h3 className="text-lg font-bold text-slate-900 mb-2">Enroll Staff Member</h3>
-          <p className="text-sm text-slate-500 mb-6">Select a course to assign to {targetUser?.displayName}.</p>
+      <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 animate-in zoom-in duration-200">
+          <h3 className="text-lg font-bold text-gray-900 mb-2">Enroll Staff Member</h3>
+          <p className="text-sm text-gray-500 mb-6">Select a course to assign to {targetUser?.displayName}.</p>
 
           <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
             {availableCourses.length === 0 ? (
-                <p className="text-sm text-slate-400 italic text-center py-4">All available courses are already assigned.</p>
+                <p className="text-sm text-gray-400 italic text-center py-4">All available courses are already assigned.</p>
             ) : (
                 availableCourses.map(course => (
                     <button
                         key={course.id}
                         onClick={() => handleEnroll(course.id, userId)}
                         disabled={isEnrolling}
-                        className="w-full p-3 rounded-lg border border-slate-200 hover:border-brand-500 hover:bg-brand-50 transition-all text-left flex items-center gap-3 disabled:opacity-50"
+                        className="w-full p-3 rounded-lg border border-gray-200 hover:border-primary-500 hover:bg-primary-50 transition-all text-left flex items-center gap-3 disabled:opacity-50"
                     >
-                        <div className="h-8 w-8 rounded bg-slate-100 flex items-center justify-center text-slate-400">
+                        <div className="h-8 w-8 rounded bg-gray-100 flex items-center justify-center text-gray-400">
                             <Book className="h-4 w-4" />
                         </div>
                         <div>
-                            <p className="text-sm font-bold text-slate-900">{course.title}</p>
-                            <p className="text-[10px] text-slate-500">{course.category} - {course.ceCredits} CE Credits</p>
+                            <p className="text-sm font-bold text-gray-900">{course.title}</p>
+                            <p className="text-[10px] text-gray-500">{course.category} - {course.ceCredits} CE Credits</p>
                         </div>
                     </button>
                 ))
@@ -145,11 +145,11 @@ export const UserManagement: React.FC = () => {
 
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <Users className="h-6 w-6 text-brand-600" />
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <Users className="h-6 w-6 text-primary-600" />
             Staff Compliance Directory
           </h1>
-          <p className="text-slate-500 mt-1">Manage user roles and track organizational training requirements.</p>
+          <p className="text-gray-500 mt-1">Manage user roles and track organizational training requirements.</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={fetchData} disabled={isLoading} className="gap-1.5">
@@ -168,14 +168,14 @@ export const UserManagement: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center gap-4">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
             <input
               type="text"
               placeholder="Filter by name, email or department..."
-              className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+              className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
             />
@@ -183,27 +183,27 @@ export const UserManagement: React.FC = () => {
         </div>
 
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-4 font-semibold text-slate-700">Staff Member</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">Role</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">License</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">Compliance</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">Enrollments</th>
-              <th className="px-6 py-4 font-semibold text-slate-700 text-right">Actions</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Staff Member</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Role</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">License</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Compliance</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Enrollments</th>
+              <th className="px-6 py-4 font-semibold text-gray-700 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-gray-100">
             {isLoading ? (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
+                <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
                   <Loader2 className="h-5 w-5 animate-spin inline mr-2" />
                   Loading staff directory...
                 </td>
               </tr>
             ) : filteredUsers.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-slate-400 italic">
+                <td colSpan={6} className="px-6 py-12 text-center text-gray-400 italic">
                   {searchFilter ? 'No staff members match your search.' : 'No users found in the system.'}
                 </td>
               </tr>
@@ -215,20 +215,20 @@ export const UserManagement: React.FC = () => {
                   : 0;
 
                 return (
-                  <tr key={user.uid} className="hover:bg-slate-50/50 transition-colors group">
+                  <tr key={user.uid} className="hover:bg-gray-50/50 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
+                        <div className="h-10 w-10 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold">
                           {user.displayName.charAt(0)}
                         </div>
                         <div>
-                          <div className="font-bold text-slate-900">{user.displayName}</div>
-                          <div className="text-xs text-slate-500 flex items-center gap-1">
+                          <div className="font-bold text-gray-900">{user.displayName}</div>
+                          <div className="text-xs text-gray-500 flex items-center gap-1">
                             <Mail className="h-3 w-3" />
                             {user.email}
                           </div>
                           {user.jobTitle && (
-                            <div className="text-xs text-slate-400 mt-0.5">{user.jobTitle} &middot; {user.department || 'No dept'}</div>
+                            <div className="text-xs text-gray-400 mt-0.5">{user.jobTitle} &middot; {user.department || 'No dept'}</div>
                           )}
                         </div>
                       </div>
@@ -244,7 +244,7 @@ export const UserManagement: React.FC = () => {
                     <td className="px-6 py-4">
                       {(() => {
                         if (!user.licenseExpiry) {
-                          return <span className="text-xs text-slate-400">N/A</span>;
+                          return <span className="text-xs text-gray-400">N/A</span>;
                         }
                         const expiry = new Date(user.licenseExpiry);
                         const now = new Date();
@@ -262,7 +262,7 @@ export const UserManagement: React.FC = () => {
                             )}>
                               {isExpired ? 'Expired' : isExpiringSoon ? `${daysLeft}d left` : 'Valid'}
                             </span>
-                            <div className="text-[10px] text-slate-400 mt-0.5">
+                            <div className="text-[10px] text-gray-400 mt-0.5">
                               {expiry.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                             </div>
                           </div>
@@ -271,7 +271,7 @@ export const UserManagement: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                           <div
                             className={cn(
                               "h-full rounded-full",
@@ -280,12 +280,12 @@ export const UserManagement: React.FC = () => {
                             style={{ width: `${compliance}%` }}
                           />
                         </div>
-                        <span className="text-xs font-bold text-slate-700">{Math.round(compliance)}%</span>
+                        <span className="text-xs font-bold text-gray-700">{Math.round(compliance)}%</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-slate-500">
+                    <td className="px-6 py-4 text-gray-500">
                       <div className="flex items-center gap-1">
-                        <ShieldCheck className="h-4 w-4 text-slate-300" />
+                        <ShieldCheck className="h-4 w-4 text-gray-300" />
                         {userEnrollments.length} Active
                       </div>
                     </td>
@@ -300,8 +300,8 @@ export const UserManagement: React.FC = () => {
                           <PlusCircle className="h-3.5 w-3.5" />
                           Enroll
                         </Button>
-                        <button className="p-1 hover:bg-slate-100 rounded">
-                          <MoreVertical className="h-4 w-4 text-slate-400" />
+                        <button className="p-1 hover:bg-gray-100 rounded">
+                          <MoreVertical className="h-4 w-4 text-gray-400" />
                         </button>
                       </div>
                     </td>

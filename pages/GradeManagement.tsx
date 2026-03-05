@@ -424,7 +424,7 @@ export const GradeManagement: React.FC = () => {
    */
   const renderStudentAnswer = (q: QuizQuestion, answer: any): React.ReactNode => {
     if (answer === undefined || answer === null) {
-      return <span className="text-slate-400 italic">(No answer provided)</span>;
+      return <span className="text-gray-400 italic">(No answer provided)</span>;
     }
 
     switch (q.type) {
@@ -469,8 +469,8 @@ export const GradeManagement: React.FC = () => {
                 : <X className="h-3.5 w-3.5 text-red-400" />}
             </div>
             {!isCorrect && (
-              <p className="text-[10px] text-slate-400">
-                Expected: <span className="font-bold text-slate-600">"{q.correctAnswer}"</span>
+              <p className="text-[10px] text-gray-400">
+                Expected: <span className="font-bold text-gray-600">"{q.correctAnswer}"</span>
               </p>
             )}
           </div>
@@ -487,8 +487,8 @@ export const GradeManagement: React.FC = () => {
               const isCorrect = pair.right === userMatch;
               return (
                 <div key={pIdx} className="flex items-center gap-2 text-xs">
-                  <span className="font-medium text-slate-700 min-w-[100px]">{pair.left}</span>
-                  <span className="text-slate-300">=</span>
+                  <span className="font-medium text-gray-700 min-w-[100px]">{pair.left}</span>
+                  <span className="text-gray-300">=</span>
                   <span className={cn(
                     'font-medium',
                     isCorrect ? 'text-green-700' : 'text-red-600'
@@ -507,14 +507,14 @@ export const GradeManagement: React.FC = () => {
 
       case 'short-answer': {
         return (
-          <div className="bg-white p-3 rounded border border-slate-200 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+          <div className="bg-white p-3 rounded border border-gray-200 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
             {String(answer)}
           </div>
         );
       }
 
       default:
-        return <span className="text-sm text-slate-600">{JSON.stringify(answer)}</span>;
+        return <span className="text-sm text-gray-600">{JSON.stringify(answer)}</span>;
     }
   };
 
@@ -529,22 +529,22 @@ export const GradeManagement: React.FC = () => {
     const quizBlocks = moduleData?.blocks.filter(b => b.type === 'quiz') || [];
 
     return (
-      <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
+      <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+        <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
 
           {/* ---- Header ---- */}
-          <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+          <div className="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
             <div>
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                <Shield className="h-5 w-5 text-brand-600" />
+              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary-600" />
                 Review Submission
               </h2>
-              <p className="text-sm text-slate-500 mt-1">
-                <span className="font-medium text-slate-700">{userName}</span> · {courseTitle}
+              <p className="text-sm text-gray-500 mt-1">
+                <span className="font-medium text-gray-700">{userName}</span> · {courseTitle}
               </p>
               {enrollment.score !== undefined && (
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Auto-graded score: <span className="font-bold text-slate-600">{enrollment.score}%</span>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Auto-graded score: <span className="font-bold text-gray-600">{enrollment.score}%</span>
                   <span className="ml-1">(provisional — includes essay credit)</span>
                 </p>
               )}
@@ -553,14 +553,14 @@ export const GradeManagement: React.FC = () => {
           </div>
 
           {/* ---- Body: Quiz Questions + Answers ---- */}
-          <div className="flex-1 overflow-y-auto p-8 bg-slate-50">
+          <div className="flex-1 overflow-y-auto p-8 bg-gray-50">
             {isLoadingModule ? (
-              <div className="flex items-center justify-center py-16 text-slate-400">
+              <div className="flex items-center justify-center py-16 text-gray-400">
                 <Loader2 className="h-6 w-6 animate-spin mr-2" />
                 Loading assessment data...
               </div>
             ) : quizBlocks.length === 0 ? (
-              <div className="text-center py-16 text-slate-400">
+              <div className="text-center py-16 text-gray-400">
                 <FileText className="h-10 w-10 mx-auto mb-3 opacity-50" />
                 <p>No quiz data available for this submission.</p>
                 <p className="text-xs mt-1">Module data may not have loaded correctly.</p>
@@ -572,11 +572,11 @@ export const GradeManagement: React.FC = () => {
                   const userAnswers = enrollment.quizAnswers?.[block.id] || [];
 
                   return (
-                    <div key={block.id} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div key={block.id} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                       {/* Quiz title bar */}
-                      <div className="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
-                        <span className="font-bold text-slate-700">{quiz.title || 'Knowledge Check'}</span>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">
+                      <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                        <span className="font-bold text-gray-700">{quiz.title || 'Knowledge Check'}</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase">
                           {quiz.questions.length} question{quiz.questions.length !== 1 ? 's' : ''}
                         </span>
                       </div>
@@ -588,21 +588,21 @@ export const GradeManagement: React.FC = () => {
                           const isEssay = q.type === 'short-answer';
 
                           return (
-                            <div key={q.id || qIdx} className="space-y-3 pb-6 border-b border-slate-100 last:border-0 last:pb-0">
+                            <div key={q.id || qIdx} className="space-y-3 pb-6 border-b border-gray-100 last:border-0 last:pb-0">
                               {/* Question header */}
                               <div className="flex justify-between items-start">
-                                <p className="font-semibold text-slate-900 text-sm">
-                                  <span className="text-slate-400 mr-2">{qIdx + 1}.</span>
+                                <p className="font-semibold text-gray-900 text-sm">
+                                  <span className="text-gray-400 mr-2">{qIdx + 1}.</span>
                                   {q.question}
                                 </p>
-                                <span className="text-[10px] font-bold text-slate-400 uppercase bg-slate-50 px-2 py-0.5 rounded shrink-0 ml-4">
+                                <span className="text-[10px] font-bold text-gray-400 uppercase bg-gray-50 px-2 py-0.5 rounded shrink-0 ml-4">
                                   {q.type}
                                 </span>
                               </div>
 
                               {/* Student answer */}
-                              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-                                <p className="text-[10px] font-bold text-slate-400 uppercase mb-2 flex items-center gap-1">
+                              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <p className="text-[10px] font-bold text-gray-400 uppercase mb-2 flex items-center gap-1">
                                   <User className="h-3 w-3" />
                                   Student Response
                                 </p>
@@ -611,12 +611,12 @@ export const GradeManagement: React.FC = () => {
 
                               {/* Rubric / exemplar — shown for essay questions */}
                               {isEssay && q.correctAnswer && (
-                                <div className="bg-brand-50 p-4 rounded-lg border border-brand-100">
-                                  <p className="text-[10px] font-bold text-brand-600 uppercase mb-2 flex items-center gap-1">
+                                <div className="bg-primary-50 p-4 rounded-lg border border-primary-100">
+                                  <p className="text-[10px] font-bold text-primary-600 uppercase mb-2 flex items-center gap-1">
                                     <FileText className="h-3 w-3" />
                                     Instructor Guidelines / Exemplar
                                   </p>
-                                  <p className="text-xs text-brand-900 leading-relaxed">
+                                  <p className="text-xs text-primary-900 leading-relaxed">
                                     {String(q.correctAnswer)}
                                   </p>
                                 </div>
@@ -633,16 +633,16 @@ export const GradeManagement: React.FC = () => {
           </div>
 
           {/* ---- Footer: Actions ---- */}
-          <div className="p-6 border-t border-slate-200 bg-white">
+          <div className="p-6 border-t border-gray-200 bg-white">
             {showRejectForm ? (
               /* ---- Reject Form ---- */
               <div className="space-y-3">
                 <p className="text-sm font-bold text-red-700">Reject Submission</p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-gray-500">
                   The learner will be returned to "In Progress" and may retry the assessment.
                 </p>
                 <textarea
-                  className="w-full p-3 border border-red-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-red-300 bg-red-50 text-slate-800"
+                  className="w-full p-3 border border-red-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-red-300 bg-red-50 text-gray-800"
                   rows={3}
                   placeholder="Reason for rejection (required — this is logged in the audit trail)..."
                   value={rejectReason}
@@ -675,20 +675,20 @@ export const GradeManagement: React.FC = () => {
                 {/* Optional score override & notes */}
                 <div className="flex gap-4 items-end">
                   <div className="flex-1">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
                       <MessageSquare className="h-3 w-3 inline mr-1" />
                       Review Notes (optional)
                     </label>
                     <input
                       type="text"
-                      className="w-full p-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-300 bg-white text-slate-700"
+                      className="w-full p-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-300 bg-white text-gray-700"
                       placeholder="Add notes visible in the audit trail..."
                       value={reviewNotes}
                       onChange={(e) => setReviewNotes(e.target.value)}
                     />
                   </div>
                   <div className="w-32">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
                       Override Score
                     </label>
                     <div className="flex items-center gap-1">
@@ -696,7 +696,7 @@ export const GradeManagement: React.FC = () => {
                         type="number"
                         min={0}
                         max={100}
-                        className="w-full p-2 border border-slate-200 rounded-lg text-sm text-center font-bold outline-none focus:ring-2 focus:ring-brand-300 bg-white text-slate-700"
+                        className="w-full p-2 border border-gray-200 rounded-lg text-sm text-center font-bold outline-none focus:ring-2 focus:ring-primary-300 bg-white text-gray-700"
                         placeholder={String(enrollment.score ?? '—')}
                         value={overrideScore ?? ''}
                         onChange={(e) => {
@@ -704,7 +704,7 @@ export const GradeManagement: React.FC = () => {
                           setOverrideScore(val === '' ? null : Math.max(0, Math.min(100, parseInt(val) || 0)));
                         }}
                       />
-                      <span className="text-sm font-bold text-slate-400">%</span>
+                      <span className="text-sm font-bold text-gray-400">%</span>
                     </div>
                   </div>
                 </div>
@@ -755,11 +755,11 @@ export const GradeManagement: React.FC = () => {
 
   if (!hasRole || !hasRole(['admin', 'instructor'])) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-8">
-        <div className="bg-white rounded-xl border border-red-200 p-8 max-w-md text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
+        <div className="bg-white rounded-lg border border-red-200 p-8 max-w-md text-center">
           <Shield className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-slate-900 mb-2">Access Denied</h2>
-          <p className="text-slate-600">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Access Denied</h2>
+          <p className="text-gray-600">
             Grade management is restricted to administrators and instructors.
           </p>
         </div>
@@ -779,24 +779,24 @@ export const GradeManagement: React.FC = () => {
       {/* Page Header */}
       <div className="flex justify-between items-end mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <ClipboardCheck className="h-6 w-6 text-brand-600" />
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <ClipboardCheck className="h-6 w-6 text-primary-600" />
             Grade Management Center
           </h1>
-          <p className="text-slate-500 mt-1">Review clinical assessments and verify staff competencies.</p>
+          <p className="text-gray-500 mt-1">Review clinical assessments and verify staff competencies.</p>
         </div>
       </div>
 
       {/* View Mode Tabs */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex bg-white border border-slate-200 rounded-lg p-1">
+        <div className="flex bg-white border border-gray-200 rounded-lg p-1">
           <button
             onClick={() => setViewMode('review_queue')}
             className={cn(
               'px-4 py-2 text-sm font-bold rounded-md transition-all flex items-center gap-2',
               viewMode === 'review_queue'
-                ? 'bg-brand-600 text-white'
-                : 'text-slate-500 hover:text-brand-600'
+                ? 'bg-primary-100 text-primary-800 font-semibold'
+                : 'text-gray-500 hover:text-primary-600'
             )}
           >
             <ClipboardCheck className="h-4 w-4" />
@@ -807,8 +807,8 @@ export const GradeManagement: React.FC = () => {
             className={cn(
               'px-4 py-2 text-sm font-bold rounded-md transition-all flex items-center gap-2',
               viewMode === 'course_roster'
-                ? 'bg-brand-600 text-white'
-                : 'text-slate-500 hover:text-brand-600'
+                ? 'bg-primary-100 text-primary-800 font-semibold'
+                : 'text-gray-500 hover:text-primary-600'
             )}
           >
             <Users className="h-4 w-4" />
@@ -829,7 +829,7 @@ export const GradeManagement: React.FC = () => {
               Refresh
             </Button>
 
-            <div className="flex bg-white border border-slate-200 rounded-lg p-1">
+            <div className="flex bg-white border border-gray-200 rounded-lg p-1">
               {[
                 { key: 'needs_review' as const, label: 'Needs Review' },
                 { key: 'completed' as const, label: 'Verified' },
@@ -841,8 +841,8 @@ export const GradeManagement: React.FC = () => {
                   className={cn(
                     'px-4 py-1.5 text-xs font-bold rounded-md transition-all',
                     filter === tab.key
-                      ? 'bg-brand-600 text-white'
-                      : 'text-slate-500 hover:text-brand-600'
+                      ? 'bg-primary-100 text-primary-800 font-semibold'
+                      : 'text-gray-500 hover:text-primary-600'
                   )}
                 >
                   {tab.label}
@@ -854,11 +854,11 @@ export const GradeManagement: React.FC = () => {
 
         {viewMode === 'course_roster' && courses.length > 0 && (
           <div className="flex items-center gap-2">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Course:</label>
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Course:</label>
             <select
               value={selectedCourseId || ''}
               onChange={(e) => setSelectedCourseId(e.target.value)}
-              className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-brand-300"
+              className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-primary-300"
             >
               {courses.map(c => (
                 <option key={c.id} value={c.id}>{c.title}</option>
@@ -874,10 +874,10 @@ export const GradeManagement: React.FC = () => {
       )}
 
       {viewMode === 'course_roster' && !selectedCourseId && (
-        <div className="bg-white rounded-xl border-2 border-dashed border-slate-200 p-12 text-center">
-          <Users className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <p className="text-slate-500 font-medium">No courses available</p>
-          <p className="text-sm text-slate-400 mt-1">Create and publish courses to view the roster.</p>
+        <div className="bg-white rounded-lg border-2 border-dashed border-gray-200 p-12 text-center">
+          <Users className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+          <p className="text-gray-500 font-medium">No courses available</p>
+          <p className="text-sm text-gray-400 mt-1">Create and publish courses to view the roster.</p>
         </div>
       )}
 
@@ -896,40 +896,40 @@ export const GradeManagement: React.FC = () => {
       )}
 
       {/* Submissions Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-4 font-semibold text-slate-700">Staff Member</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">Course</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">Submitted</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">Status</th>
-              <th className="px-6 py-4 font-semibold text-slate-700 text-right">Actions</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Staff Member</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Course</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Submitted</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Status</th>
+              <th className="px-6 py-4 font-semibold text-gray-700 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-gray-100">
             {isLoading ? (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
+                <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
                   <Loader2 className="h-5 w-5 animate-spin inline mr-2" />
                   Loading submissions...
                 </td>
               </tr>
             ) : submissions.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-slate-400 italic">
+                <td colSpan={5} className="px-6 py-12 text-center text-gray-400 italic">
                   No submissions found matching "{filter}".
                 </td>
               </tr>
             ) : (
               submissions.map(sub => (
-                <tr key={sub.enrollment.id} className="hover:bg-slate-50/50 group">
+                <tr key={sub.enrollment.id} className="hover:bg-gray-50/50 group">
                   <td className="px-6 py-4">
-                    <div className="font-bold text-slate-900">{sub.userName}</div>
-                    <div className="text-xs text-slate-400">{sub.userEmail || sub.enrollment.userId}</div>
+                    <div className="font-bold text-gray-900">{sub.userName}</div>
+                    <div className="text-xs text-gray-400">{sub.userEmail || sub.enrollment.userId}</div>
                   </td>
-                  <td className="px-6 py-4 font-medium text-slate-700">{sub.courseTitle}</td>
-                  <td className="px-6 py-4 text-slate-500 font-mono text-xs">
+                  <td className="px-6 py-4 font-medium text-gray-700">{sub.courseTitle}</td>
+                  <td className="px-6 py-4 text-gray-500 font-mono text-xs">
                     {sub.enrollment.lastAccessedAt ? formatDate(sub.enrollment.lastAccessedAt) : '—'}
                   </td>
                   <td className="px-6 py-4">

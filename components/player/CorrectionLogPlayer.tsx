@@ -87,7 +87,7 @@ export const CorrectionLogPlayer: React.FC<CorrectionLogPlayerProps> = ({
   const hasCorrections = allEntries.some(e => !e.isOriginal);
 
   return (
-    <div className="my-8 border border-red-200 rounded-xl overflow-hidden bg-white shadow-sm">
+    <div className="my-8 border border-red-200 rounded-lg overflow-hidden bg-white shadow-sm">
       <div className="bg-red-50 px-6 py-4 border-b border-red-100 flex justify-between items-center">
         <h3 className="font-bold text-red-900 flex items-center gap-2">
           <FileText className="h-5 w-5 text-red-600" />
@@ -99,7 +99,7 @@ export const CorrectionLogPlayer: React.FC<CorrectionLogPlayerProps> = ({
       </div>
 
       <div className="p-6 space-y-4">
-        <p className="text-xs text-slate-500 italic mb-4">
+        <p className="text-xs text-gray-500 italic mb-4">
           Click the pencil icon next to an entry to practice making a correction. Original text will be struck through and your correction appended with your initials and a timestamp.
         </p>
 
@@ -108,24 +108,24 @@ export const CorrectionLogPlayer: React.FC<CorrectionLogPlayerProps> = ({
           const isSuperseded = corrections.length > 0;
 
           return (
-            <div key={entry.id} className="border border-slate-200 rounded-lg p-4">
+            <div key={entry.id} className="border border-gray-200 rounded-lg p-4">
               {/* Original entry */}
               <div className="flex items-start gap-3">
                 <div className="flex-1">
                   <p className={cn(
                     "text-sm leading-relaxed",
-                    isSuperseded ? "line-through text-slate-400" : "text-slate-700"
+                    isSuperseded ? "line-through text-gray-400" : "text-gray-700"
                   )}>
                     {entry.text}
                   </p>
-                  <p className="text-[10px] text-slate-400 mt-1">
+                  <p className="text-[10px] text-gray-400 mt-1">
                     {entry.author} &middot; {new Date(entry.timestamp).toLocaleString()}
                   </p>
                 </div>
                 {!isSuperseded && editingId !== entry.id && (
                   <button
                     onClick={() => handleStartCorrection(entry.id)}
-                    className="p-1.5 hover:bg-red-50 rounded text-slate-400 hover:text-red-600 transition-colors shrink-0"
+                    className="p-1.5 hover:bg-red-50 rounded text-gray-400 hover:text-red-600 transition-colors shrink-0"
                     title="Correct this entry"
                   >
                     <Pencil className="h-3.5 w-3.5" />
@@ -136,7 +136,7 @@ export const CorrectionLogPlayer: React.FC<CorrectionLogPlayerProps> = ({
               {/* Corrections */}
               {corrections.map(corr => (
                 <div key={corr.id} className="mt-3 pl-4 border-l-2 border-red-300">
-                  <p className="text-sm text-slate-800 leading-relaxed">{corr.text}</p>
+                  <p className="text-sm text-gray-800 leading-relaxed">{corr.text}</p>
                   <p className="text-[10px] text-red-600 mt-1 flex items-center gap-1">
                     <Clock className="h-3 w-3" />
                     Corrected by {getInitials(corr.author)} &middot; {new Date(corr.timestamp).toLocaleString()}
@@ -146,9 +146,9 @@ export const CorrectionLogPlayer: React.FC<CorrectionLogPlayerProps> = ({
 
               {/* Inline correction editor */}
               {editingId === entry.id && (
-                <div className="mt-3 pl-4 border-l-2 border-brand-300 space-y-2">
+                <div className="mt-3 pl-4 border-l-2 border-primary-300 space-y-2">
                   <textarea
-                    className="w-full text-sm p-3 border border-brand-200 rounded-lg outline-none focus:ring-2 focus:ring-brand-400 resize-none bg-brand-50"
+                    className="w-full text-sm p-3 border border-primary-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-400 resize-none bg-primary-50"
                     rows={3}
                     value={correctionText}
                     onChange={(e) => setCorrectionText(e.target.value)}
@@ -158,14 +158,14 @@ export const CorrectionLogPlayer: React.FC<CorrectionLogPlayerProps> = ({
                   <div className="flex gap-2 justify-end">
                     <button
                       onClick={handleCancelCorrection}
-                      className="px-3 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-700 flex items-center gap-1"
+                      className="px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 flex items-center gap-1"
                     >
                       <X className="h-3 w-3" /> Cancel
                     </button>
                     <button
                       onClick={handleSubmitCorrection}
                       disabled={!correctionText.trim()}
-                      className="px-3 py-1.5 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded flex items-center gap-1 disabled:opacity-50"
+                      className="px-3 py-1.5 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded flex items-center gap-1 disabled:opacity-50"
                     >
                       <Check className="h-3 w-3" /> Submit Correction
                     </button>

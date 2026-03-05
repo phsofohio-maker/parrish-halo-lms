@@ -37,13 +37,13 @@ export const LicenseGate: React.FC<LicenseGateProps> = ({ children, courseCatego
   // Expired — full block
   if (isExpired) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-8">
-        <div className="bg-white rounded-2xl border-2 border-red-200 shadow-xl max-w-lg w-full p-8 text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
+        <div className="bg-white rounded-lg border-2 border-red-200 shadow-lg max-w-lg w-full p-8 text-center">
           <div className="h-20 w-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <ShieldAlert className="h-10 w-10 text-red-600" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">License Expired</h2>
-          <p className="text-slate-600 mb-6 leading-relaxed">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">License Expired</h2>
+          <p className="text-gray-600 mb-6 leading-relaxed">
             Your clinical license expired on{' '}
             <strong className="text-red-600">
               {expiryDate?.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}

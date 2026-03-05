@@ -351,10 +351,10 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
   
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <Loader2 className="h-10 w-10 text-brand-600 animate-spin mx-auto" />
-          <p className="mt-4 text-slate-600 font-medium">Loading module...</p>
+          <Loader2 className="h-10 w-10 text-primary-600 animate-spin mx-auto" />
+          <p className="mt-4 text-gray-600 font-medium">Loading module...</p>
         </div>
       </div>
     );
@@ -363,11 +363,11 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
   // Error state
   if (moduleError || !moduleData) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-8">
-        <div className="bg-white rounded-xl border border-red-200 p-8 max-w-md text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
+        <div className="bg-white rounded-lg border border-red-200 p-8 max-w-md text-center">
           <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-slate-900 mb-2">Failed to Load</h2>
-          <p className="text-slate-600 mb-6">{moduleError || 'Module not found'}</p>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Failed to Load</h2>
+          <p className="text-gray-600 mb-6">{moduleError || 'Module not found'}</p>
           <Button onClick={onBack} variant="outline">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Go Back
@@ -380,11 +380,11 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
   // Not enrolled state
   if (!isEnrolled) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-8">
-        <div className="bg-white rounded-xl border border-slate-200 p-8 max-w-md text-center shadow-sm">
-          <Lock className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-slate-900 mb-2">Enrollment Required</h2>
-          <p className="text-slate-600 mb-6">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
+        <div className="bg-white rounded-lg border border-gray-200 p-8 max-w-md text-center shadow-sm">
+          <Lock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Enrollment Required</h2>
+          <p className="text-gray-600 mb-6">
             You need to be enrolled in this course to access the content.
           </p>
           <div className="flex gap-3 justify-center">
@@ -405,13 +405,13 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
   // Already passed state
   if (isPassed && grade) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center border border-slate-200">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-8 text-center border border-gray-200">
           <div className="h-20 w-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Award className="h-10 w-10 text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Module Completed!</h2>
-          <p className="text-slate-500 mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Module Completed!</h2>
+          <p className="text-gray-500 mb-4">
             You have successfully passed <strong>{moduleData.title}</strong> with a score of{' '}
             <span className="text-green-600 font-bold">{grade.score}%</span>.
           </p>
@@ -428,7 +428,7 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
               </span>
             </div>
           )}
-          <div className="bg-slate-50 rounded border border-slate-200 p-4 mb-6 text-xs text-slate-500">
+          <div className="bg-gray-50 rounded border border-gray-200 p-4 mb-6 text-xs text-gray-500">
             Completed: {new Date(grade.gradedAt).toLocaleDateString()}<br/>
             Certificate ID: {grade.id.slice(-12).toUpperCase()}
           </div>
@@ -445,19 +445,19 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
     <LicenseGate courseCategory={courseCategory}>
     <div className="flex flex-col h-screen bg-white">
       {/* Header */}
-      <div className="h-16 border-b border-slate-200 flex items-center justify-between px-6 bg-white sticky top-0 z-20">
+      <div className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white sticky top-0 z-20">
         <div className="flex items-center gap-4">
           <button 
             onClick={onBack} 
-            className="p-2 hover:bg-slate-100 rounded-full text-slate-500 transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
           <div>
-            <h1 className="text-sm font-bold text-slate-900 line-clamp-1">
+            <h1 className="text-sm font-bold text-gray-900 line-clamp-1">
               {moduleData.title}
             </h1>
-            <div className="flex items-center gap-2 text-xs text-slate-500">
+            <div className="flex items-center gap-2 text-xs text-gray-500">
               <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
               {completionPercent}% Complete
             </div>
@@ -467,12 +467,12 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
         {/* Progress bar */}
         <div className="hidden md:flex items-center gap-2">
           <div className="text-right mr-2">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Progress</p>
-            <p className="text-xs font-bold text-brand-600">{completionPercent}%</p>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Progress</p>
+            <p className="text-xs font-bold text-primary-600">{completionPercent}%</p>
           </div>
-          <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
+          <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-brand-500 transition-all duration-300" 
+              className="h-full bg-primary-500 transition-all duration-300" 
               style={{ width: `${completionPercent}%` }}
             />
           </div>
@@ -480,9 +480,9 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto bg-slate-50">
+      <div className="flex-1 overflow-y-auto bg-gray-50">
         <div className="max-w-3xl mx-auto py-12 px-6">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 md:p-12">
             
             {/* Failed attempt message */}
             {result && !result.passed && (
@@ -525,7 +525,7 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
                     ) : (
                       <button
                         onClick={() => handleBlockComplete(block.id)}
-                        className="text-xs text-brand-600 hover:text-brand-800 flex items-center gap-1"
+                        className="text-xs text-primary-600 hover:text-primary-800 flex items-center gap-1"
                       >
                         <CheckCircle className="h-3 w-3" />
                         Mark as read
@@ -537,8 +537,8 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
             ))}
 
             {/* Submit section */}
-            <div className="mt-16 pt-8 border-t border-slate-100 flex flex-col items-center gap-4">
-              <p className="text-sm text-slate-500 italic text-center">
+            <div className="mt-16 pt-8 border-t border-gray-100 flex flex-col items-center gap-4">
+              <p className="text-sm text-gray-500 italic text-center">
                 By submitting, you acknowledge that you have reviewed all training materials above.
               </p>
               <Button 
@@ -568,7 +568,7 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
             </div>
           </div>
           
-          <div className="text-center mt-8 text-xs text-slate-400">
+          <div className="text-center mt-8 text-xs text-gray-400">
             Harmony Health LMS &bull; Secure Audit Logging Enabled
           </div>
         </div>

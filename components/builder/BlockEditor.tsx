@@ -54,12 +54,12 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
   // ============================================
 
   const renderRichTextToolbar = () => (
-    <div className="flex items-center gap-1 p-2 border-b border-slate-200 bg-slate-50 rounded-t-md">
-      <button className="p-1.5 hover:bg-slate-200 rounded text-slate-600" title="Bold"><Bold className="h-4 w-4" /></button>
-      <button className="p-1.5 hover:bg-slate-200 rounded text-slate-600" title="Italic"><Italic className="h-4 w-4" /></button>
-      <div className="w-px h-4 bg-slate-300 mx-1"></div>
-      <button className="p-1.5 hover:bg-slate-200 rounded text-slate-600" title="List"><List className="h-4 w-4" /></button>
-      <button className="p-1.5 hover:bg-slate-200 rounded text-slate-600" title="Link"><LinkIcon className="h-4 w-4" /></button>
+    <div className="flex items-center gap-1 p-2 border-b border-gray-200 bg-gray-50 rounded-t-md">
+      <button className="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Bold"><Bold className="h-4 w-4" /></button>
+      <button className="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Italic"><Italic className="h-4 w-4" /></button>
+      <div className="w-px h-4 bg-gray-300 mx-1"></div>
+      <button className="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="List"><List className="h-4 w-4" /></button>
+      <button className="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Link"><LinkIcon className="h-4 w-4" /></button>
     </div>
   );
 
@@ -101,12 +101,12 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
     };
 
     return (
-      <div key={q.id || qIdx} className="border border-slate-200 rounded-lg bg-white shadow-sm overflow-hidden">
+      <div key={q.id || qIdx} className="border border-gray-200 rounded-lg bg-white shadow-sm overflow-hidden">
 
         {/* ---- Question Header: Number + Type Selector + Delete ---- */}
-        <div className="bg-slate-50 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
+        <div className="bg-gray-50 px-4 py-2 border-b border-gray-200 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-400">Q{qIdx + 1}</span>
+            <span className="text-xs font-bold text-gray-400">Q{qIdx + 1}</span>
 
             {/* 
               THIS IS THE KEY ADDITION — the question type selector.
@@ -115,7 +115,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
               previous type (e.g. MC options showing on a fill-blank).
             */}
             <select
-              className="text-xs font-bold text-brand-600 bg-transparent outline-none border-none p-0 cursor-pointer uppercase"
+              className="text-xs font-bold text-primary-600 bg-transparent outline-none border-none p-0 cursor-pointer uppercase"
               value={q.type || 'multiple-choice'}
               onChange={(e) => {
                 const newType = e.target.value as QuizQuestionType;
@@ -165,7 +165,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
             </select>
           </div>
 
-          <button onClick={removeQuestion} className="text-slate-400 hover:text-red-500 p-1 transition-colors">
+          <button onClick={removeQuestion} className="text-gray-400 hover:text-red-500 p-1 transition-colors">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -175,7 +175,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
 
           {/* Question text — always present regardless of type */}
           <textarea
-            className="w-full text-sm font-medium border-none focus:ring-0 p-0 resize-none bg-transparent placeholder:text-slate-300 text-slate-900"
+            className="w-full text-sm font-medium border-none focus:ring-0 p-0 resize-none bg-transparent placeholder:text-gray-300 text-gray-900"
             rows={2}
             value={q.question}
             placeholder="Enter the question text..."
@@ -190,17 +190,17 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
 
           {/* ---- Multiple Choice ---- */}
           {(q.type === 'multiple-choice' || !q.type) && (
-            <div className="space-y-2 pl-4 border-l-2 border-slate-100">
+            <div className="space-y-2 pl-4 border-l-2 border-gray-100">
               {(q.options || []).map((opt, oIdx) => (
                 <div key={oIdx} className="flex items-center gap-2">
                   <input
                     type="radio"
                     checked={q.correctAnswer === oIdx}
                     onChange={() => updateQuestion({ correctAnswer: oIdx })}
-                    className="text-brand-600"
+                    className="text-primary-600"
                   />
                   <input
-                    className="flex-1 text-xs p-1 border-b border-transparent focus:border-brand-300 outline-none text-slate-600"
+                    className="flex-1 text-xs p-1 border-b border-transparent focus:border-primary-300 outline-none text-gray-600"
                     value={opt}
                     onChange={(e) => {
                       const newOpts = [...q.options];
@@ -220,7 +220,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
                         : q.correctAnswer;
                       updateQuestion({ options: newOpts, correctAnswer: newCorrect });
                     }}
-                    className="text-slate-300 hover:text-red-400"
+                    className="text-gray-300 hover:text-red-400"
                   >
                     <Minus className="h-3 w-3" />
                   </button>
@@ -228,7 +228,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
               ))}
               <button
                 onClick={() => updateQuestion({ options: [...(q.options || []), 'New Option'] })}
-                className="text-[10px] font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1"
+                className="text-[10px] font-bold text-primary-600 hover:text-primary-700 flex items-center gap-1"
               >
                 <Plus className="h-3 w-3" /> Add Option
               </button>
@@ -245,7 +245,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
                     'flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer transition-all',
                     q.correctAnswer === idx
                       ? 'bg-green-50 border-green-300 ring-1 ring-green-300'
-                      : 'bg-white border-slate-200 hover:bg-slate-50'
+                      : 'bg-white border-gray-200 hover:bg-gray-50'
                   )}
                 >
                   <input
@@ -256,7 +256,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
                   />
                   <span className={cn(
                     'text-sm font-medium',
-                    q.correctAnswer === idx ? 'text-green-700' : 'text-slate-600'
+                    q.correctAnswer === idx ? 'text-green-700' : 'text-gray-600'
                   )}>
                     {label}
                   </span>
@@ -268,13 +268,13 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
           {/* ---- Matching ---- */}
           {q.type === 'matching' && (
             <div className="space-y-3 pl-4">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                 Match Pairs (left → right)
               </p>
               {(q.matchingPairs || []).map((pair, pIdx) => (
                 <div key={pIdx} className="flex items-center gap-2">
                   <input
-                    className="flex-1 text-xs p-2 bg-slate-50 border border-slate-200 rounded focus:border-brand-300 outline-none"
+                    className="flex-1 text-xs p-2 bg-gray-50 border border-gray-200 rounded focus:border-primary-300 outline-none"
                     placeholder={`Left ${pIdx + 1}`}
                     value={pair.left}
                     onChange={(e) => {
@@ -283,9 +283,9 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
                       updateQuestion({ matchingPairs: newPairs });
                     }}
                   />
-                  <span className="text-slate-300 text-xs">→</span>
+                  <span className="text-gray-300 text-xs">→</span>
                   <input
-                    className="flex-1 text-xs p-2 bg-slate-50 border border-slate-200 rounded focus:border-brand-300 outline-none"
+                    className="flex-1 text-xs p-2 bg-gray-50 border border-gray-200 rounded focus:border-primary-300 outline-none"
                     placeholder={`Right ${pIdx + 1}`}
                     value={pair.right}
                     onChange={(e) => {
@@ -299,7 +299,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
                       const newPairs = (q.matchingPairs || []).filter((_, idx) => idx !== pIdx);
                       updateQuestion({ matchingPairs: newPairs });
                     }}
-                    className="text-slate-300 hover:text-red-400"
+                    className="text-gray-300 hover:text-red-400"
                   >
                     <Minus className="h-3 w-3" />
                   </button>
@@ -309,7 +309,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
                 onClick={() => updateQuestion({
                   matchingPairs: [...(q.matchingPairs || []), { left: '', right: '' }],
                 })}
-                className="text-[10px] font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1"
+                className="text-[10px] font-bold text-primary-600 hover:text-primary-700 flex items-center gap-1"
               >
                 <Plus className="h-3 w-3" /> Add Pair
               </button>
@@ -319,16 +319,16 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
           {/* ---- Fill in the Blank ---- */}
           {q.type === 'fill-blank' && (
             <div className="pl-4">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
                 Correct Answer
               </label>
               <input
-                className="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded focus:border-brand-300 outline-none"
+                className="w-full text-xs p-2 bg-gray-50 border border-gray-200 rounded focus:border-primary-300 outline-none"
                 value={typeof q.correctAnswer === 'string' ? q.correctAnswer : ''}
                 placeholder="The exact word or phrase the learner must enter..."
                 onChange={(e) => updateQuestion({ correctAnswer: e.target.value })}
               />
-              <p className="text-[10px] text-slate-400 italic mt-1 flex items-center gap-1">
+              <p className="text-[10px] text-gray-400 italic mt-1 flex items-center gap-1">
                 <Info className="h-3 w-3" />
                 Grading is case-insensitive and trims whitespace.
               </p>
@@ -339,16 +339,16 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
           {q.type === 'short-answer' && (
             <div className="pl-4 space-y-3">
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
                   Response Guidelines / Rubric
                 </label>
                 <textarea
-                  className="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded focus:border-brand-300 outline-none min-h-[80px]"
+                  className="w-full text-xs p-2 bg-gray-50 border border-gray-200 rounded focus:border-primary-300 outline-none min-h-[80px]"
                   value={typeof q.correctAnswer === 'string' ? q.correctAnswer : ''}
                   placeholder="Describe what should be included in the learner's response..."
                   onChange={(e) => updateQuestion({ correctAnswer: e.target.value })}
                 />
-                <p className="text-[10px] text-slate-400 italic mt-1 flex items-center gap-1">
+                <p className="text-[10px] text-gray-400 italic mt-1 flex items-center gap-1">
                   <Info className="h-3 w-3" />
                   Short answers require manual instructor review. This rubric will be shown to reviewers.
                 </p>
@@ -357,11 +357,11 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
           )}
 
           {/* ---- Points (always present) ---- */}
-          <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Points:</span>
+          <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
+            <span className="text-[10px] font-bold text-gray-400 uppercase">Points:</span>
             <input
               type="number"
-              className="w-16 text-xs p-1 border border-slate-200 rounded text-center font-bold bg-white text-slate-700"
+              className="w-16 text-xs p-1 border border-gray-200 rounded text-center font-bold bg-white text-gray-700"
               value={q.points}
               min={1}
               onChange={(e) => updateQuestion({ points: parseInt(e.target.value) || 1 })}
@@ -383,7 +383,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
           <div className="space-y-2">
             <input
               type="text"
-              className="w-full px-0 py-2 text-2xl font-bold border-b-2 border-slate-100 focus:border-brand-500 outline-none bg-transparent placeholder:text-slate-300 text-slate-900"
+              className="w-full px-0 py-2 text-2xl font-bold border-b-2 border-gray-100 focus:border-primary-500 outline-none bg-transparent placeholder:text-gray-300 text-gray-900"
               value={(block.data as TextBlockData).content || ''}
               onChange={(e) => handleChange('content', e.target.value)}
               placeholder="Heading Title"
@@ -399,7 +399,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
           <div className="space-y-3">
             <div className="flex gap-2">
               {[
-                { id: 'paragraph', icon: FileText, label: 'Text', color: 'bg-slate-100 text-slate-700' },
+                { id: 'paragraph', icon: FileText, label: 'Text', color: 'bg-gray-100 text-gray-700' },
                 { id: 'callout-info', icon: Info, label: 'Info', color: 'bg-blue-100 text-blue-700' },
                 { id: 'callout-warning', icon: AlertTriangle, label: 'Warning', color: 'bg-amber-100 text-amber-700' },
                 { id: 'callout-critical', icon: AlertOctagon, label: 'Critical', color: 'bg-red-100 text-red-700' },
@@ -411,7 +411,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
                     'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all',
                     currentVariant === opt.id
                       ? opt.color
-                      : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50'
+                      : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50'
                   )}
                 >
                   <opt.icon className="h-3 w-3" />
@@ -422,14 +422,14 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
 
             <div className={cn(
               'rounded-md border transition-colors bg-white',
-              currentVariant === 'callout-info' && 'border-l-4 border-l-blue-500 border-slate-200',
-              currentVariant === 'callout-warning' && 'border-l-4 border-l-amber-500 border-slate-200',
-              currentVariant === 'callout-critical' && 'border-l-4 border-l-red-500 border-slate-200',
-              currentVariant === 'paragraph' && 'border-slate-300 focus-within:ring-2 focus-within:ring-brand-500 focus-within:border-brand-500'
+              currentVariant === 'callout-info' && 'border-l-4 border-l-blue-500 border-gray-200',
+              currentVariant === 'callout-warning' && 'border-l-4 border-l-amber-500 border-gray-200',
+              currentVariant === 'callout-critical' && 'border-l-4 border-l-red-500 border-gray-200',
+              currentVariant === 'paragraph' && 'border-gray-300 focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500'
             )}>
               {renderRichTextToolbar()}
               <textarea
-                className="w-full p-4 min-h-[120px] outline-none resize-y rounded-b-md text-slate-700 text-sm leading-relaxed bg-white"
+                className="w-full p-4 min-h-[120px] outline-none resize-y rounded-b-md text-gray-700 text-sm leading-relaxed bg-white"
                 value={textData.content || ''}
                 onChange={(e) => handleChange('content', e.target.value)}
                 placeholder="Start typing your content here..."
@@ -442,7 +442,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
         const imgData = block.data as ImageBlockData;
         return (
           <div className="space-y-4">
-            <div className="p-6 border-2 border-dashed border-slate-300 rounded-lg bg-slate-50 text-center hover:bg-slate-100 transition-colors cursor-pointer group">
+            <div className="p-6 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-center hover:bg-gray-100 transition-colors cursor-pointer group">
               {imgData.url ? (
                 <div className="relative">
                   <img src={imgData.url} alt="Preview" className="max-h-64 mx-auto rounded shadow-sm" />
@@ -455,11 +455,11 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
                 </div>
               ) : (
                 <div className="py-4">
-                  <div className="mx-auto h-12 w-12 text-slate-300 group-hover:text-brand-500 transition-colors mb-2">
+                  <div className="mx-auto h-12 w-12 text-gray-300 group-hover:text-primary-500 transition-colors mb-2">
                     <ImageIcon className="h-full w-full" />
                   </div>
-                  <p className="text-sm font-medium text-slate-700">Click to upload or drag and drop</p>
-                  <p className="text-xs text-slate-500 mt-1">SVG, PNG, JPG or GIF (max. 5MB)</p>
+                  <p className="text-sm font-medium text-gray-700">Click to upload or drag and drop</p>
+                  <p className="text-xs text-gray-500 mt-1">SVG, PNG, JPG or GIF (max. 5MB)</p>
                   <input
                     type="text"
                     placeholder="Or paste image URL..."
@@ -472,18 +472,18 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Caption</label>
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Caption</label>
                 <input
-                  className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-1 focus:ring-brand-500 outline-none bg-white text-slate-900"
+                  className="w-full text-sm p-2 border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 outline-none bg-white text-gray-900"
                   placeholder="Visible below image"
                   value={imgData.caption || ''}
                   onChange={(e) => handleChange('caption', e.target.value)}
                 />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Alt Text</label>
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Alt Text</label>
                 <input
-                  className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-1 focus:ring-brand-500 outline-none bg-white text-slate-900"
+                  className="w-full text-sm p-2 border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 outline-none bg-white text-gray-900"
                   placeholder="Accessibility description"
                   value={imgData.altText || ''}
                   onChange={(e) => handleChange('altText', e.target.value)}
@@ -504,41 +504,41 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
             )}
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-8">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Title</label>
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Title</label>
                 <input
-                  className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-brand-500 outline-none text-sm bg-white text-slate-900"
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 outline-none text-sm bg-white text-gray-900"
                   value={vidData.title || ''}
                   onChange={(e) => handleChange('title', e.target.value)}
                   placeholder="Video title"
                 />
               </div>
               <div className="col-span-4">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Duration (min)</label>
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Duration (min)</label>
                 <input
                   type="number"
-                  className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-brand-500 outline-none text-sm bg-white text-slate-900"
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 outline-none text-sm bg-white text-gray-900"
                   value={vidData.duration ? vidData.duration / 60 : 0}
                   onChange={(e) => handleChange('duration', parseInt(e.target.value) * 60)}
                 />
               </div>
             </div>
             <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Embed URL</label>
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Embed URL</label>
               <input
                 type="text"
-                className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-brand-500 outline-none font-mono text-sm text-brand-600 bg-slate-50"
+                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 outline-none font-mono text-sm text-primary-600 bg-gray-50"
                 value={vidData.url || ''}
                 onChange={(e) => handleChange('url', e.target.value)}
                 placeholder="https://www.youtube.com/embed/..."
               />
             </div>
             <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">
                 Transcript / Summary
-                <span className="ml-2 text-slate-400 font-normal normal-case italic">(Recommended for compliance)</span>
+                <span className="ml-2 text-gray-400 font-normal normal-case italic">(Recommended for compliance)</span>
               </label>
               <textarea
-                className="w-full p-2 border border-slate-300 rounded focus:ring-1 focus:ring-brand-500 outline-none text-sm h-20 bg-white text-slate-900"
+                className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 outline-none text-sm h-20 bg-white text-gray-900"
                 placeholder="Paste video transcript here..."
                 value={vidData.transcript || ''}
                 onChange={(e) => handleChange('transcript', e.target.value)}
@@ -555,20 +555,20 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
         return (
           <div className="space-y-4">
             {/* Assessment header — unchanged */}
-            <div className="bg-gradient-to-r from-brand-50 to-white p-4 rounded border border-brand-100 flex justify-between items-center">
+            <div className="bg-primary-50 p-4 rounded border border-primary-100 flex justify-between items-center">
               <div>
-                <h4 className="text-sm font-bold text-brand-900">Assessment Configuration</h4>
-                <p className="text-xs text-brand-600">Configure passing requirements for this block</p>
+                <h4 className="text-sm font-bold text-primary-900">Assessment Configuration</h4>
+                <p className="text-xs text-primary-600">Configure passing requirements for this block</p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-slate-600 uppercase">Pass Score:</span>
+                <span className="text-xs font-semibold text-gray-600 uppercase">Pass Score:</span>
                 <input
                   type="number"
-                  className="w-16 p-1 text-sm border border-brand-200 rounded text-center font-bold bg-white text-slate-900"
+                  className="w-16 p-1 text-sm border border-primary-200 rounded text-center font-bold bg-white text-gray-900"
                   value={quizData.passingScore || 80}
                   onChange={(e) => handleChange('passingScore', parseInt(e.target.value))}
                 />
-                <span className="text-sm font-bold text-slate-400">%</span>
+                <span className="text-sm font-bold text-gray-400">%</span>
               </div>
             </div>
 
@@ -583,7 +583,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
             <Button
               size="sm"
               variant="outline"
-              className="w-full border-dashed border-slate-300 text-slate-500 hover:border-brand-400 hover:text-brand-600"
+              className="w-full border-dashed border-gray-300 text-gray-500 hover:border-primary-400 hover:text-primary-600"
               onClick={() => {
                 const newQ: QuizQuestion = {
                   id: Math.random().toString(),
@@ -609,26 +609,26 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
         return (
           <div className="space-y-4">
             <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Log Title</label>
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Log Title</label>
               <input
-                className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-brand-500 outline-none text-sm bg-white text-slate-900"
+                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 outline-none text-sm bg-white text-gray-900"
                 value={logData.title || ''}
                 onChange={(e) => handleChange('title', e.target.value)}
                 placeholder="e.g., Patient Assessment Notes"
               />
             </div>
             <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">
                 Seed Entries ({(logData.entries || []).length})
               </label>
-              <p className="text-[10px] text-slate-400 italic mb-2">
+              <p className="text-[10px] text-gray-400 italic mb-2">
                 Add initial entries that learners will practice correcting using the single-line-and-initial protocol.
               </p>
               <div className="space-y-2">
                 {(logData.entries || []).map((entry, idx) => (
                   <div key={entry.id || idx} className="flex items-start gap-2">
                     <textarea
-                      className="flex-1 text-xs p-2 bg-slate-50 border border-slate-200 rounded focus:border-brand-300 outline-none resize-none"
+                      className="flex-1 text-xs p-2 bg-gray-50 border border-gray-200 rounded focus:border-primary-300 outline-none resize-none"
                       rows={2}
                       value={entry.text}
                       placeholder={`Entry ${idx + 1} — e.g., "Patient vitals: BP 120/80, HR 78..."`}
@@ -640,7 +640,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
                     />
                     <button
                       onClick={() => handleChange('entries', (logData.entries || []).filter((_, i) => i !== idx))}
-                      className="text-slate-300 hover:text-red-400 mt-1"
+                      className="text-gray-300 hover:text-red-400 mt-1"
                     >
                       <Minus className="h-3 w-3" />
                     </button>
@@ -659,7 +659,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
                   };
                   handleChange('entries', [...(logData.entries || []), newEntry]);
                 }}
-                className="text-[10px] font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 mt-2"
+                className="text-[10px] font-bold text-primary-600 hover:text-primary-700 flex items-center gap-1 mt-2"
               >
                 <Plus className="h-3 w-3" /> Add Entry
               </button>
@@ -677,19 +677,19 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
           <div className="space-y-4">
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-8">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Exercise Title</label>
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Exercise Title</label>
                 <input
-                  className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-brand-500 outline-none text-sm bg-white text-slate-900"
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 outline-none text-sm bg-white text-gray-900"
                   value={objSubjData.title || ''}
                   onChange={(e) => handleChange('title', e.target.value)}
                   placeholder="e.g., Classify the Clinical Data"
                 />
               </div>
               <div className="col-span-4">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Points per Item</label>
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Points per Item</label>
                 <input
                   type="number"
-                  className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-brand-500 outline-none text-sm bg-white text-slate-900 text-center font-bold"
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 outline-none text-sm bg-white text-gray-900 text-center font-bold"
                   value={objSubjData.pointsPerItem || 10}
                   min={1}
                   onChange={(e) => handleChange('pointsPerItem', parseInt(e.target.value) || 1)}
@@ -697,14 +697,14 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
               </div>
             </div>
             <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">
                 Items ({(objSubjData.items || []).length})
               </label>
               <div className="space-y-2">
                 {(objSubjData.items || []).map((item, idx) => (
                   <div key={item.id || idx} className="flex items-center gap-2">
                     <input
-                      className="flex-1 text-xs p-2 bg-slate-50 border border-slate-200 rounded focus:border-brand-300 outline-none"
+                      className="flex-1 text-xs p-2 bg-gray-50 border border-gray-200 rounded focus:border-primary-300 outline-none"
                       value={item.text}
                       placeholder={`Item ${idx + 1} — e.g., "Patient reports feeling dizzy"`}
                       onChange={(e) => {
@@ -714,7 +714,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
                       }}
                     />
                     <select
-                      className="text-xs p-2 border border-slate-200 rounded bg-white font-bold"
+                      className="text-xs p-2 border border-gray-200 rounded bg-white font-bold"
                       value={item.category}
                       onChange={(e) => {
                         const newItems = [...(objSubjData.items || [])];
@@ -727,7 +727,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
                     </select>
                     <button
                       onClick={() => handleChange('items', (objSubjData.items || []).filter((_, i) => i !== idx))}
-                      className="text-slate-300 hover:text-red-400"
+                      className="text-gray-300 hover:text-red-400"
                     >
                       <Minus className="h-3 w-3" />
                     </button>
@@ -743,7 +743,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
                   };
                   handleChange('items', [...(objSubjData.items || []), newItem]);
                 }}
-                className="text-[10px] font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 mt-2"
+                className="text-[10px] font-bold text-primary-600 hover:text-primary-700 flex items-center gap-1 mt-2"
               >
                 <Plus className="h-3 w-3" /> Add Item
               </button>
@@ -773,20 +773,20 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
   }[block.type] || Hash;
 
   return (
-    <div className="group border border-slate-200 rounded-lg bg-white shadow-sm transition-all hover:border-brand-300 hover:shadow-md">
-      <div className="flex items-center justify-between p-2 pl-4 bg-white border-b border-slate-100 rounded-t-lg">
+    <div className="group border border-gray-200 rounded-lg bg-white shadow-sm transition-all hover:border-primary-300 hover:shadow-md">
+      <div className="flex items-center justify-between p-2 pl-4 bg-white border-b border-gray-100 rounded-t-lg">
         <div className="flex items-center gap-3">
-          <div className="cursor-move p-1 hover:bg-slate-100 rounded text-slate-300 hover:text-slate-500">
+          <div className="cursor-move p-1 hover:bg-gray-100 rounded text-gray-300 hover:text-gray-500">
             <GripVertical className="h-4 w-4" />
           </div>
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide flex items-center gap-2">
+          <span className="text-xs font-bold text-gray-400 uppercase tracking-wide flex items-center gap-2">
             <Icon className="h-3 w-3" />
             {block.type}
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <button className="text-xs text-slate-400 hover:text-brand-600 px-2 py-1 hover:bg-slate-50 rounded">Settings</button>
-          <button onClick={() => onDelete(block.id)} className="p-1.5 text-slate-400 hover:text-critical-500 hover:bg-critical-50 rounded transition-colors">
+          <button className="text-xs text-gray-400 hover:text-primary-600 px-2 py-1 hover:bg-gray-50 rounded">Settings</button>
+          <button onClick={() => onDelete(block.id)} className="p-1.5 text-gray-400 hover:text-critical-500 hover:bg-critical-50 rounded transition-colors">
             <Trash2 className="h-4 w-4" />
           </button>
         </div>

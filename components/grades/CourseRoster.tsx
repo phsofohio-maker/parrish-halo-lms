@@ -169,13 +169,13 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
 
   const SortHeader: React.FC<{ field: SortField; label: string; className?: string }> = ({ field, label, className }) => (
     <th
-      className={cn('px-6 py-3 font-semibold text-slate-700 cursor-pointer hover:text-brand-600 select-none', className)}
+      className={cn('px-6 py-3 font-semibold text-gray-700 cursor-pointer hover:text-primary-600 select-none', className)}
       onClick={() => handleSort(field)}
     >
       <span className="flex items-center gap-1">
         {label}
         {sortField === field && (
-          <span className="text-brand-600">{sortDirection === 'asc' ? '\u2191' : '\u2193'}</span>
+          <span className="text-primary-600">{sortDirection === 'asc' ? '\u2191' : '\u2193'}</span>
         )}
       </span>
     </th>
@@ -192,7 +192,7 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
     }
     if (status === 'not_started') {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-50 text-slate-500 border border-slate-200">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-gray-50 text-gray-500 border border-gray-200">
           Not Started
         </span>
       );
@@ -233,25 +233,25 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
       {/* Stats Bar */}
       <div className="flex items-center gap-4 flex-wrap">
         <div className="flex items-center gap-2 text-sm">
-          <Users className="h-4 w-4 text-slate-400" />
-          <span className="font-bold text-slate-700">{totalStudents}</span>
-          <span className="text-slate-500">enrolled</span>
+          <Users className="h-4 w-4 text-gray-400" />
+          <span className="font-bold text-gray-700">{totalStudents}</span>
+          <span className="text-gray-500">enrolled</span>
         </div>
-        <div className="h-4 w-px bg-slate-200" />
+        <div className="h-4 w-px bg-gray-200" />
         <div className="flex items-center gap-2 text-sm">
           <CheckCircle className="h-4 w-4 text-green-500" />
           <span className="font-bold text-green-700">{passing}</span>
-          <span className="text-slate-500">passing</span>
+          <span className="text-gray-500">passing</span>
         </div>
-        <div className="h-4 w-px bg-slate-200" />
+        <div className="h-4 w-px bg-gray-200" />
         <div className="flex items-center gap-2 text-sm">
           <XCircle className="h-4 w-4 text-red-500" />
           <span className="font-bold text-red-700">{failing}</span>
-          <span className="text-slate-500">failing</span>
+          <span className="text-gray-500">failing</span>
         </div>
-        <div className="h-4 w-px bg-slate-200" />
-        <div className="text-sm text-slate-500">
-          Avg: <span className="font-bold text-slate-700">{avgScore}%</span>
+        <div className="h-4 w-px bg-gray-200" />
+        <div className="text-sm text-gray-500">
+          Avg: <span className="font-bold text-gray-700">{avgScore}%</span>
         </div>
 
         <div className="ml-auto flex items-center gap-2">
@@ -264,7 +264,7 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
 
       {/* Filter Tabs */}
       <div className="flex items-center gap-2">
-        <Filter className="h-3.5 w-3.5 text-slate-400" />
+        <Filter className="h-3.5 w-3.5 text-gray-400" />
         {([
           { key: 'all' as const, label: 'All' },
           { key: 'passing' as const, label: 'Passing' },
@@ -278,8 +278,8 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
             className={cn(
               'px-3 py-1 text-xs font-bold rounded-md transition-all',
               filter === tab.key
-                ? 'bg-brand-600 text-white'
-                : 'text-slate-500 hover:text-brand-600 bg-white border border-slate-200'
+                ? 'bg-primary-600 text-white'
+                : 'text-gray-500 hover:text-primary-600 bg-white border border-gray-200'
             )}
           >
             {tab.label}
@@ -296,30 +296,30 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
       )}
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="w-8 px-4 py-3" />
               <SortHeader field="name" label="Learner" />
               <SortHeader field="score" label="Overall Score" className="text-center" />
               <SortHeader field="completion" label="Completion" className="text-center" />
-              <th className="px-6 py-3 font-semibold text-slate-700 text-center">Critical Modules</th>
+              <th className="px-6 py-3 font-semibold text-gray-700 text-center">Critical Modules</th>
               <SortHeader field="status" label="Status" className="text-center" />
               <SortHeader field="lastActivity" label="Last Activity" className="text-center" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-gray-100">
             {isLoading ? (
               <tr>
-                <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
+                <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
                   <Loader2 className="h-5 w-5 animate-spin inline mr-2" />
                   Loading roster...
                 </td>
               </tr>
             ) : sortedEntries.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-6 py-12 text-center text-slate-400 italic">
+                <td colSpan={7} className="px-6 py-12 text-center text-gray-400 italic">
                   {entries.length === 0
                     ? 'No learners enrolled in this course.'
                     : `No learners matching "${filter}" filter.`}
@@ -329,22 +329,22 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
               sortedEntries.map(entry => (
                 <React.Fragment key={entry.enrollment.id}>
                   <tr
-                    className="hover:bg-slate-50/50 cursor-pointer transition-colors"
+                    className="hover:bg-gray-50/50 cursor-pointer transition-colors"
                     onClick={() => toggleExpand(entry.enrollment.userId)}
                   >
                     {/* Expand Arrow */}
                     <td className="px-4 py-4">
                       {expandedUserId === entry.enrollment.userId ? (
-                        <ChevronDown className="h-4 w-4 text-brand-500" />
+                        <ChevronDown className="h-4 w-4 text-primary-500" />
                       ) : (
-                        <ChevronRight className="h-4 w-4 text-slate-400" />
+                        <ChevronRight className="h-4 w-4 text-gray-400" />
                       )}
                     </td>
 
                     {/* Learner Name */}
                     <td className="px-6 py-4">
-                      <div className="font-bold text-slate-900">{entry.userName}</div>
-                      <div className="text-xs text-slate-400">{entry.userEmail || entry.enrollment.userId}</div>
+                      <div className="font-bold text-gray-900">{entry.userName}</div>
+                      <div className="text-xs text-gray-400">{entry.userEmail || entry.enrollment.userId}</div>
                     </td>
 
                     {/* Overall Score */}
@@ -357,7 +357,7 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
                           {entry.courseGrade.overallScore}%
                         </span>
                       ) : (
-                        <span className="text-slate-400 text-sm">--</span>
+                        <span className="text-gray-400 text-sm">--</span>
                       )}
                     </td>
 
@@ -365,21 +365,21 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
                     <td className="px-6 py-4 text-center">
                       {entry.courseGrade ? (
                         <div className="flex items-center justify-center gap-2">
-                          <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                          <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                             <div
                               className={cn(
                                 'h-full rounded-full',
-                                entry.courseGrade.completionPercent === 100 ? 'bg-green-500' : 'bg-brand-500'
+                                entry.courseGrade.completionPercent === 100 ? 'bg-green-500' : 'bg-primary-500'
                               )}
                               style={{ width: `${entry.courseGrade.completionPercent}%` }}
                             />
                           </div>
-                          <span className="text-xs font-bold text-slate-600">
+                          <span className="text-xs font-bold text-gray-600">
                             {entry.courseGrade.completionPercent}%
                           </span>
                         </div>
                       ) : (
-                        <span className="text-xs text-slate-400">{entry.enrollment.progress}%</span>
+                        <span className="text-xs text-gray-400">{entry.enrollment.progress}%</span>
                       )}
                     </td>
 
@@ -394,7 +394,7 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
                           {entry.courseGrade.criticalModulesPassed}/{entry.courseGrade.totalCriticalModules}
                         </span>
                       ) : (
-                        <span className="text-slate-400 text-xs">--</span>
+                        <span className="text-gray-400 text-xs">--</span>
                       )}
                     </td>
 
@@ -404,7 +404,7 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
                     </td>
 
                     {/* Last Activity */}
-                    <td className="px-6 py-4 text-center text-xs text-slate-500 font-mono">
+                    <td className="px-6 py-4 text-center text-xs text-gray-500 font-mono">
                       {entry.enrollment.lastAccessedAt
                         ? formatDate(entry.enrollment.lastAccessedAt)
                         : '--'}
@@ -414,13 +414,13 @@ export const CourseRoster: React.FC<CourseRosterProps> = ({ courseId }) => {
                   {/* Expanded GradeBreakdown */}
                   {expandedUserId === entry.enrollment.userId && (
                     <tr>
-                      <td colSpan={7} className="px-8 py-6 bg-slate-50">
+                      <td colSpan={7} className="px-8 py-6 bg-gray-50">
                         {entry.courseGrade ? (
                           <GradeBreakdown calculation={entry.courseGrade} />
                         ) : (
-                          <div className="text-center py-8 text-slate-400">
+                          <div className="text-center py-8 text-gray-400">
                             <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                            <p className="font-medium text-slate-500">Grade Not Yet Calculated</p>
+                            <p className="font-medium text-gray-500">Grade Not Yet Calculated</p>
                             <p className="text-xs mt-1">This learner's course grade will appear here once their assessments are graded.</p>
                           </div>
                         )}

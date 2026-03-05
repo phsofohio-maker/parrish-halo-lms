@@ -296,25 +296,25 @@ export const CohortManagement: React.FC = () => {
   // ============================================
 
   const renderFormModal = () => (
-    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in zoom-in duration-200">
-        <div className="p-6 border-b border-slate-200 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-slate-900">
+    <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in zoom-in duration-200">
+        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+          <h3 className="text-lg font-bold text-gray-900">
             {editingCohort ? 'Edit Cohort' : 'Create New Cohort'}
           </h3>
-          <button onClick={closeFormModal} className="p-1 hover:bg-slate-100 rounded">
-            <X className="h-5 w-5 text-slate-400" />
+          <button onClick={closeFormModal} className="p-1 hover:bg-gray-100 rounded">
+            <X className="h-5 w-5 text-gray-400" />
           </button>
         </div>
 
         <div className="p-6 space-y-6">
           {/* Name */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">Cohort Name</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Cohort Name</label>
             <input
               type="text"
               placeholder="e.g., Hospice RNs - Q1 2026"
-              className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
               value={formData.name}
               onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
             />
@@ -322,11 +322,11 @@ export const CohortManagement: React.FC = () => {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">Description</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Description</label>
             <textarea
               placeholder="Describe the purpose of this cohort..."
               rows={2}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
               value={formData.description}
               onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
             />
@@ -334,10 +334,10 @@ export const CohortManagement: React.FC = () => {
 
           {/* Departments */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
               Departments
               {formData.departments.length > 0 && (
-                <span className="ml-2 text-xs font-normal text-brand-600">
+                <span className="ml-2 text-xs font-normal text-primary-600">
                   {formData.departments.length} selected
                 </span>
               )}
@@ -353,25 +353,25 @@ export const CohortManagement: React.FC = () => {
                   className={cn(
                     'px-3 py-1.5 rounded-full text-xs font-medium border transition-colors',
                     formData.departments.includes(dept)
-                      ? 'bg-brand-50 border-brand-300 text-brand-700'
-                      : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                      ? 'bg-primary-50 border-primary-300 text-primary-700'
+                      : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
                   )}
                 >
                   {dept}
                 </button>
               ))}
               {knownValues.departments.length === 0 && (
-                <p className="text-xs text-slate-400 italic">No departments found in user data.</p>
+                <p className="text-xs text-gray-400 italic">No departments found in user data.</p>
               )}
             </div>
           </div>
 
           {/* Job Titles */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
               Job Titles
               {formData.jobTitles.length > 0 && (
-                <span className="ml-2 text-xs font-normal text-brand-600">
+                <span className="ml-2 text-xs font-normal text-primary-600">
                   {formData.jobTitles.length} selected
                 </span>
               )}
@@ -388,24 +388,24 @@ export const CohortManagement: React.FC = () => {
                     'px-3 py-1.5 rounded-full text-xs font-medium border transition-colors',
                     formData.jobTitles.includes(title)
                       ? 'bg-purple-50 border-purple-300 text-purple-700'
-                      : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                      : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
                   )}
                 >
                   {title}
                 </button>
               ))}
               {knownValues.jobTitles.length === 0 && (
-                <p className="text-xs text-slate-400 italic">No job titles found in user data.</p>
+                <p className="text-xs text-gray-400 italic">No job titles found in user data.</p>
               )}
             </div>
           </div>
 
           {/* Courses */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
               Assign Courses
               {formData.courseIds.length > 0 && (
-                <span className="ml-2 text-xs font-normal text-brand-600">
+                <span className="ml-2 text-xs font-normal text-primary-600">
                   {formData.courseIds.length} selected
                 </span>
               )}
@@ -421,33 +421,33 @@ export const CohortManagement: React.FC = () => {
                   className={cn(
                     'w-full p-3 rounded-lg border text-left flex items-center gap-3 transition-all',
                     formData.courseIds.includes(course.id)
-                      ? 'border-brand-500 bg-brand-50'
-                      : 'border-slate-200 hover:border-slate-300'
+                      ? 'border-primary-500 bg-primary-50'
+                      : 'border-gray-200 hover:border-gray-300'
                   )}
                 >
                   <div className={cn(
                     'h-8 w-8 rounded flex items-center justify-center shrink-0',
-                    formData.courseIds.includes(course.id) ? 'bg-brand-100 text-brand-600' : 'bg-slate-100 text-slate-400'
+                    formData.courseIds.includes(course.id) ? 'bg-primary-100 text-primary-600' : 'bg-gray-100 text-gray-400'
                   )}>
                     <BookOpen className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-slate-900 truncate">{course.title}</p>
-                    <p className="text-[10px] text-slate-500">{course.category} &middot; {course.ceCredits} CE Credits</p>
+                    <p className="text-sm font-bold text-gray-900 truncate">{course.title}</p>
+                    <p className="text-[10px] text-gray-500">{course.category} &middot; {course.ceCredits} CE Credits</p>
                   </div>
                   {formData.courseIds.includes(course.id) && (
-                    <CheckCircle2 className="h-4 w-4 text-brand-600 shrink-0 ml-auto" />
+                    <CheckCircle2 className="h-4 w-4 text-primary-600 shrink-0 ml-auto" />
                   )}
                 </button>
               ))}
               {courses.filter(c => c.status === 'published').length === 0 && (
-                <p className="text-xs text-slate-400 italic text-center py-4">No published courses available.</p>
+                <p className="text-xs text-gray-400 italic text-center py-4">No published courses available.</p>
               )}
             </div>
           </div>
         </div>
 
-        <div className="p-6 border-t border-slate-200 flex gap-3">
+        <div className="p-6 border-t border-gray-200 flex gap-3">
           <Button variant="outline" className="flex-1" onClick={closeFormModal} disabled={isSaving}>
             Cancel
           </Button>
@@ -472,10 +472,10 @@ export const CohortManagement: React.FC = () => {
     if (!deletingCohort) return null;
 
     return (
-      <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 animate-in zoom-in duration-200">
-          <h3 className="text-lg font-bold text-slate-900 mb-2">Delete Cohort</h3>
-          <p className="text-sm text-slate-500 mb-6">
+      <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 animate-in zoom-in duration-200">
+          <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Cohort</h3>
+          <p className="text-sm text-gray-500 mb-6">
             Are you sure you want to delete <strong>{deletingCohort.name}</strong>?
             This will not remove existing enrollments.
           </p>
@@ -500,27 +500,27 @@ export const CohortManagement: React.FC = () => {
     if (!enrollResult || !enrollingCohortId) return null;
 
     return (
-      <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 animate-in zoom-in duration-200">
+      <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 animate-in zoom-in duration-200">
           <div className="flex items-center gap-3 mb-4">
             <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
               <CheckCircle2 className="h-5 w-5 text-green-600" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900">Bulk Enrollment Complete</h3>
+            <h3 className="text-lg font-bold text-gray-900">Bulk Enrollment Complete</h3>
           </div>
 
-          <div className="bg-slate-50 rounded-lg p-4 space-y-2 mb-6">
+          <div className="bg-gray-50 rounded-lg p-4 space-y-2 mb-6">
             <div className="flex justify-between text-sm">
-              <span className="text-slate-500">New Enrollments Created</span>
+              <span className="text-gray-500">New Enrollments Created</span>
               <span className="font-bold text-green-600">{enrollResult.created}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Already Enrolled (Skipped)</span>
-              <span className="font-bold text-slate-500">{enrollResult.skipped}</span>
+              <span className="text-gray-500">Already Enrolled (Skipped)</span>
+              <span className="font-bold text-gray-500">{enrollResult.skipped}</span>
             </div>
-            <div className="flex justify-between text-sm border-t border-slate-200 pt-2">
-              <span className="text-slate-700 font-semibold">Total Pairs Evaluated</span>
-              <span className="font-bold text-slate-900">{enrollResult.total}</span>
+            <div className="flex justify-between text-sm border-t border-gray-200 pt-2">
+              <span className="text-gray-700 font-semibold">Total Pairs Evaluated</span>
+              <span className="font-bold text-gray-900">{enrollResult.total}</span>
             </div>
           </div>
 
@@ -543,39 +543,39 @@ export const CohortManagement: React.FC = () => {
     if (!cohort) return null;
 
     return (
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mt-6">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mt-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Eye className="h-5 w-5 text-brand-600" />
-            <h3 className="font-bold text-slate-900">
+            <Eye className="h-5 w-5 text-primary-600" />
+            <h3 className="font-bold text-gray-900">
               Preview: {cohort.name}
             </h3>
-            <span className="px-2 py-0.5 bg-brand-50 text-brand-700 text-xs font-bold rounded-full">
+            <span className="px-2 py-0.5 bg-primary-50 text-primary-700 text-xs font-bold rounded-full">
               {isLoadingPreview ? '...' : `${previewUsers.length} users`}
             </span>
           </div>
-          <button onClick={() => { setPreviewCohortId(null); setPreviewUsers([]); }} className="p-1 hover:bg-slate-100 rounded">
-            <X className="h-4 w-4 text-slate-400" />
+          <button onClick={() => { setPreviewCohortId(null); setPreviewUsers([]); }} className="p-1 hover:bg-gray-100 rounded">
+            <X className="h-4 w-4 text-gray-400" />
           </button>
         </div>
 
         {isLoadingPreview ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-5 w-5 animate-spin text-slate-400 mr-2" />
-            <span className="text-sm text-slate-500">Loading matched users...</span>
+            <Loader2 className="h-5 w-5 animate-spin text-gray-400 mr-2" />
+            <span className="text-sm text-gray-500">Loading matched users...</span>
           </div>
         ) : previewUsers.length === 0 ? (
-          <p className="text-sm text-slate-400 italic text-center py-6">No users match the current filter criteria.</p>
+          <p className="text-sm text-gray-400 italic text-center py-6">No users match the current filter criteria.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {previewUsers.map(u => (
-              <div key={u.uid} className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100">
-                <div className="h-8 w-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-xs shrink-0">
+              <div key={u.uid} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 border border-gray-100">
+                <div className="h-8 w-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-xs shrink-0">
                   {u.displayName.charAt(0)}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-slate-900 truncate">{u.displayName}</p>
-                  <p className="text-xs text-slate-500 truncate">
+                  <p className="text-sm font-medium text-gray-900 truncate">{u.displayName}</p>
+                  <p className="text-xs text-gray-500 truncate">
                     {u.jobTitle || 'No title'} &middot; {u.department || 'No dept'}
                   </p>
                 </div>
@@ -600,11 +600,11 @@ export const CohortManagement: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <UsersRound className="h-6 w-6 text-brand-600" />
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <UsersRound className="h-6 w-6 text-primary-600" />
             Cohort Management
           </h1>
-          <p className="text-slate-500 mt-1">
+          <p className="text-gray-500 mt-1">
             Group staff by department and job title, then bulk-enroll them into courses.
           </p>
         </div>
@@ -629,27 +629,27 @@ export const CohortManagement: React.FC = () => {
       )}
 
       {/* Cohort List */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-4 font-semibold text-slate-700">Cohort</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">Filter Criteria</th>
-              <th className="px-6 py-4 font-semibold text-slate-700">Courses</th>
-              <th className="px-6 py-4 font-semibold text-slate-700 text-right">Actions</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Cohort</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Filter Criteria</th>
+              <th className="px-6 py-4 font-semibold text-gray-700">Courses</th>
+              <th className="px-6 py-4 font-semibold text-gray-700 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-gray-100">
             {isLoading ? (
               <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-slate-400">
+                <td colSpan={4} className="px-6 py-12 text-center text-gray-400">
                   <Loader2 className="h-5 w-5 animate-spin inline mr-2" />
                   Loading cohorts...
                 </td>
               </tr>
             ) : cohorts.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-slate-400 italic">
+                <td colSpan={4} className="px-6 py-12 text-center text-gray-400 italic">
                   No cohorts created yet. Click "Create Cohort" to get started.
                 </td>
               </tr>
@@ -658,12 +658,12 @@ export const CohortManagement: React.FC = () => {
                 const assignedCourses = courses.filter(c => cohort.courseIds.includes(c.id));
 
                 return (
-                  <tr key={cohort.id} className="hover:bg-slate-50/50 transition-colors group">
+                  <tr key={cohort.id} className="hover:bg-gray-50/50 transition-colors group">
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-bold text-slate-900">{cohort.name}</div>
+                        <div className="font-bold text-gray-900">{cohort.name}</div>
                         {cohort.description && (
-                          <div className="text-xs text-slate-500 mt-0.5 line-clamp-1">{cohort.description}</div>
+                          <div className="text-xs text-gray-500 mt-0.5 line-clamp-1">{cohort.description}</div>
                         )}
                       </div>
                     </td>
@@ -680,19 +680,19 @@ export const CohortManagement: React.FC = () => {
                           </span>
                         ))}
                         {!cohort.filterCriteria.departments?.length && !cohort.filterCriteria.jobTitles?.length && (
-                          <span className="text-xs text-slate-400 italic">No filters</span>
+                          <span className="text-xs text-gray-400 italic">No filters</span>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-1 text-slate-500">
-                        <BookOpen className="h-4 w-4 text-slate-300" />
+                      <div className="flex items-center gap-1 text-gray-500">
+                        <BookOpen className="h-4 w-4 text-gray-300" />
                         <span className="text-xs font-medium">
                           {assignedCourses.length} course{assignedCourses.length !== 1 ? 's' : ''}
                         </span>
                       </div>
                       {assignedCourses.length > 0 && (
-                        <div className="text-[10px] text-slate-400 mt-0.5 line-clamp-1">
+                        <div className="text-[10px] text-gray-400 mt-0.5 line-clamp-1">
                           {assignedCourses.map(c => c.title).join(', ')}
                         </div>
                       )}
