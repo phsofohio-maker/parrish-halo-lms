@@ -10,7 +10,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/Button';
-import { Stethoscope, Lock, Mail, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { cn } from '../utils';
 
 export const Login: React.FC = () => {
@@ -50,11 +50,14 @@ export const Login: React.FC = () => {
       <div className="bg-white w-full max-w-md rounded-lg shadow-xs border border-gray-200 overflow-hidden">
         {/* Logo & Header */}
         <div className="pt-10 pb-6 px-8 text-center">
-          <div className="flex items-center justify-center mb-4">
-            <Stethoscope className="h-10 w-10 text-primary-700" strokeWidth={1.75} />
+          <div className="flex items-center justify-center mb-6">
+            <img
+              src="/images/HHCA_LMS_LogoPNG_.png"
+              alt="Harmony Health Care Assistant"
+              className="max-w-[200px] w-auto"
+            />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Harmony Health LMS</h1>
-          <p className="text-gray-500 mt-2 text-sm">Secure Clinical Training Platform</p>
+          <p className="text-gray-500 text-sm">Secure Clinical Training Platform</p>
         </div>
 
         {/* Form */}

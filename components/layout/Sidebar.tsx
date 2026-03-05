@@ -6,7 +6,6 @@ import {
   ShieldCheck,
   Users,
   LogOut,
-  Stethoscope,
   Layers,
   GraduationCap,
   ClipboardCheck,
@@ -51,11 +50,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, currentPath, onNavigate,
   return (
     <div className="w-[260px] flex flex-col bg-primary-900 h-screen fixed left-0 top-0">
       {/* Logo */}
-      <div className="pt-5 pb-6 px-5 border-b border-white/12">
-        <div className="flex items-center justify-center gap-2">
-          <Stethoscope className="h-8 w-8 text-white" strokeWidth={1.75} />
-          <span className="text-white font-bold text-xl">Harmony</span>
-        </div>
+      <div className="pt-5 pb-6 px-5 border-b border-white/12 flex items-center justify-center">
+        <img
+          src="/images/HHCA_LMS_LogoPNG_.png"
+          alt="Harmony Health Care Assistant"
+          className="max-h-[40px] w-auto"
+        />
       </div>
 
       {/* Navigation */}
