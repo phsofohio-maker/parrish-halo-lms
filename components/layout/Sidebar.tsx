@@ -38,9 +38,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, currentPath, onNavigate,
         )}
       >
         <Icon
-          className="h-5 w-5 shrink-0"
+          className="h-5 w-5 shrink-0 text-white"
           strokeWidth={1.75}
-          style={{ opacity: isActive ? 1 : 0.7 }}
         />
         <span className="text-white">{label}</span>
       </button>
@@ -50,16 +49,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, currentPath, onNavigate,
   return (
     <div className="w-[260px] flex flex-col bg-primary-900 h-screen fixed left-0 top-0">
       {/* Logo */}
-      <div className="pt-5 pb-6 px-5 border-b border-white/12 flex items-center justify-center">
+      <div className="pt-5 px-5 border-b border-white/12 flex items-center justify-center">
         <img
-          src="/images/HHCA_LMS_LogoPNG_.png"
+          src="/images/HHCA_LMS_Logo_WhiteEPS_.svg"
           alt="Harmony Health Care Assistant"
-          className="max-h-[40px] w-auto"
+          className="h-[250px] w-auto object-contain"
         />
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 flex flex-col gap-1 py-4 overflow-y-auto">
+      <div className="flex-1 flex flex-col gap-1 py-4 overflow-hidden">
         <div className="mb-4">
           <p className="text-[11px] font-semibold text-white/40 uppercase tracking-[0.08em] px-6 pt-6 pb-2">Platform</p>
           <NavItem path="/" icon={LayoutDashboard} label="Dashboard" />
