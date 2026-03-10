@@ -17,7 +17,17 @@ export interface SeedUser {
 }
 
 export const SEED_USERS: SeedUser[] = [
-  // ── Admins (2) ──────────────────────────────────
+  // ── Real Admin — Miara Carpenter ──────────────
+  {
+    email: 'miarac@parrishhealthsystems.org',
+    password: 'ParrishAdmin2026!',
+    displayName: 'Miara Carpenter',
+    role: 'admin',
+    department: 'Clinical Education',
+    jobTitle: 'Administrator',
+  },
+
+  // ── Test Admins (2) ──────────────────────────────
   {
     email: 'sarah.chen@parrish.health',
     password: 'ParrishAdmin2026!',
