@@ -13,7 +13,7 @@
  * @module components/builder/BlockEditor
  */
 
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import {
   BlockType,
   ContentBlock,
@@ -33,9 +33,38 @@ import {
   Trash2, GripVertical, CheckSquare, Image as ImageIcon,
   Type, Video, Hash, Bold, Italic, List, Link as LinkIcon,
   AlertTriangle, Info, AlertOctagon, FileText, Plus, Minus,
+  Loader2, Upload,
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { cn } from '../../utils';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../services/firebase';
+
+// ============================================
+// YOUTUBE URL NORMALIZER
+// ============================================
+
+/**
+ * Converts standard YouTube watch URLs and short URLs to embed format.
+ * Handles: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/embed/ID
+ */
+function normalizeYouTubeUrl(url: string): string {
+  if (!url) return url;
+  const trimmed = url.trim();
+
+  // Already in embed format
+  if (trimmed.includes('youtube.com/embed/')) return trimmed;
+
+  // Standard watch URL: https://www.youtube.com/watch?v=VIDEO_ID
+  const watchMatch = trimmed.match(/(?:youtube\.com\/watch\?.*v=)([a-zA-Z0-9_-]+)/);
+  if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`;
+
+  // Short URL: https://youtu.be/VIDEO_ID
+  const shortMatch = trimmed.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+  if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}`;
+
+  return trimmed;
+}
 
 interface BlockEditorProps {
   block: ContentBlock;
@@ -440,58 +469,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
 
       case 'image':
         const imgData = block.data as ImageBlockData;
-        return (
-          <div className="space-y-4">
-            <div className="p-6 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-center hover:bg-gray-100 transition-colors cursor-pointer group">
-              {imgData.url ? (
-                <div className="relative">
-                  <img src={imgData.url} alt="Preview" className="max-h-64 mx-auto rounded shadow-sm" />
-                  <button
-                    onClick={() => handleChange('url', '')}
-                    className="absolute top-2 right-2 bg-white p-1 rounded-full shadow hover:text-red-600"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              ) : (
-                <div className="py-4">
-                  <div className="mx-auto h-12 w-12 text-gray-300 group-hover:text-primary-500 transition-colors mb-2">
-                    <ImageIcon className="h-full w-full" />
-                  </div>
-                  <p className="text-sm font-medium text-gray-700">Click to upload or drag and drop</p>
-                  <p className="text-xs text-gray-500 mt-1">SVG, PNG, JPG or GIF (max. 5MB)</p>
-                  <input
-                    type="text"
-                    placeholder="Or paste image URL..."
-                    className="mt-4 w-full max-w-sm text-sm p-2 border rounded text-center bg-white"
-                    onChange={(e) => handleChange('url', e.target.value)}
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Caption</label>
-                <input
-                  className="w-full text-sm p-2 border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 outline-none bg-white text-gray-900"
-                  placeholder="Visible below image"
-                  value={imgData.caption || ''}
-                  onChange={(e) => handleChange('caption', e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Alt Text</label>
-                <input
-                  className="w-full text-sm p-2 border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 outline-none bg-white text-gray-900"
-                  placeholder="Accessibility description"
-                  value={imgData.altText || ''}
-                  onChange={(e) => handleChange('altText', e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-        );
+        return <ImageBlockEditor imgData={imgData} blockId={block.id} onChange={onChange} handleChange={handleChange} />;
 
       case 'video':
         const vidData = block.data as VideoBlockData;
@@ -523,14 +501,24 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
               </div>
             </div>
             <div>
-              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Embed URL</label>
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">YouTube or Video URL</label>
               <input
                 type="text"
                 className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 outline-none font-mono text-sm text-primary-600 bg-gray-50"
                 value={vidData.url || ''}
                 onChange={(e) => handleChange('url', e.target.value)}
-                placeholder="https://www.youtube.com/embed/..."
+                onBlur={(e) => {
+                  const normalized = normalizeYouTubeUrl(e.target.value);
+                  if (normalized !== e.target.value) {
+                    handleChange('url', normalized);
+                  }
+                }}
+                placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
               />
+              <p className="text-[10px] text-gray-400 italic mt-1 flex items-center gap-1">
+                <Info className="h-3 w-3" />
+                Standard YouTube URLs are auto-converted to embed format on blur.
+              </p>
             </div>
             <div>
               <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">
@@ -781,7 +769,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
           </div>
           <span className="text-xs font-bold text-gray-400 uppercase tracking-wide flex items-center gap-2">
             <Icon className="h-3 w-3" />
-            {block.type}
+            {block.type === 'obj_subj_validator' ? 'Clinical Data Sorter' : block.type}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -794,6 +782,144 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({ block, onChange, onDel
 
       <div className="p-5">
         {renderContent()}
+      </div>
+    </div>
+  );
+};
+
+// ============================================
+// IMAGE BLOCK EDITOR (with Firebase Storage upload)
+// ============================================
+
+const ImageBlockEditor: React.FC<{
+  imgData: ImageBlockData;
+  blockId: string;
+  onChange: (id: string, data: any) => void;
+  handleChange: (field: string, value: any) => void;
+}> = ({ imgData, blockId, onChange, handleChange }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [uploadError, setUploadError] = useState('');
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type and size
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please select an image file.');
+      return;
+    }
+    if (file.size > 100 * 1024 * 1024) {
+      setUploadError('File size exceeds 100MB limit.');
+      return;
+    }
+
+    setUploadError('');
+    setUploadProgress(0);
+
+    // Upload to Firebase Storage
+    const storagePath = `courses/uploads/${blockId}_${file.name}`;
+    const storageRef = ref(storage, storagePath);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        setUploadProgress(progress);
+      },
+      (error) => {
+        setUploadError(error.message || 'Upload failed.');
+        setUploadProgress(null);
+      },
+      async () => {
+        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+        handleChange('url', downloadUrl);
+        setUploadProgress(null);
+      }
+    );
+  };
+
+  return (
+    <div className="space-y-4">
+      <div
+        className="p-6 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-center hover:bg-gray-100 transition-colors cursor-pointer group"
+        onClick={() => !imgData.url && fileInputRef.current?.click()}
+      >
+        {imgData.url ? (
+          <div className="relative">
+            <img src={imgData.url} alt="Preview" className="max-h-64 mx-auto rounded shadow-sm" />
+            <button
+              onClick={(e) => { e.stopPropagation(); handleChange('url', ''); }}
+              className="absolute top-2 right-2 bg-white p-1 rounded-full shadow hover:text-red-600"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        ) : uploadProgress !== null ? (
+          <div className="py-6">
+            <Loader2 className="h-8 w-8 text-primary-500 animate-spin mx-auto mb-3" />
+            <p className="text-sm font-medium text-gray-700">Uploading... {uploadProgress}%</p>
+            <div className="w-48 h-1.5 bg-gray-200 rounded-full mx-auto mt-2 overflow-hidden">
+              <div
+                className="h-full bg-primary-500 rounded-full transition-all duration-300"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="py-4">
+            <div className="mx-auto h-12 w-12 text-gray-300 group-hover:text-primary-500 transition-colors mb-2">
+              <Upload className="h-full w-full" />
+            </div>
+            <p className="text-sm font-medium text-gray-700">Click to upload or drag and drop</p>
+            <p className="text-xs text-gray-500 mt-1">SVG, PNG, JPG or GIF (max. 100MB)</p>
+            <input
+              type="text"
+              placeholder="Or paste image URL..."
+              className="mt-4 w-full max-w-sm text-sm p-2 border rounded text-center bg-white"
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => handleChange('url', e.target.value)}
+            />
+          </div>
+        )}
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleFileSelect}
+        />
+      </div>
+
+      {uploadError && (
+        <p className="text-sm text-red-600 flex items-center gap-1">
+          <AlertTriangle className="h-3.5 w-3.5" />
+          {uploadError}
+        </p>
+      )}
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Caption</label>
+          <input
+            className="w-full text-sm p-2 border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 outline-none bg-white text-gray-900"
+            placeholder="Visible below image"
+            value={imgData.caption || ''}
+            onChange={(e) => handleChange('caption', e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Alt Text</label>
+          <input
+            className="w-full text-sm p-2 border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 outline-none bg-white text-gray-900"
+            placeholder="Accessibility description"
+            value={imgData.altText || ''}
+            onChange={(e) => handleChange('altText', e.target.value)}
+          />
+        </div>
       </div>
     </div>
   );

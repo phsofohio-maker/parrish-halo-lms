@@ -282,7 +282,7 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
               className="px-4 py-2 rounded-full hover:bg-purple-50 text-sm font-medium text-purple-700 flex items-center gap-2 transition-colors whitespace-nowrap"
             >
               <Plus className="h-3 w-3 text-purple-400" />
-              Obj/Subj Exercise
+              Clinical Data Sorter
             </button>
           </div>
         </div>

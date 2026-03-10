@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
 import { ContentBlock, TextBlockData, VideoBlockData, ImageBlockData, QuizBlockData, CorrectionLogBlockData, ObjSubjValidatorBlockData } from '../../functions/src/types';
+
+/** Normalize YouTube URLs to embed format for the player iframe */
+function normalizeYouTubeUrl(url: string): string {
+  if (!url) return url;
+  const trimmed = url.trim();
+  if (trimmed.includes('youtube.com/embed/')) return trimmed;
+  const watchMatch = trimmed.match(/(?:youtube\.com\/watch\?.*v=)([a-zA-Z0-9_-]+)/);
+  if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`;
+  const shortMatch = trimmed.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+  if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}`;
+  return trimmed;
+}
 import { cn } from '../../utils';
 import { Info, AlertTriangle, AlertOctagon, FileText, ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
 import { CorrectionLogPlayer } from './CorrectionLogPlayer';
@@ -69,13 +81,14 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, onQuizAnswe
 
     case 'video':
       const vidData = block.data as VideoBlockData;
+      const embedUrl = normalizeYouTubeUrl(vidData.url);
       return (
         <div className="mb-8">
           <div className="aspect-video w-full rounded-lg overflow-hidden shadow-sm border border-gray-200 bg-black">
-            <iframe 
-              src={vidData.url} 
-              className="w-full h-full" 
-              allowFullScreen 
+            <iframe
+              src={embedUrl}
+              className="w-full h-full"
+              allowFullScreen
               title={vidData.title}
             />
           </div>
