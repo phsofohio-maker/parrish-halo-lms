@@ -7,8 +7,8 @@
  * @module pages/CourseManager
  */
 import React, { useState } from 'react';
-import { Course } from '../functions/src/types';
-import { Settings, FileEdit, Trash2, Plus, Search, Layers, AlertCircle, Globe, Lock, Loader2, RefreshCw } from 'lucide-react';
+import { Course, CourseCategory } from '../functions/src/types';
+import { Settings, FileEdit, Trash2, Plus, Search, Layers, AlertCircle, Globe, Lock, Loader2, RefreshCw, X } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { cn, generateId } from '../utils';
 import { useAuth } from '../contexts/AuthContext';
@@ -18,6 +18,15 @@ import { createModule } from '../services/courseService';
 import { collection, doc, deleteDoc, getDocs, writeBatch } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { auditService } from '../services/auditService';
+import { CoverImagePicker } from '../components/builder/CoverImagePicker';
+
+const CATEGORIES: { value: CourseCategory; label: string }[] = [
+  { value: 'clinical_skills', label: 'Clinical Skills' },
+  { value: 'compliance', label: 'Compliance' },
+  { value: 'hospice', label: 'Hospice' },
+  { value: 'onboarding', label: 'Onboarding' },
+  { value: 'Testing', label: 'Testing' },
+];
 
 interface CourseManagerProps {
   onNavigate: (path: string, context?: Record<string, any>) => void;
@@ -31,45 +40,38 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleCreateCourse = async () => {
-    if (!user || isCreating) return;
-    setIsCreating(true);
+  // Course creation modal state
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newCourse, setNewCourse] = useState({
+    title: '',
+    description: '',
+    category: 'clinical_skills' as CourseCategory,
+    ceCredits: 1.0,
+    thumbnailUrl: '',
+  });
 
+  const handleCreateCourse = () => setShowCreateModal(true);
+
+  const handleSubmitCreate = async () => {
+    if (!user || isCreating || !newCourse.title.trim()) return;
+    setIsCreating(true);
     try {
-      // Create the course in Firestore
       const courseId = await createCourse(
         {
-          title: 'New Clinical Course',
-          description: 'Enter description here...',
-          category: 'clinical_skills',
-          ceCredits: 1.0,
-          thumbnailUrl: `https://picsum.photos/400/200?random=${Math.random()}`,
+          title: newCourse.title.trim(),
+          description: newCourse.description.trim(),
+          category: newCourse.category,
+          ceCredits: newCourse.ceCredits,
+          thumbnailUrl: newCourse.thumbnailUrl,
           status: 'draft',
           estimatedHours: 0,
         },
         user.uid,
         user.displayName
       );
-
-      // Create a default first module
-      const moduleId = await createModule(
-        courseId,
-        {
-          title: 'Module 1: Getting Started',
-          description: '',
-          status: 'draft',
-          passingScore: 80,
-          estimatedMinutes: 10,
-          order: 0,
-          weight: 100,
-          isCritical: false,
-        },
-        user.uid,
-        user.displayName
-      );
-
-      // Navigate to the builder with the new course and module
-      onNavigate('/builder', { courseId, moduleId });
+      setShowCreateModal(false);
+      setNewCourse({ title: '', description: '', category: 'clinical_skills', ceCredits: 1.0, thumbnailUrl: '' });
+      onNavigate('/course-editor', { courseId });
     } catch (err) {
       console.error('Failed to create course:', err);
     } finally {
@@ -146,37 +148,8 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
     }
   };
 
-  const handleEditCurriculum = async (courseId: string) => {
-    try {
-      // Fetch modules to get the first module ID
-      const modules = await getModules(courseId);
-      const moduleId = modules.length > 0 ? modules[0].id : undefined;
-
-      if (moduleId) {
-        onNavigate('/builder', { courseId, moduleId });
-      } else {
-        // Create a module if none exist
-        if (!user) return;
-        const newModuleId = await createModule(
-          courseId,
-          {
-            title: 'Module 1',
-            description: '',
-            status: 'draft',
-            passingScore: 80,
-            estimatedMinutes: 10,
-            order: 0,
-            weight: 100,
-            isCritical: false,
-          },
-          user.uid,
-          user.displayName
-        );
-        onNavigate('/builder', { courseId, moduleId: newModuleId });
-      }
-    } catch (err) {
-      console.error('Failed to load modules for editing:', err);
-    }
+  const handleEditCurriculum = (courseId: string) => {
+    onNavigate('/course-editor', { courseId });
   };
 
   return (
@@ -195,6 +168,92 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
             <div className="flex gap-3">
               <Button variant="outline" className="flex-1" onClick={() => setConfirmDeleteId(null)} disabled={isDeleting}>Cancel</Button>
               <Button variant="danger" className="flex-1" onClick={() => handleDeleteCourse(confirmDeleteId)} isLoading={isDeleting}>Delete</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Course Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 animate-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-gray-900">Create New Course</h3>
+              <button onClick={() => setShowCreateModal(false)} className="p-1 text-gray-400 hover:text-gray-600">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Course Title</label>
+                <input
+                  type="text"
+                  value={newCourse.title}
+                  onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })}
+                  placeholder="e.g., Infection Control Fundamentals"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  value={newCourse.description}
+                  onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
+                  placeholder="Brief description of this course..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <select
+                    value={newCourse.category}
+                    onChange={(e) => setNewCourse({ ...newCourse, category: e.target.value as CourseCategory })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
+                  >
+                    {CATEGORIES.map((c) => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">CE Credits</label>
+                  <input
+                    type="number"
+                    value={newCourse.ceCredits}
+                    onChange={(e) => setNewCourse({ ...newCourse, ceCredits: parseFloat(e.target.value) || 0 })}
+                    step={0.5}
+                    min={0}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+              </div>
+
+              <CoverImagePicker
+                selectedUrl={newCourse.thumbnailUrl}
+                onSelect={(url) => setNewCourse({ ...newCourse, thumbnailUrl: url })}
+                suggestedCategory={newCourse.category}
+              />
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <Button variant="outline" className="flex-1" onClick={() => setShowCreateModal(false)}>
+                Cancel
+              </Button>
+              <Button
+                className="flex-1 gap-1.5"
+                onClick={handleSubmitCreate}
+                isLoading={isCreating}
+                disabled={!newCourse.title.trim()}
+              >
+                <Plus className="h-4 w-4" />
+                Create Course
+              </Button>
             </div>
           </div>
         </div>

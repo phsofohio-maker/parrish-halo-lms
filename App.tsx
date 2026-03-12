@@ -14,6 +14,7 @@
  * - /audit         -> AuditLogs (admin)
  * - /remediation   -> RemediationQueue (admin/instructor)
  * - /builder       -> ModuleBuilder (admin, full-screen)
+ * - /course-editor -> CourseEditor (admin, full-screen)
  */
 
 import React, { useState } from 'react';
@@ -28,6 +29,7 @@ import { CourseDetail } from './pages/CourseDetail';
 import { CoursePlayer } from './pages/CoursePlayer';
 import { UserManagement } from './pages/UserManagement';
 import { CourseManager } from './pages/CourseManager';
+import { CourseEditor } from './pages/CourseEditor';
 import { MyGrades } from './pages/MyGrades';
 import { GradeManagement } from './pages/GradeManagement';
 import { Invitations } from './pages/Invitations';
@@ -147,6 +149,31 @@ const AppContent: React.FC = () => {
     );
   }
 
+  // Course Editor (full-screen, between CourseManager and ModuleBuilder)
+  if (currentPath === '/course-editor') {
+    if (!routeContext.courseId) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <AlertCircle className="h-10 w-10 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600 mb-4">No course selected.</p>
+            <Button onClick={() => setCurrentPath('/curriculum')}>
+              Go to Curriculum Manager
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <CourseEditor
+        courseId={routeContext.courseId}
+        onNavigate={handleNavigate}
+        onBack={() => setCurrentPath('/curriculum')}
+      />
+    );
+  }
+
   // ============================================
   // SIDEBAR ROUTES
   // ============================================
@@ -193,7 +220,7 @@ const AppContent: React.FC = () => {
             courseId={routeContext.courseId}
             moduleId={routeContext.moduleId}
             userUid={user.uid}
-            onBack={() => setCurrentPath('/curriculum')}
+            onBack={() => setCurrentPath('/course-editor')}
           />
         );
 
