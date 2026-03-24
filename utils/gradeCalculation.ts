@@ -141,6 +141,26 @@ export const gradeQuestion = (
       };
     }
 
+    // ---- Multiple Answer ----
+    // All-or-nothing: student must select exactly the correct set of options
+    case 'multiple-answer': {
+      const correctSet = new Set(
+        Array.isArray(question.correctAnswer) ? (question.correctAnswer as number[]) : []
+      );
+      const userSet = new Set(
+        Array.isArray(userAnswer) ? (userAnswer as number[]) : []
+      );
+      const allCorrect =
+        correctSet.size > 0 &&
+        userSet.size === correctSet.size &&
+        [...correctSet].every(idx => userSet.has(idx));
+      return {
+        ...base,
+        isCorrect: allCorrect,
+        earnedPoints: allCorrect ? question.points : 0,
+      };
+    }
+
     // ---- Short Answer / Essay ----
     // Cannot be auto-graded. Awards provisional credit if answer has substance.
     // Always flagged for manual instructor review.
@@ -266,6 +286,9 @@ export const isAnswerComplete = (
 
     case 'short-answer':
       return typeof answer === 'string' && answer.length >= 20;
+
+    case 'multiple-answer':
+      return Array.isArray(answer) && (answer as number[]).length > 0;
 
     default:
       return false;

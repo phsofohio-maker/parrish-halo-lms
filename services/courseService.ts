@@ -47,7 +47,8 @@ import {
     thumbnailUrl: doc.data().thumbnailUrl || '',
     status: doc.data().status || 'draft',
     modules: [],
-    estimatedHours: 0
+    estimatedHours: 0,
+    availability: doc.data().availability || undefined,
   });
   
   /**
@@ -66,7 +67,8 @@ import {
     // NEW: Extract weighted grading fields
     weight: doc.data().weight || 0,
     isCritical: doc.data().isCritical || false,
-    
+    availability: doc.data().availability || undefined,
+
     blocks: [], // Populated separately if needed
   });
   
@@ -237,7 +239,8 @@ import {
       // NEW: Weighted grading fields
       weight: module.weight || 0,
       isCritical: module.isCritical || false,
-      
+      ...(module.availability ? { availability: module.availability } : {}),
+
       // Metadata
       courseId,
       createdAt: serverTimestamp(),
@@ -282,7 +285,8 @@ import {
     // NEW: Include weighted grading fields in updates
     if (updates.weight !== undefined) updateData.weight = updates.weight;
     if (updates.isCritical !== undefined) updateData.isCritical = updates.isCritical;
-    
+    if (updates.availability !== undefined) updateData.availability = updates.availability;
+
     await updateDoc(moduleRef, updateData);
     
     await auditService.logToFirestore(

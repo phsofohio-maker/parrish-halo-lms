@@ -208,7 +208,8 @@ export const useModule = ({ courseId, moduleId }: UseModuleOptions): UseModuleRe
             passingScore: module.passingScore,
             estimatedMinutes: module.estimatedMinutes,
             weight: 0,
-            isCritical: false
+            isCritical: false,
+            ...(module.availability ? { availability: module.availability } : {}),
           },
           user.uid,
           user.displayName
@@ -227,6 +228,7 @@ export const useModule = ({ courseId, moduleId }: UseModuleOptions): UseModuleRe
             status: module.status,
             passingScore: module.passingScore,
             estimatedMinutes: module.estimatedMinutes,
+            ...(module.availability ? { availability: module.availability } : {}),
           },
           user.uid,
           user.displayName

@@ -147,6 +147,11 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
                 const defaults: Partial<QuizQuestion> = { type: newType };
 
                 switch (newType) {
+                  case 'multiple-answer':
+                    defaults.options = ['Option A', 'Option B', 'Option C'];
+                    defaults.correctAnswer = [];
+                    defaults.matchingPairs = undefined;
+                    break;
                   case 'true-false':
                     defaults.options = ['True', 'False'];
                     defaults.correctAnswer = 0;
@@ -179,6 +184,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
               }}
             >
               <option value="multiple-choice">Multiple Choice</option>
+              <option value="multiple-answer">Multiple Answer</option>
               <option value="true-false">True / False</option>
               <option value="matching">Matching</option>
               <option value="fill-blank">Fill in the Blank</option>
@@ -253,6 +259,69 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
               >
                 <Plus className="h-3 w-3" /> Add Option
               </button>
+            </div>
+          )}
+
+          {/* ---- Multiple Answer ---- */}
+          {q.type === 'multiple-answer' && (
+            <div className="space-y-2 pl-4 border-l-2 border-gray-100">
+              <p className="text-[10px] text-gray-500 font-medium">Check all correct answers</p>
+              {(q.options || []).map((opt, oIdx) => {
+                const currentCorrect = Array.isArray(q.correctAnswer) ? (q.correctAnswer as number[]) : [];
+                const isCorrect = currentCorrect.includes(oIdx);
+                return (
+                  <div key={oIdx} className={`flex items-center gap-2 ${isCorrect ? 'bg-emerald-50 rounded px-1 -mx-1' : ''}`}>
+                    <input
+                      type="checkbox"
+                      checked={isCorrect}
+                      onChange={() => {
+                        const updated = isCorrect
+                          ? currentCorrect.filter(i => i !== oIdx)
+                          : [...currentCorrect, oIdx].sort();
+                        updateQuestion({ correctAnswer: updated });
+                      }}
+                      className="text-primary-600 rounded"
+                    />
+                    <input
+                      className="flex-1 text-xs p-1 border-b border-transparent focus:border-primary-300 outline-none text-gray-600"
+                      value={opt}
+                      onChange={(e) => {
+                        const newOpts = [...q.options];
+                        newOpts[oIdx] = e.target.value;
+                        updateQuestion({ options: newOpts });
+                      }}
+                    />
+                    {isCorrect && (
+                      <span className="text-[10px] font-bold text-green-600 px-1">CORRECT</span>
+                    )}
+                    <button
+                      onClick={() => {
+                        const newOpts = q.options.filter((_, idx) => idx !== oIdx);
+                        // Adjust correctAnswer indices after removal
+                        const newCorrect = currentCorrect
+                          .filter(i => i !== oIdx)
+                          .map(i => i > oIdx ? i - 1 : i);
+                        updateQuestion({ options: newOpts, correctAnswer: newCorrect });
+                      }}
+                      className="text-gray-300 hover:text-red-400"
+                    >
+                      <Minus className="h-3 w-3" />
+                    </button>
+                  </div>
+                );
+              })}
+              <button
+                onClick={() => updateQuestion({ options: [...(q.options || []), 'New Option'] })}
+                className="text-[10px] font-bold text-primary-600 hover:text-primary-700 flex items-center gap-1"
+              >
+                <Plus className="h-3 w-3" /> Add Option
+              </button>
+              {Array.isArray(q.correctAnswer) && (q.correctAnswer as number[]).length === 0 && (
+                <p className="text-[10px] text-amber-600">At least one option must be marked correct.</p>
+              )}
+              {Array.isArray(q.correctAnswer) && (q.correctAnswer as number[]).length === q.options.length && q.options.length > 0 && (
+                <p className="text-[10px] text-amber-600">At least one option must be incorrect.</p>
+              )}
             </div>
           )}
 

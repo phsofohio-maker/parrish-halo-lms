@@ -13,7 +13,7 @@ function normalizeYouTubeUrl(url: string): string {
   return trimmed;
 }
 import { cn } from '../../utils';
-import { Info, AlertTriangle, AlertOctagon, FileText, ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
+import { Info, AlertTriangle, AlertOctagon, FileText, ChevronDown, ChevronUp, CheckCircle, Check } from 'lucide-react';
 import { CorrectionLogPlayer } from './CorrectionLogPlayer';
 import { ObjSubjPlayer } from './ObjSubjPlayer';
 
@@ -164,6 +164,48 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, onQuizAnswe
                             name={`q-${block.id}-${qIdx}`}
                             className="hidden"
                             onChange={() => onQuizAnswer?.(block.id, qIdx, oIdx)}
+                          />
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* ---- Multiple Answer ---- */}
+                {q.type === 'multiple-answer' && (
+                  <div className="space-y-2 pl-6">
+                    <p className="text-xs text-gray-500 italic">Select all that apply</p>
+                    {(q.options || []).map((opt, oIdx) => {
+                      const selectedArr: number[] = Array.isArray(blockAnswers[qIdx]) ? blockAnswers[qIdx] : [];
+                      const isSelected = selectedArr.includes(oIdx);
+                      return (
+                        <label
+                          key={oIdx}
+                          className={cn(
+                            "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all",
+                            isSelected
+                              ? "bg-primary-50 border-primary-500 ring-1 ring-primary-500"
+                              : "bg-white border-gray-200 hover:border-primary-300 hover:bg-gray-50"
+                          )}
+                        >
+                          <div className={cn(
+                            "h-4 w-4 rounded border flex items-center justify-center shrink-0",
+                            isSelected ? "border-primary-600 bg-primary-600" : "border-gray-300 bg-white"
+                          )}>
+                            {isSelected && <Check className="h-2.5 w-2.5 text-white" />}
+                          </div>
+                          <span className={cn("text-sm", isSelected ? "text-primary-900 font-medium" : "text-gray-600")}>
+                            {opt}
+                          </span>
+                          <input
+                            type="checkbox"
+                            className="hidden"
+                            onChange={() => {
+                              const newArr = isSelected
+                                ? selectedArr.filter(i => i !== oIdx)
+                                : [...selectedArr, oIdx];
+                              onQuizAnswer?.(block.id, qIdx, newArr);
+                            }}
                           />
                         </label>
                       );

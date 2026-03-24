@@ -74,6 +74,7 @@ export const useCourses = (): UseCoursesReturn => {
         status: doc.data().status || 'draft',
         modules: [],
         estimatedHours: doc.data().estimatedHours || 0,
+        availability: doc.data().availability || undefined,
       }));
 
       setCourses(data);

@@ -30,6 +30,7 @@ import { initAdmin } from './seedAll';
 // Accounts to preserve during cleanup
 const PRESERVE_EMAILS = [
   'miarac@parrishhealthsystems.org',
+  'kobet@parrishhealthsystems.org',
 ];
 
 const COLLECTIONS_TO_CLEAN = [

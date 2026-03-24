@@ -62,7 +62,15 @@ id: string;
 type: QuizQuestionType;
 question: string;
 options: string[];
-correctAnswer: number | string | string[];
+/**
+ * Type depends on question type:
+ * - multiple-choice / true-false: number (index of correct option)
+ * - fill-blank: string (correct text)
+ * - matching: string[] (via matchingPairs)
+ * - short-answer: string (rubric, not auto-graded)
+ * - multiple-answer: number[] (indices of ALL correct options)
+ */
+correctAnswer: number | string | number[] | string[];
 matchingPairs?: MatchingPair[];
 points: number;
 explanation?: string;
@@ -144,6 +152,11 @@ export type CourseCategory = "hospice"
 | "onboarding"
 | "Testing";
 
+export interface AvailabilityWindow {
+  opensAt?: string;   // ISO 8601 datetime
+  closesAt?: string;  // ISO 8601 datetime
+}
+
 export interface Module {
   id: string;
   courseId: string;
@@ -156,6 +169,7 @@ export interface Module {
   blocks: ContentBlock[];
   weight: number;
   isCritical: boolean;
+  availability?: AvailabilityWindow;
 }
 
 export interface ModuleScore {
@@ -237,6 +251,7 @@ export interface Course {
   status?: CourseStatus;
   modules: Module[];
   estimatedHours: number;
+  availability?: AvailabilityWindow;
 }
 
 // ============================================
@@ -331,7 +346,8 @@ export type QuizQuestionType =
 | "true-false"
 | "matching"
 | "fill-blank"
-| "short-answer";
+| "short-answer"
+| "multiple-answer";
 
 export interface MatchingPair {
 left: string;

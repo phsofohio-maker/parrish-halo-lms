@@ -36,6 +36,7 @@ import {
   ChevronUp,
   BookOpen,
   X,
+  Calendar,
 } from 'lucide-react';
 
 interface CourseEditorProps {
@@ -71,6 +72,8 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({
   const [editCategory, setEditCategory] = useState<CourseCategory>('clinical_skills');
   const [editCredits, setEditCredits] = useState(1.0);
   const [editThumbnail, setEditThumbnail] = useState('');
+  const [editOpensAt, setEditOpensAt] = useState('');
+  const [editClosesAt, setEditClosesAt] = useState('');
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [metadataOpen, setMetadataOpen] = useState(true);
@@ -113,6 +116,8 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({
       setEditCategory(courseData.category);
       setEditCredits(courseData.ceCredits);
       setEditThumbnail(courseData.thumbnailUrl);
+      setEditOpensAt(courseData.availability?.opensAt || '');
+      setEditClosesAt(courseData.availability?.closesAt || '');
       setIsDirty(false);
     } catch (err) {
       console.error('Failed to load course:', err);
@@ -134,15 +139,20 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({
       editDescription !== course.description ||
       editCategory !== course.category ||
       editCredits !== course.ceCredits ||
-      editThumbnail !== course.thumbnailUrl;
+      editThumbnail !== course.thumbnailUrl ||
+      editOpensAt !== (course.availability?.opensAt || '') ||
+      editClosesAt !== (course.availability?.closesAt || '');
     setIsDirty(changed);
-  }, [editTitle, editDescription, editCategory, editCredits, editThumbnail, course]);
+  }, [editTitle, editDescription, editCategory, editCredits, editThumbnail, editOpensAt, editClosesAt, course]);
 
   // Save course metadata
   const handleSaveMetadata = async () => {
     if (!user || !course || isSaving) return;
     setIsSaving(true);
     try {
+      const availability = (editOpensAt || editClosesAt)
+        ? { opensAt: editOpensAt || undefined, closesAt: editClosesAt || undefined }
+        : undefined;
       await updateCourse(
         courseId,
         {
@@ -151,6 +161,7 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({
           category: editCategory,
           ceCredits: editCredits,
           thumbnailUrl: editThumbnail,
+          availability,
         },
         user.uid,
         user.displayName
@@ -162,6 +173,7 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({
         category: editCategory,
         ceCredits: editCredits,
         thumbnailUrl: editThumbnail,
+        availability,
       });
       setIsDirty(false);
     } catch (err) {
@@ -435,10 +447,56 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({
                 </div>
               </div>
 
+              {/* Availability Window */}
+              <div className="col-span-2 border-t border-gray-100 pt-4 mt-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Availability Window
+                  <span className="text-xs text-gray-400 font-normal ml-1">(optional)</span>
+                </label>
+                <p className="text-xs text-gray-400 mb-3">
+                  Set dates to control when students can access this course. Leave blank for always available.
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Opens</label>
+                    <input
+                      type="datetime-local"
+                      value={editOpensAt ? editOpensAt.slice(0, 16) : ''}
+                      onChange={(e) => setEditOpensAt(e.target.value ? new Date(e.target.value).toISOString() : '')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Closes</label>
+                    <input
+                      type="datetime-local"
+                      value={editClosesAt ? editClosesAt.slice(0, 16) : ''}
+                      onChange={(e) => setEditClosesAt(e.target.value ? new Date(e.target.value).toISOString() : '')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                </div>
+                {(editOpensAt || editClosesAt) && (
+                  <button
+                    onClick={() => { setEditOpensAt(''); setEditClosesAt(''); }}
+                    className="text-xs text-gray-400 hover:text-red-500 mt-2 transition-colors"
+                  >
+                    Clear dates
+                  </button>
+                )}
+                {editOpensAt && editClosesAt && new Date(editClosesAt) <= new Date(editOpensAt) && (
+                  <p className="text-xs text-amber-600 mt-2 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" /> Close date must be after open date.
+                  </p>
+                )}
+              </div>
+
               <CoverImagePicker
                 selectedUrl={editThumbnail}
                 onSelect={setEditThumbnail}
                 suggestedCategory={editCategory}
+                courseId={courseId}
+                enableUpload={true}
               />
 
               {isDirty && (
@@ -501,6 +559,9 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({
                       <span className="font-medium text-gray-900 truncate">{mod.title}</span>
                       {mod.isCritical && (
                         <Shield className="h-3.5 w-3.5 text-red-500 shrink-0" title="Critical module" />
+                      )}
+                      {mod.availability && (mod.availability.opensAt || mod.availability.closesAt) && (
+                        <Calendar className="h-3.5 w-3.5 text-blue-500 shrink-0" title="Has availability window" />
                       )}
                     </div>
                     <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">

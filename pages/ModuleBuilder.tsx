@@ -242,6 +242,59 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
                 </div>
               </div>
             </div>
+
+            {/* Availability Window */}
+            <div className="border-t border-gray-100 pt-4 mt-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Availability Window
+                <span className="text-xs text-gray-400 font-normal ml-1">(optional)</span>
+              </label>
+              <p className="text-xs text-gray-400 mb-3">
+                Control when students can access this module. Leave blank for always available.
+              </p>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="block text-xs text-gray-500 mb-1">Opens</label>
+                  <input
+                    type="datetime-local"
+                    value={module.availability?.opensAt ? module.availability.opensAt.slice(0, 16) : ''}
+                    onChange={(e) => {
+                      const opensAt = e.target.value ? new Date(e.target.value).toISOString() : undefined;
+                      updateModuleMetadata({
+                        availability: { ...module.availability, opensAt },
+                      });
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-xs text-gray-500 mb-1">Closes</label>
+                  <input
+                    type="datetime-local"
+                    value={module.availability?.closesAt ? module.availability.closesAt.slice(0, 16) : ''}
+                    onChange={(e) => {
+                      const closesAt = e.target.value ? new Date(e.target.value).toISOString() : undefined;
+                      updateModuleMetadata({
+                        availability: { ...module.availability, closesAt },
+                      });
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+              </div>
+              {(module.availability?.opensAt || module.availability?.closesAt) && (
+                <button
+                  onClick={() => updateModuleMetadata({ availability: undefined })}
+                  className="text-xs text-gray-400 hover:text-red-500 mt-2 transition-colors"
+                >
+                  Clear dates
+                </button>
+              )}
+              {module.availability?.opensAt && module.availability?.closesAt &&
+                new Date(module.availability.closesAt) <= new Date(module.availability.opensAt) && (
+                <p className="text-xs text-amber-600 mt-2">Close date must be after open date.</p>
+              )}
+            </div>
           </div>
         </div>
 

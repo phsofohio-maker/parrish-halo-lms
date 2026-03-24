@@ -31,6 +31,7 @@ import { useAuth } from '../contexts/AuthContext';
 // Services
 import { getCourse, getModules } from '../services/courseService';
 import { LicenseGate } from '../components/clinical/LicenseGate';
+import { checkAvailability } from '../utils/availabilityUtils';
 
 interface CourseDetailProps {
   courseId: string;
@@ -352,34 +353,54 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                   )}
                 </>
               ) : (
-                <>
-                  <p className="text-gray-600 mb-4">
-                    Enroll in this course to track your progress and earn CE credits.
-                  </p>
-                  {enrollmentError && (
-                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-                      <AlertCircle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
-                      <p className="text-sm text-red-700">{enrollmentError}</p>
-                    </div>
-                  )}
-                  <Button
-                    className="w-full"
-                    onClick={handleEnroll}
-                    disabled={enrollmentLoading}
-                  >
-                    {enrollmentLoading ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Enrolling...
-                      </>
-                    ) : (
-                      <>
-                        <BookOpen className="h-4 w-4 mr-2" />
-                        Enroll Now
-                      </>
-                    )}
-                  </Button>
-                </>
+                (() => {
+                  const avail = checkAvailability(course?.availability);
+                  if (avail.status !== 'available') return (
+                    <>
+                      <div className="flex items-center gap-2 text-gray-500 mb-4">
+                        <Lock className="h-5 w-5" />
+                        <span className="font-medium">
+                          {avail.status === 'not_yet_open' ? avail.message : 'Enrollment Closed'}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-400">
+                        {avail.status === 'not_yet_open'
+                          ? 'This course is not yet available for enrollment.'
+                          : 'This course is no longer accepting enrollments.'}
+                      </p>
+                    </>
+                  );
+                  return (
+                    <>
+                      <p className="text-gray-600 mb-4">
+                        Enroll in this course to track your progress and earn CE credits.
+                      </p>
+                      {enrollmentError && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+                          <AlertCircle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                          <p className="text-sm text-red-700">{enrollmentError}</p>
+                        </div>
+                      )}
+                      <Button
+                        className="w-full"
+                        onClick={handleEnroll}
+                        disabled={enrollmentLoading}
+                      >
+                        {enrollmentLoading ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Enrolling...
+                          </>
+                        ) : (
+                          <>
+                            <BookOpen className="h-4 w-4 mr-2" />
+                            Enroll Now
+                          </>
+                        )}
+                      </Button>
+                    </>
+                  );
+                })()
               )}
             </div>
             

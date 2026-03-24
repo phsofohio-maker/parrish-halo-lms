@@ -505,6 +505,46 @@ export const GradeManagement: React.FC = () => {
         );
       }
 
+      case 'multiple-answer': {
+        const correctSet = new Set(
+          Array.isArray(q.correctAnswer) ? (q.correctAnswer as number[]) : []
+        );
+        const selected: number[] = Array.isArray(answer) ? answer : [];
+        return (
+          <div className="space-y-1.5">
+            {(q.options || []).map((opt, oIdx) => {
+              const wasSelected = selected.includes(oIdx);
+              const isCorrectOption = correctSet.has(oIdx);
+              const isRight = wasSelected === isCorrectOption;
+              return (
+                <div key={oIdx} className="flex items-center gap-2 text-xs">
+                  <span className={cn(
+                    'inline-block h-4 w-4 rounded border-2 flex-shrink-0 flex items-center justify-center',
+                    wasSelected
+                      ? (isRight ? 'border-green-500 bg-green-50' : 'border-red-400 bg-red-50')
+                      : (isCorrectOption ? 'border-amber-400 bg-amber-50' : 'border-gray-200 bg-gray-50')
+                  )}>
+                    {wasSelected && (isRight
+                      ? <Check className="h-2.5 w-2.5 text-green-600" />
+                      : <X className="h-2.5 w-2.5 text-red-500" />)}
+                    {!wasSelected && isCorrectOption && <span className="text-amber-500 text-[8px] font-bold">!</span>}
+                  </span>
+                  <span className={cn(
+                    'font-medium',
+                    wasSelected && isRight && 'text-green-700',
+                    wasSelected && !isRight && 'text-red-600',
+                    !wasSelected && isCorrectOption && 'text-amber-600',
+                    !wasSelected && !isCorrectOption && 'text-gray-400'
+                  )}>
+                    {opt}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+
       case 'short-answer': {
         return (
           <div className="bg-white p-3 rounded border border-gray-200 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">

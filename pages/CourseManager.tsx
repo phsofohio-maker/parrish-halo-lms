@@ -7,14 +7,13 @@
  * @module pages/CourseManager
  */
 import React, { useState } from 'react';
-import { Course, CourseCategory } from '../functions/src/types';
-import { Settings, FileEdit, Trash2, Plus, Search, Layers, AlertCircle, Globe, Lock, Loader2, RefreshCw, X } from 'lucide-react';
+import { Course, CourseCategory, Module } from '../functions/src/types';
+import { Settings, FileEdit, Trash2, Plus, Search, Layers, AlertCircle, Globe, Lock, Loader2, RefreshCw, X, Scale, AlertTriangle, Save } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { cn, generateId } from '../utils';
 import { useAuth } from '../contexts/AuthContext';
 import { useCourses } from '../hooks/useCourses';
-import { createCourse, updateCourse, getModules } from '../services/courseService';
-import { createModule } from '../services/courseService';
+import { createCourse, updateCourse, getModules, createModule, updateModule } from '../services/courseService';
 import { collection, doc, deleteDoc, getDocs, writeBatch } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { auditService } from '../services/auditService';
@@ -39,6 +38,57 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Weights modal state
+  const [weightsCourseId, setWeightsCourseId] = useState<string | null>(null);
+  const [weightsModules, setWeightsModules] = useState<Module[]>([]);
+  const [weightEdits, setWeightEdits] = useState<Record<string, number>>({});
+  const [isLoadingWeights, setIsLoadingWeights] = useState(false);
+  const [isSavingWeights, setIsSavingWeights] = useState(false);
+
+  const openWeightsModal = async (courseId: string) => {
+    setWeightsCourseId(courseId);
+    setIsLoadingWeights(true);
+    try {
+      const mods = await getModules(courseId);
+      setWeightsModules(mods);
+      setWeightEdits(Object.fromEntries(mods.map((m) => [m.id, m.weight])));
+    } catch (err) {
+      console.error('Failed to load modules:', err);
+    } finally {
+      setIsLoadingWeights(false);
+    }
+  };
+
+  const closeWeightsModal = () => {
+    setWeightsCourseId(null);
+    setWeightsModules([]);
+    setWeightEdits({});
+  };
+
+  const weightsTotal = Object.values(weightEdits).reduce((sum: number, w: number) => sum + w, 0);
+  const weightsDirty = weightsModules.some((m) => weightEdits[m.id] !== m.weight);
+
+  const handleSaveWeights = async () => {
+    if (!user || !weightsCourseId || isSavingWeights) return;
+    setIsSavingWeights(true);
+    try {
+      const changed = weightsModules.filter((m) => weightEdits[m.id] !== m.weight);
+      await Promise.all(
+        changed.map((m) =>
+          updateModule(weightsCourseId, m.id, { weight: weightEdits[m.id] }, user.uid, user.displayName)
+        )
+      );
+      // Update local state so dirty tracking resets
+      setWeightsModules((prev) =>
+        prev.map((m) => ({ ...m, weight: weightEdits[m.id] ?? m.weight }))
+      );
+    } catch (err) {
+      console.error('Failed to save weights:', err);
+    } finally {
+      setIsSavingWeights(false);
+    }
+  };
 
   // Course creation modal state
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -238,6 +288,7 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
                 selectedUrl={newCourse.thumbnailUrl}
                 onSelect={(url) => setNewCourse({ ...newCourse, thumbnailUrl: url })}
                 suggestedCategory={newCourse.category}
+                enableUpload={false}
               />
             </div>
 
@@ -255,6 +306,95 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
                 Create Course
               </Button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Module Weights Modal */}
+      {weightsCourseId && (
+        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 animate-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <Scale className="h-5 w-5 text-primary-600" />
+                Module Weights
+              </h3>
+              <button onClick={closeWeightsModal} className="p-1 text-gray-400 hover:text-gray-600">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {isLoadingWeights ? (
+              <div className="py-12 text-center text-gray-400">
+                <Loader2 className="h-5 w-5 animate-spin inline mr-2" />
+                Loading modules...
+              </div>
+            ) : weightsModules.length === 0 ? (
+              <p className="py-8 text-center text-gray-400 text-sm">This course has no modules yet.</p>
+            ) : (
+              <>
+                <div className="space-y-3">
+                  {weightsModules.map((mod) => (
+                    <div key={mod.id} className="flex items-center gap-3">
+                      <span className="flex-1 text-sm text-gray-700 truncate">{mod.title}</span>
+                      <div className="relative w-20 shrink-0">
+                        <input
+                          type="number"
+                          value={weightEdits[mod.id] ?? mod.weight}
+                          onChange={(e) =>
+                            setWeightEdits((prev) => ({
+                              ...prev,
+                              [mod.id]: Math.max(0, Math.min(100, parseInt(e.target.value) || 0)),
+                            }))
+                          }
+                          min={0}
+                          max={100}
+                          className="w-full px-3 py-1.5 pr-7 border border-gray-300 rounded-lg text-sm font-mono text-right focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                        <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Total */}
+                <div className="mt-4 pt-3 border-t border-gray-200 flex items-center justify-between">
+                  <span className="text-sm text-gray-500">Total</span>
+                  <span
+                    className={cn(
+                      'text-sm font-mono font-bold',
+                      weightsTotal === 100 ? 'text-green-600' : 'text-amber-600'
+                    )}
+                  >
+                    {weightsTotal}%
+                  </span>
+                </div>
+
+                {weightsTotal !== 100 && (
+                  <div className="mt-3 flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
+                    <p className="text-xs text-amber-800">
+                      Weights should add up to 100% for accurate grading.
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex gap-3 mt-5">
+                  <Button variant="outline" className="flex-1" onClick={closeWeightsModal}>
+                    Cancel
+                  </Button>
+                  <Button
+                    className="flex-1 gap-1.5"
+                    onClick={handleSaveWeights}
+                    isLoading={isSavingWeights}
+                    disabled={!weightsDirty}
+                  >
+                    <Save className="h-4 w-4" />
+                    Save Weights
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -382,6 +522,15 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
                       >
                         <FileEdit className="h-3.5 w-3.5" />
                         Curriculum
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openWeightsModal(course.id)}
+                        className="gap-1.5"
+                      >
+                        <Scale className="h-3.5 w-3.5" />
+                        Weights
                       </Button>
                       <button
                         onClick={() => setConfirmDeleteId(course.id)}

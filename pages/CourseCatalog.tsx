@@ -8,9 +8,10 @@
 
 import React from 'react';
 import { useCourses } from '../hooks/useCourses';
-import { Clock, BookOpen, Award, ArrowRight, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Clock, BookOpen, Award, ArrowRight, Loader2, AlertCircle, RefreshCw, Lock } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { cn } from '../utils';
+import { checkAvailability } from '../utils/availabilityUtils';
 
 interface CourseCatalogProps {
   onNavigate: (path: string, context?: Record<string, any>) => void;
@@ -96,6 +97,20 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({ onNavigate }) => {
                       Draft
                     </span>
                   )}
+                  {(() => {
+                    const avail = checkAvailability(course.availability);
+                    if (avail.status === 'not_yet_open') return (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-500/80 text-white">
+                        {avail.message}
+                      </span>
+                    );
+                    if (avail.status === 'closed') return (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-gray-500/80 text-white">
+                        Closed
+                      </span>
+                    );
+                    return null;
+                  })()}
                 </div>
               </div>
               
@@ -120,16 +135,30 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({ onNavigate }) => {
                     </div>
                   </div>
                   
-                  <Button 
-                    className="w-full justify-between"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleViewCourse(course.id);
-                    }}
-                  >
-                    View Course
-                    <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity -ml-4 group-hover:ml-0" />
-                  </Button>
+                  {(() => {
+                    const avail = checkAvailability(course.availability);
+                    if (avail.status !== 'available') return (
+                      <Button
+                        className="w-full justify-center opacity-60"
+                        disabled
+                      >
+                        <Lock className="h-3.5 w-3.5 mr-1.5" />
+                        {avail.status === 'not_yet_open' ? avail.message : 'Enrollment Closed'}
+                      </Button>
+                    );
+                    return (
+                      <Button
+                        className="w-full justify-between"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewCourse(course.id);
+                        }}
+                      >
+                        View Course
+                        <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity -ml-4 group-hover:ml-0" />
+                      </Button>
+                    );
+                  })()}
                 </div>
               </div>
             </div>

@@ -41,6 +41,7 @@ import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { auditService } from '../services/auditService';
 import { LicenseGate } from '../components/clinical/LicenseGate';
+import { checkAvailability } from '../utils/availabilityUtils';
 
 interface CoursePlayerProps {
   courseId: string;
@@ -104,6 +105,16 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
           setModuleError('Module not found');
           return;
         }
+        // Check module-level availability
+        const avail = checkAvailability(data.availability);
+        if (avail.status !== 'available') {
+          setModuleError(
+            avail.status === 'not_yet_open'
+              ? `This module is not yet available. ${avail.message || ''}`
+              : 'This module is no longer available.'
+          );
+          return;
+        }
         setModuleData(data);
       } catch (err) {
         setModuleError(err instanceof Error ? err.message : 'Failed to load module');
@@ -143,6 +154,9 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
       case 'fill-blank':
         return typeof answer === 'string' && answer.trim().length > 0;
       
+      case 'multiple-answer':
+        return Array.isArray(answer) && answer.length > 0;
+
       case 'multiple-choice':
       case 'true-false':
       default:
