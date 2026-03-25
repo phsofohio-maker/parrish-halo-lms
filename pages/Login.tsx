@@ -14,12 +14,35 @@ import { Lock, Mail, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { cn } from '../utils';
 
 export const Login: React.FC = () => {
-  const { login, error, clearError, isLoading } = useAuth();
+  const { login, resetPassword, error, clearError, isLoading } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetSent, setResetSent] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail.trim()) {
+      setLocalError('Email is required');
+      return;
+    }
+    setResetLoading(true);
+    setLocalError(null);
+    try {
+      await resetPassword(resetEmail.trim());
+      setResetSent(true);
+    } catch {
+      // Always show success message to avoid leaking whether email exists
+      setResetSent(true);
+    } finally {
+      setResetLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,6 +151,73 @@ export const Login: React.FC = () => {
               </button>
             </div>
           </div>
+
+          {/* Forgot Password Link */}
+          {!showForgotPassword && (
+            <div className="text-right -mt-2">
+              <button
+                type="button"
+                onClick={() => { setShowForgotPassword(true); setResetEmail(email); setResetSent(false); setLocalError(null); clearError(); }}
+                className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+              >
+                Forgot Password?
+              </button>
+            </div>
+          )}
+
+          {/* Forgot Password Inline Form */}
+          {showForgotPassword && (
+            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg space-y-3">
+              {resetSent ? (
+                <div>
+                  <p className="text-sm text-gray-700 font-medium">Check your email</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    If an account exists with that email, a password reset link has been sent.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => { setShowForgotPassword(false); setResetSent(false); }}
+                    className="text-sm text-primary-600 hover:text-primary-700 font-medium mt-2"
+                  >
+                    Back to Sign In
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-gray-700">Reset your password</p>
+                  <div className="relative">
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-gray-500" strokeWidth={1.75} />
+                    <input
+                      type="email"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-600 focus:shadow-[0_0_0_3px_rgba(15,123,79,0.12)]"
+                      placeholder="Enter your email"
+                      disabled={resetLoading}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      onClick={handleResetPassword}
+                      className="text-sm"
+                      isLoading={resetLoading}
+                      disabled={resetLoading}
+                    >
+                      Send Reset Link
+                    </Button>
+                    <button
+                      type="button"
+                      onClick={() => { setShowForgotPassword(false); setLocalError(null); }}
+                      className="text-sm text-gray-500 hover:text-gray-700"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
 
           {/* Submit Button */}
           <Button

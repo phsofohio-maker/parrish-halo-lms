@@ -18,6 +18,7 @@ import { User, UserRoleType } from '../functions/src/types';
 import {
   loginWithEmail,
   logout as authLogout,
+  resetPassword as authResetPassword,
   subscribeToAuthState,
   getUserProfile,
   AuthServiceError,
@@ -37,6 +38,7 @@ interface AuthState {
 interface AuthContextValue extends AuthState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   clearError: () => void;
   hasRole: (roles: UserRoleType | UserRoleType[]) => boolean;
 }
@@ -173,6 +175,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
+  // Reset password handler
+  const resetPassword = useCallback(async (email: string) => {
+    await authResetPassword(email);
+  }, []);
+
   // Clear error
   const clearError = useCallback(() => {
     setState(prev => ({ ...prev, error: null }));
@@ -190,9 +197,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     ...state,
     login,
     logout,
+    resetPassword,
     clearError,
     hasRole,
-  }), [state, login, logout, clearError, hasRole]);
+  }), [state, login, logout, resetPassword, clearError, hasRole]);
 
   return (
     <AuthContext.Provider value={value}>

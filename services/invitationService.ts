@@ -26,6 +26,7 @@ import { auditService } from './auditService';
 
 const INVITATIONS_COLLECTION = 'invitations';
 const MAIL_COLLECTION = 'mail';
+const PRODUCTION_URL = import.meta.env.VITE_APP_URL || 'https://harmony-lms.web.app';
 
 // ============================================
 // HELPERS
@@ -137,7 +138,7 @@ export const createInvitation = async (
   await setDoc(docRef, invitationData);
 
   // Dispatch email via the mail collection (Firebase Extension)
-  const acceptUrl = `${window.location.origin}/accept-invite?token=${token}`;
+  const acceptUrl = `${PRODUCTION_URL}/accept-invite?token=${token}`;
   const mailDocRef = doc(db, MAIL_COLLECTION, `mail_${invitationId}`);
   await setDoc(mailDocRef, {
     to: email,
@@ -224,7 +225,7 @@ export const resendInvitation = async (
   });
 
   // Dispatch new email
-  const acceptUrl = `${window.location.origin}/accept-invite?token=${token}`;
+  const acceptUrl = `${PRODUCTION_URL}/accept-invite?token=${token}`;
   const mailDocRef = doc(db, MAIL_COLLECTION, `mail_resend_${invitationId}_${Date.now()}`);
   await setDoc(mailDocRef, {
     to: data.email,

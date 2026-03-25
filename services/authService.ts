@@ -10,6 +10,7 @@
 import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
+    sendPasswordResetEmail,
     signOut,
     onAuthStateChanged,
     User as FirebaseUser,
@@ -178,6 +179,20 @@ import {
     }
   };
   
+  /**
+   * Sends a password reset email via Firebase Auth
+   */
+  export const resetPassword = async (email: string): Promise<void> => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      if ((error as AuthError).code) {
+        throw mapAuthError(error as AuthError);
+      }
+      throw error;
+    }
+  };
+
   /**
    * Signs out the current user
    */

@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 
-const functions = getFunctions(app, 'us-east1');
+const functions = getFunctions(app);
 
 interface AcceptInviteProps {
   token: string;

@@ -153,8 +153,8 @@ export type CourseCategory = "hospice"
 | "Testing";
 
 export interface AvailabilityWindow {
-  opensAt?: string;   // ISO 8601 datetime
-  closesAt?: string;  // ISO 8601 datetime
+  opensAt?: string; // ISO 8601 datetime
+  closesAt?: string; // ISO 8601 datetime
 }
 
 export interface Module {

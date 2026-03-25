@@ -710,12 +710,9 @@ export const setUserRole = onCall(async (request) => {
     );
   }
 
-  // BOOTSTRAP MODE: For the very first admin setup, comment out
-  // the admin check below. After your first admin is set, uncomment it.
-  //
-  // if (request.auth.token.role !== "admin") {
-  //   throw new HttpsError("permission-denied", "Only admins can set roles.");
-  // }
+  if (request.auth.token.role !== "admin") {
+    throw new HttpsError("permission-denied", "Only admins can set roles.");
+  }
 
   try {
     // Set the custom claim
