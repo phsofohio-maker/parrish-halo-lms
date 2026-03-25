@@ -579,10 +579,10 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-gray-900 truncate">{mod.title}</span>
                       {mod.isCritical && (
-                        <Shield className="h-3.5 w-3.5 text-red-500 shrink-0" title="Critical module" />
+                        <span title="Critical module"><Shield className="h-3.5 w-3.5 text-red-500 shrink-0" /></span>
                       )}
                       {mod.availability && (mod.availability.opensAt || mod.availability.closesAt) && (
-                        <Calendar className="h-3.5 w-3.5 text-blue-500 shrink-0" title="Has availability window" />
+                        <span title="Has availability window"><Calendar className="h-3.5 w-3.5 text-blue-500 shrink-0" /></span>
                       )}
                     </div>
                     <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">

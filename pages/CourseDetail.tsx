@@ -288,7 +288,7 @@ export const CourseDetail: React.FC<CourseDetailProps> = ({
                       {status !== 'locked' && (
                         <Button
                           size="sm"
-                          variant={status === 'completed' ? 'outline' : 'default'}
+                          variant={status === 'completed' ? 'outline' : 'primary'}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleStartModule(module.id);

@@ -38,11 +38,6 @@ export const GradeTestPanel: React.FC = () => {
       return;
     }
 
-  const testUserId = `student-${Date.now()}`;
-  const runTests = async () => {
-    setRunning(true);
-    setResults(['Running grade service tests...', '']);
-    
     const testUserId = user.uid;
     const testCourseId = 'test-course-001';
     const testModuleId = `module-${Date.now()}`;
@@ -195,4 +190,3 @@ export const GradeTestPanel: React.FC = () => {
     </div>
   );
 };
-}
