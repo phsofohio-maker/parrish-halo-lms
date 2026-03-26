@@ -146,6 +146,7 @@ const AppContent: React.FC = () => {
         moduleId={routeContext.moduleId}
         courseCategory={routeContext.courseCategory}
         onBack={() => setCurrentPath('/course')}
+        onNavigate={handleNavigate}
       />
     );
   }

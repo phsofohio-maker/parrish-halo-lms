@@ -7,10 +7,11 @@
  * @module pages/Dashboard
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { User } from '../functions/src/types';
 import { useCourses } from '../hooks/useCourses';
 import { useUserTranscript } from '../hooks/useCourseGrades';
+import { useUserEnrollments } from '../hooks/useUserEnrollments';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/Button';
 import { GradeSummaryCard } from '../components/grades/GradeSummaryCard';
@@ -25,20 +26,83 @@ import {
   Plus,
   RefreshCw,
   GraduationCap,
+  ChevronRight,
 } from 'lucide-react';
 import { cn } from '../utils';
+import { getLastActiveModuleProgress, ModuleProgressRecord } from '../services/progressService';
+import { getModules } from '../services/courseService';
 
 interface DashboardProps {
   user: User;
   onNavigate: (path: string, context?: Record<string, any>) => void;
 }
 
+// Relative time formatting
+const formatRelativeTime = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return 'Just now';
+  if (diffMin < 60) return `${diffMin} min ago`;
+  const diffHrs = Math.floor(diffMin / 60);
+  if (diffHrs < 24) return `${diffHrs} hour${diffHrs > 1 ? 's' : ''} ago`;
+  const diffDays = Math.floor(diffHrs / 24);
+  if (diffDays === 1) return `Yesterday at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  return date.toLocaleDateString();
+};
+
+interface ActiveEnrollmentInfo {
+  courseId: string;
+  lastProgress: ModuleProgressRecord | null;
+  lastModuleTitle: string | null;
+}
+
 export const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate }) => {
   const { hasRole } = useAuth();
   const { courses, isLoading, error, refetch } = useCourses();
   const { courseGrades, isLoading: gradesLoading } = useUserTranscript();
+  const { enrollments, isLoading: enrollmentsLoading } = useUserEnrollments();
+
+  // Fix 2.2: Last active module per enrollment
+  const [activeInfo, setActiveInfo] = useState<Record<string, ActiveEnrollmentInfo>>({});
 
   const canAuthor = hasRole(['admin', 'content_author']);
+
+  // Active (in-progress) enrollments
+  const activeEnrollments = enrollments.filter(e =>
+    e.status === 'in_progress' || e.status === 'not_started' || e.status === 'needs_review'
+  );
+
+  // Fetch last active module for each active enrollment
+  useEffect(() => {
+    if (!user?.uid || activeEnrollments.length === 0) return;
+
+    const fetchActiveInfo = async () => {
+      const info: Record<string, ActiveEnrollmentInfo> = {};
+
+      await Promise.all(activeEnrollments.map(async (enrollment) => {
+        try {
+          const [lastProgress, modules] = await Promise.all([
+            getLastActiveModuleProgress(user.uid, enrollment.courseId),
+            getModules(enrollment.courseId),
+          ]);
+
+          const lastModuleTitle = lastProgress
+            ? modules.find(m => m.id === lastProgress.moduleId)?.title || null
+            : null;
+
+          info[enrollment.courseId] = { courseId: enrollment.courseId, lastProgress, lastModuleTitle };
+        } catch {
+          info[enrollment.courseId] = { courseId: enrollment.courseId, lastProgress: null, lastModuleTitle: null };
+        }
+      }));
+
+      setActiveInfo(info);
+    };
+
+    fetchActiveInfo();
+  }, [user?.uid, activeEnrollments.length]);
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -92,6 +156,94 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate }) => {
           </div>
         </div>
       </div>
+
+      {/* Fix 2.2: Active Enrollments with Resume Context */}
+      {activeEnrollments.length > 0 && (
+        <div className="mb-10">
+          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <PlayCircle className="h-4 w-4 text-primary-500" />
+            Continue Learning
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {activeEnrollments.map(enrollment => {
+              const course = courses.find(c => c.id === enrollment.courseId);
+              if (!course) return null;
+              const info = activeInfo[enrollment.courseId];
+              const lastModuleTitle = info?.lastModuleTitle;
+              const lastUpdated = info?.lastProgress?.updatedAt;
+
+              return (
+                <div
+                  key={enrollment.id}
+                  className="bg-white rounded-lg border border-gray-200 p-5 hover:border-primary-300 hover:shadow-sm transition-all"
+                >
+                  <h3 className="font-bold text-gray-900 mb-2 line-clamp-1">{course.title}</h3>
+
+                  {/* Progress bar */}
+                  <div className="mb-3">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-gray-500">Progress</span>
+                      <span className="font-medium text-gray-700">{enrollment.progress}%</span>
+                    </div>
+                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary-500 transition-all"
+                        style={{ width: `${enrollment.progress}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Last active info */}
+                  {lastModuleTitle && (
+                    <p className="text-xs text-gray-500 mb-1 line-clamp-1">
+                      Last active: {lastModuleTitle}
+                    </p>
+                  )}
+                  {lastUpdated && (
+                    <p className="text-xs text-gray-400 mb-3">
+                      {formatRelativeTime(lastUpdated)}
+                    </p>
+                  )}
+
+                  {/* Actions */}
+                  <div className="flex gap-2">
+                    {info?.lastProgress ? (
+                      <Button
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => onNavigate('/player', {
+                          courseId: enrollment.courseId,
+                          moduleId: info.lastProgress!.moduleId,
+                          courseCategory: course.category,
+                        })}
+                      >
+                        Continue{lastModuleTitle ? ` ${lastModuleTitle}` : ''}
+                        <ChevronRight className="h-3 w-3 ml-1" />
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => onNavigate('/course', { courseId: enrollment.courseId })}
+                      >
+                        <PlayCircle className="h-3 w-3 mr-1" />
+                        Start Course
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onNavigate('/course', { courseId: enrollment.courseId })}
+                    >
+                      View
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Grade Summary Cards */}
       {courseGrades.length > 0 && (

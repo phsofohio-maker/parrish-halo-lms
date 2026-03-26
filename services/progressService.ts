@@ -15,8 +15,11 @@ import {
     getDocs,
     setDoc,
     updateDoc,
+    deleteField,
     query,
     where,
+    orderBy,
+    limit as firestoreLimit,
     serverTimestamp,
     Timestamp,
   } from 'firebase/firestore';
@@ -49,10 +52,14 @@ import {
     isComplete: boolean;
     startedAt?: string;
     completedAt?: string;
+    updatedAt?: string;
     // Quiz tracking
     totalAttempts: number;
     bestScore?: number;
     lastScore?: number;
+    // Draft persistence
+    draftAnswers?: string;
+    draftSavedAt?: string;
   }
   
   interface ProgressDoc {
@@ -91,9 +98,12 @@ import {
     isComplete: doc.data().isComplete ?? false,
     startedAt: doc.data().startedAt?.toDate?.()?.toISOString(),
     completedAt: doc.data().completedAt?.toDate?.()?.toISOString(),
+    updatedAt: doc.data().updatedAt?.toDate?.()?.toISOString(),
     totalAttempts: doc.data().totalAttempts ?? 0,
     bestScore: doc.data().bestScore,
     lastScore: doc.data().lastScore,
+    draftAnswers: doc.data().draftAnswers,
+    draftSavedAt: doc.data().draftSavedAt?.toDate?.()?.toISOString(),
   });
   
   // ============================================
@@ -377,4 +387,97 @@ import {
       moduleId,
       `Reset module progress for user ${userId} (remediation)`
     );
+  };
+
+  // ============================================
+  // DRAFT ANSWER PERSISTENCE (Fix 1.1)
+  // ============================================
+
+  /**
+   * Save draft answers to the progress document (merge-write).
+   * Does not touch completedBlocks, overallProgress, or graded data.
+   */
+  export const saveDraftAnswers = async (
+    userId: string,
+    moduleId: string,
+    answers: Record<string, any[]>,
+  ): Promise<void> => {
+    const progressId = getProgressId(userId, moduleId);
+    const docRef = doc(db, PROGRESS_COLLECTION, progressId);
+    // Strip undefined values to prevent Firestore errors
+    const cleaned = JSON.parse(JSON.stringify(answers));
+    await setDoc(docRef, {
+      draftAnswers: JSON.stringify(cleaned),
+      draftSavedAt: serverTimestamp(),
+    }, { merge: true });
+  };
+
+  /**
+   * Load draft answers from the progress document.
+   * Returns null if no draft exists.
+   */
+  export const loadDraftAnswers = async (
+    userId: string,
+    moduleId: string,
+  ): Promise<{ answers: Record<string, any[]>; savedAt: string | null } | null> => {
+    const progressId = getProgressId(userId, moduleId);
+    const docRef = doc(db, PROGRESS_COLLECTION, progressId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) return null;
+
+    const data = docSnap.data();
+    if (!data.draftAnswers) return null;
+
+    try {
+      const answers = JSON.parse(data.draftAnswers);
+      const savedAt = data.draftSavedAt?.toDate?.()?.toISOString() || null;
+      return { answers, savedAt };
+    } catch {
+      return null;
+    }
+  };
+
+  /**
+   * Clear draft answers after successful submission.
+   */
+  export const clearDraftAnswers = async (
+    userId: string,
+    moduleId: string,
+  ): Promise<void> => {
+    const progressId = getProgressId(userId, moduleId);
+    const docRef = doc(db, PROGRESS_COLLECTION, progressId);
+
+    const existing = await getDoc(docRef);
+    if (!existing.exists()) return;
+
+    await updateDoc(docRef, {
+      draftAnswers: deleteField(),
+      draftSavedAt: deleteField(),
+    });
+  };
+
+  // ============================================
+  // LAST ACTIVE MODULE QUERY (Fix 2.2)
+  // ============================================
+
+  /**
+   * Get the most recently updated progress record for a user in a course.
+   * Used by Dashboard to show "Last active: Module X" on enrollment cards.
+   */
+  export const getLastActiveModuleProgress = async (
+    userId: string,
+    courseId: string,
+  ): Promise<ModuleProgressRecord | null> => {
+    const q = query(
+      collection(db, PROGRESS_COLLECTION),
+      where('userId', '==', userId),
+      where('courseId', '==', courseId),
+      orderBy('updatedAt', 'desc'),
+      firestoreLimit(1)
+    );
+
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) return null;
+    return docToProgress(snapshot.docs[0]);
   };
