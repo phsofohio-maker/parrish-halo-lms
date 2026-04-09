@@ -59,7 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, currentPath, onNavigate,
         <img
           src="/images/HHCA_LMS_Logo_WhiteEPS_.svg"
           alt="Harmony Health Care Assistant"
-          className="h-[250px] w-auto object-contain"
+          className="h-[150px] w-auto object-contain"
         />
       </div>
 
