@@ -36,7 +36,7 @@ interface CourseManagerProps {
 export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
   const { user } = useAuth();
   const { addToast } = useToast();
-  const { courses, isLoading, error, refetch } = useCourses();
+  const { courses, moduleCounts, isLoading, error, refetch } = useCourses();
   const [filter, setFilter] = useState('');
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -491,7 +491,7 @@ export const CourseManager: React.FC<CourseManagerProps> = ({ onNavigate }) => {
                       )}
                       <div>
                         <div className="font-bold text-gray-900">{course.title}</div>
-                        <div className="text-xs text-gray-500">{course.modules?.length || 0} Modules</div>
+                        <div className="text-xs text-gray-500">{moduleCounts[course.id] ?? 0} Modules</div>
                       </div>
                     </div>
                   </td>

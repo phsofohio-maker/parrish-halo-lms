@@ -14,7 +14,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { collection, query, where, orderBy, getDocs, getCountFromServer } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { Course } from '../functions/src/types';
 import { createCourse } from '../services/courseService';
@@ -22,6 +22,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 interface UseCoursesReturn {
   courses: Course[];
+  moduleCounts: Record<string, number>;
   isLoading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
@@ -34,6 +35,7 @@ const AUTHOR_ROLES = ['admin', 'instructor'];
 export const useCourses = (): UseCoursesReturn => {
   const { user, role } = useAuth();
   const [courses, setCourses] = useState<Course[]>([]);
+  const [moduleCounts, setModuleCounts] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,6 +79,16 @@ export const useCourses = (): UseCoursesReturn => {
         availability: doc.data().availability || undefined,
       }));
 
+      // Fetch module counts for each course in parallel
+      const counts = await Promise.all(
+        data.map(async (course) => {
+          const modulesRef = collection(db, 'courses', course.id, 'modules');
+          const countSnap = await getCountFromServer(modulesRef);
+          return [course.id, countSnap.data().count] as [string, number];
+        })
+      );
+      setModuleCounts(Object.fromEntries(counts));
+
       setCourses(data);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load courses';
@@ -116,6 +128,7 @@ export const useCourses = (): UseCoursesReturn => {
 
   return {
     courses,
+    moduleCounts,
     isLoading,
     error,
     refetch: fetchCourses,
