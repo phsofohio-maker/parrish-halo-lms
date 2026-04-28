@@ -37,6 +37,10 @@ import { Invitations } from './pages/Invitations';
 import { AcceptInvite } from './pages/AcceptInvite';
 import { RemediationQueue } from './pages/RemediationQueue';
 import { CohortManagement } from './pages/CohortManagement';
+import { SkillGapDashboard } from './pages/SkillGapDashboard';
+import { Reports } from './pages/Reports';
+import { PolicyManagement } from './pages/PolicyManagement';
+import { PolicyCenter } from './pages/PolicyCenter';
 import { Button } from './components/ui/Button';
 import { Loader2, AlertCircle } from 'lucide-react';
 
@@ -245,6 +249,18 @@ const AppContent: React.FC = () => {
       case '/audit':
         return <AuditLogs />;
 
+      case '/skill-gap':
+        return <SkillGapDashboard />;
+
+      case '/reports':
+        return <Reports />;
+
+      case '/policies':
+        return <PolicyManagement />;
+
+      case '/policy-center':
+        return <PolicyCenter />;
+
       default:
         return <Dashboard user={user} onNavigate={handleNavigate} />;
     }
@@ -258,7 +274,7 @@ const AppContent: React.FC = () => {
         onNavigate={handleNavigate}
         onLogout={handleLogout}
       />
-      <main className="flex-1 ml-[260px]">
+      <main className="flex-1 ml-0 lg:ml-[260px] pt-14 lg:pt-0">
         {renderPage()}
       </main>
     </div>

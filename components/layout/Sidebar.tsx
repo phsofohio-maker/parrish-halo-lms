@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, UserRoleType } from '../../functions/src/types';
 import {
   BookOpen,
@@ -12,8 +12,14 @@ import {
   UserPlus,
   AlertTriangle,
   UsersRound,
+  BarChart3,
+  FileText,
+  ScrollText,
+  FileSignature,
   Volume2,
   VolumeX,
+  Menu,
+  X,
 } from 'lucide-react';
 import { cn } from '../../utils';
 import { useAppSound } from '../../hooks/useAppSound';
@@ -28,6 +34,22 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ user, currentPath, onNavigate, onLogout }) => {
   const { isSoundEnabled, toggleSound } = useAppSound();
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Auto-close drawer when route changes (mobile/tablet)
+  useEffect(() => {
+    setIsOpen(false);
+  }, [currentPath]);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen]);
 
   if (!user) return null;
 
@@ -53,9 +75,35 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, currentPath, onNavigate,
   };
 
   return (
-    <div className="w-[260px] flex flex-col bg-white border-r border-gray-200 h-screen fixed left-0 top-0 z-50">
+    <>
+      {/* Mobile/tablet hamburger trigger */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        aria-label="Open navigation menu"
+        aria-expanded={isOpen}
+        className="lg:hidden fixed top-3 left-3 z-40 h-10 w-10 rounded-md bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-600 hover:bg-gray-50"
+      >
+        <Menu className="h-5 w-5" strokeWidth={1.75} />
+      </button>
+
+      {/* Backdrop */}
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+          className="lg:hidden fixed inset-0 bg-black/40 z-40"
+        />
+      )}
+
+      <div
+        className={cn(
+          "w-[260px] flex flex-col bg-white border-r border-gray-200 h-screen fixed left-0 top-0 z-50 transition-transform duration-200 ease-out lg:translate-x-0",
+          isOpen ? "translate-x-0 shadow-xl" : "-translate-x-full lg:shadow-none"
+        )}
+      >
       {/* Brand */}
-      <div className="px-5 pt-5 pb-4 border-b border-gray-200 mb-1">
+      <div className="px-5 pt-5 pb-4 border-b border-gray-200 mb-1 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img
             src="/images/Halo_O_SymbolEPS_.svg"
@@ -68,6 +116,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, currentPath, onNavigate,
             className="w-[140px] h-auto object-contain"
           />
         </div>
+        <button
+          type="button"
+          onClick={() => setIsOpen(false)}
+          aria-label="Close navigation menu"
+          className="lg:hidden -mr-1 p-1 text-gray-400 hover:text-gray-600"
+        >
+          <X className="h-5 w-5" strokeWidth={1.75} />
+        </button>
       </div>
 
       {/* Navigation */}
@@ -77,6 +133,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, currentPath, onNavigate,
           <NavItem path="/" icon={LayoutDashboard} label="Dashboard" />
           <NavItem path="/courses" icon={BookOpen} label="Course Catalog" />
           <NavItem path="/my-grades" icon={GraduationCap} label="My Grades" />
+          <NavItem path="/policy-center" icon={FileSignature} label="Policy Center" />
         </div>
 
         {(user.role === 'admin' || user.role === 'instructor') && (
@@ -89,6 +146,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, currentPath, onNavigate,
             <NavItem path="/invitations" icon={UserPlus} label="Invite Staff" />
             <NavItem path="/users" icon={Users} label="Staff Directory" />
             <NavItem path="/audit" icon={ShieldCheck} label="Audit Trail" />
+            {user.role === 'admin' && (
+              <NavItem path="/policies" icon={ScrollText} label="Policies" />
+            )}
+          </div>
+        )}
+
+        {(user.role === 'admin' || user.role === 'instructor') && (
+          <div className="mb-1">
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.1em] px-5 pt-4 pb-2">Insights</p>
+            {user.role === 'admin' && (
+              <NavItem path="/skill-gap" icon={BarChart3} label="Skill Gap" />
+            )}
+            <NavItem path="/reports" icon={FileText} label="Reports" />
           </div>
         )}
       </div>
@@ -119,6 +189,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, currentPath, onNavigate,
           Sign Out
         </button>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
