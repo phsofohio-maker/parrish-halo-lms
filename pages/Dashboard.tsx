@@ -12,6 +12,7 @@ import { User } from '../functions/src/types';
 import { useCourses } from '../hooks/useCourses';
 import { useUserTranscript } from '../hooks/useCourseGrades';
 import { useUserEnrollments } from '../hooks/useUserEnrollments';
+import { usePageLoadTracking } from '../hooks/usePageLoadTracking';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/Button';
 import { GradeSummaryCard } from '../components/grades/GradeSummaryCard';
@@ -59,6 +60,7 @@ interface ActiveEnrollmentInfo {
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate }) => {
+  usePageLoadTracking('dashboard');
   const { hasRole } = useAuth();
   const { courses, isLoading, error, refetch } = useCourses();
   const { courseGrades, isLoading: gradesLoading } = useUserTranscript();

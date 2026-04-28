@@ -104,6 +104,82 @@ async function createAuditLog(
 }
 
 /**
+ * Sends a certificate-ready email by writing to the `mail` collection.
+ * The Trigger Email extension processes the doc and dispatches the email.
+ * Looks up the student's email from the users collection.
+ * Creates an audit log entry on success.
+ *
+ * @param {object} params - Email params: certId, cert, file, actorId, actorName
+ * @return {Promise<void>}
+ */
+async function sendCertificateEmail(params: {
+  certId: string;
+  cert: admin.firestore.DocumentData;
+  storagePath: string;
+  actorId: string;
+  actorName: string;
+}): Promise<void> {
+  const { certId, cert, storagePath, actorId, actorName } = params;
+
+  // Look up student email from users collection
+  const userDoc = await db.collection("users").doc(cert.userId).get();
+  if (!userDoc.exists) {
+    logger.warn("Cannot send cert email — user not found", { userId: cert.userId, certId });
+    return;
+  }
+  const studentEmail = userDoc.data()?.email;
+  if (!studentEmail) {
+    logger.warn("Cannot send cert email — user has no email", { userId: cert.userId, certId });
+    return;
+  }
+
+  // Generate a signed URL with 7-day expiry
+  const expiresMs = Date.now() + 7 * 24 * 60 * 60 * 1000;
+  const bucket = admin.storage().bucket();
+  const [downloadUrl] = await bucket.file(storagePath).getSignedUrl({
+    action: "read",
+    expires: expiresMs,
+  });
+
+  const safeStudent = String(cert.studentName || "").trim() || "Colleague";
+  const safeCourse = String(cert.courseName || "").trim() || "your course";
+  const safeGrade = typeof cert.grade === "number" ? `${cert.grade}%` : String(cert.grade ?? "");
+
+  await db.collection("mail").add({
+    to: studentEmail,
+    message: {
+      subject: `Your Certificate for ${safeCourse} is Ready`,
+      html: `
+        <p>Congratulations ${safeStudent},</p>
+        <p>You have successfully completed <strong>${safeCourse}</strong>
+           with a grade of <strong>${safeGrade}</strong>.</p>
+        <p>Your certificate (ID: <strong>${certId}</strong>) is ready for download.</p>
+        <p><a href="${downloadUrl}">Download Your Certificate</a></p>
+        <p style="color:#6b7280;font-size:12px">This download link expires in 7 days.
+           Your certificate record is permanent and always available in Parrish HALO.</p>
+        <p>— Parrish Health Systems Training</p>
+      `,
+    },
+  });
+
+  await createAuditLog(
+    actorId,
+    actorName,
+    "CERTIFICATE_EMAIL_SENT",
+    certId,
+    `Certificate email queued for ${safeStudent} — ${safeCourse}`,
+    {
+      certId,
+      courseId: cert.courseId,
+      userId: cert.userId,
+      recipientEmail: studentEmail,
+    }
+  );
+
+  logger.info("Certificate email queued", { certId, recipientEmail: studentEmail });
+}
+
+/**
  * Validates grade data structure
  * @param {Record<string, unknown>} data - The raw data to validate
  * @return {boolean} True if valid
@@ -915,6 +991,23 @@ export const generateCertificate = onCall(
         `Certificate PDF generated for ${cert.studentName} — ${cert.courseName}`,
         { userId: cert.userId, courseId: cert.courseId }
       );
+
+      // 12. Send certificate email notification (non-blocking)
+      // Email failure must NOT fail certificate generation.
+      try {
+        await sendCertificateEmail({
+          certId,
+          cert,
+          storagePath,
+          actorId: request.auth.uid,
+          actorName: request.auth.token.name || "System",
+        });
+      } catch (emailError) {
+        logger.error("Certificate email send failed (non-blocking)", {
+          certId,
+          error: emailError,
+        });
+      }
 
       logger.info("Certificate generated", { certId, storagePath });
       return { success: true, certId, hasPdf: true, storagePath };

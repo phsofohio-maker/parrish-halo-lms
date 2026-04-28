@@ -76,10 +76,16 @@ interface BlockEditorProps {
   onMoveDown?: () => void;
   isFirst?: boolean;
   isLast?: boolean;
+  // Optional context — when provided to a `text` block, enables the
+  // "Define Term" BubbleMenu in the embedded RichTextEditor.
+  courseId?: string;
+  actorId?: string;
+  actorName?: string;
 }
 
 export const BlockEditor: React.FC<BlockEditorProps> = ({
-  block, onChange, onDelete, onMoveUp, onMoveDown, isFirst, isLast
+  block, onChange, onDelete, onMoveUp, onMoveDown, isFirst, isLast,
+  courseId, actorId, actorName,
 }) => {
   const [showSettings, setShowSettings] = useState(false);
 
@@ -519,6 +525,9 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
               placeholder="Start typing your content here..."
               variant={currentVariant}
               minHeight="120px"
+              courseId={courseId}
+              actorId={actorId}
+              actorName={actorName}
             />
           </div>
         );

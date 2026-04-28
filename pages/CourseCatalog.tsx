@@ -8,6 +8,7 @@
 
 import React from 'react';
 import { useCourses } from '../hooks/useCourses';
+import { usePageLoadTracking } from '../hooks/usePageLoadTracking';
 import { Clock, BookOpen, Award, ArrowRight, Loader2, AlertCircle, RefreshCw, Lock } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { cn } from '../utils';
@@ -18,6 +19,7 @@ interface CourseCatalogProps {
 }
 
 export const CourseCatalog: React.FC<CourseCatalogProps> = ({ onNavigate }) => {
+  usePageLoadTracking('course-catalog');
   const { courses, isLoading, error, refetch } = useCourses();
 
   // Navigate to course detail

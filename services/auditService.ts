@@ -56,7 +56,10 @@ export type AuditActionType =
   | 'COHORT_DELETE'
   | 'BULK_ENROLLMENT'
   | 'CORRECTION_ENTRY'
-  | 'LICENSE_GATE_BLOCKED';
+  | 'LICENSE_GATE_BLOCKED'
+  | 'GLOSSARY_TERM_CREATE'
+  | 'GLOSSARY_TERM_UPDATE'
+  | 'GLOSSARY_TERM_DELETE';
 
 // Internal log structure for Firestore
 interface FirestoreAuditLog {

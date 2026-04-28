@@ -10,9 +10,16 @@ import Placeholder from '@tiptap/extension-placeholder';
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough,
   Heading2, Heading3, List, ListOrdered, Link as LinkIcon,
-  Highlighter, Undo2, Redo2,
+  Highlighter, Undo2, Redo2, BookOpen, X,
 } from 'lucide-react';
 import { cn } from '../../utils';
+import { ClinicalTerm } from './ClinicalTermExtension';
+import {
+  createTerm as createGlossaryTerm,
+  updateTerm as updateGlossaryTerm,
+  getTerm as getGlossaryTerm,
+  GlossaryTerm,
+} from '../../services/glossaryService';
 
 interface RichTextEditorProps {
   content: string;
@@ -21,6 +28,11 @@ interface RichTextEditorProps {
   variant?: 'paragraph' | 'callout-info' | 'callout-warning' | 'callout-critical';
   className?: string;
   minHeight?: string;
+  // Optional — when provided, enables the "Define Term" BubbleMenu action
+  // and binds new term definitions to the given course.
+  courseId?: string;
+  actorId?: string;
+  actorName?: string;
 }
 
 const HIGHLIGHT_COLORS = [
@@ -69,10 +81,16 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   variant = 'paragraph',
   className,
   minHeight = '120px',
+  courseId,
+  actorId,
+  actorName,
 }) => {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [highlightOpen, setHighlightOpen] = useState(false);
   const highlightRef = useRef<HTMLDivElement>(null);
+  const [showTermModal, setShowTermModal] = useState(false);
+
+  const termsEnabled = Boolean(courseId && actorId);
 
   const editor = useEditor({
     immediatelyRender: true,
@@ -89,6 +107,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' },
       }),
       Typography,
+      ClinicalTerm,
       Placeholder.configure({
         placeholder: ({ node }) =>
           node.type.name === 'heading' ? 'Heading...' : placeholder,
@@ -314,6 +333,25 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           >
             <Highlighter className="h-4 w-4" strokeWidth={1.75} />
           </ToolbarButton>
+          {termsEnabled && (
+            <>
+              <Separator />
+              <button
+                type="button"
+                onClick={() => setShowTermModal(true)}
+                className={cn(
+                  'flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors',
+                  editor.isActive('clinicalTerm')
+                    ? 'text-primary-700 bg-primary-50'
+                    : 'text-gray-600 hover:bg-gray-100'
+                )}
+                title="Define clinical term"
+              >
+                <BookOpen className="h-3.5 w-3.5" strokeWidth={1.75} />
+                {editor.isActive('clinicalTerm') ? 'Edit Term' : 'Define Term'}
+              </button>
+            </>
+          )}
         </BubbleMenu>
       )}
 
@@ -323,6 +361,210 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         className="tiptap-content p-4 outline-none"
         style={{ minHeight }}
       />
+
+      {/* Define Term modal */}
+      {showTermModal && termsEnabled && courseId && actorId && (
+        <DefineTermModal
+          editor={editor}
+          courseId={courseId}
+          actorId={actorId}
+          actorName={actorName ?? ''}
+          onClose={() => setShowTermModal(false)}
+        />
+      )}
     </div>
   );
 };
+
+// ============================================
+// Define Term Modal
+// Inline component — opens from the BubbleMenu when an author selects
+// text and clicks "Define Term". Writes a glossary term to Firestore
+// and applies the ClinicalTerm mark to the selected range.
+// ============================================
+
+interface DefineTermModalProps {
+  editor: NonNullable<ReturnType<typeof useEditor>>;
+  courseId: string;
+  actorId: string;
+  actorName: string;
+  onClose: () => void;
+}
+
+const DefineTermModal: React.FC<DefineTermModalProps> = ({
+  editor,
+  courseId,
+  actorId,
+  actorName,
+  onClose,
+}) => {
+  const existingAttrs = editor.getAttributes('clinicalTerm') as
+    | { termId?: string; term?: string }
+    | undefined;
+  const isEditing = Boolean(existingAttrs?.termId);
+
+  const initialTerm = (() => {
+    if (existingAttrs?.term) return existingAttrs.term;
+    const { from, to } = editor.state.selection;
+    return editor.state.doc.textBetween(from, to, ' ').trim();
+  })();
+
+  const [termValue, setTermValue] = useState(initialTerm);
+  const [definitionValue, setDefinitionValue] = useState('');
+  const [loadingExisting, setLoadingExisting] = useState(isEditing);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isEditing || !existingAttrs?.termId) {
+      setLoadingExisting(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const existing = await getGlossaryTerm(courseId, existingAttrs.termId!);
+        if (!cancelled && existing) {
+          setTermValue(existing.term);
+          setDefinitionValue(existing.definition);
+        }
+      } catch {
+        // ignore — modal stays editable
+      } finally {
+        if (!cancelled) setLoadingExisting(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isEditing, existingAttrs?.termId, courseId]);
+
+  const handleSave = async () => {
+    if (!termValue.trim() || !definitionValue.trim()) {
+      setError('Term and definition are required.');
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      let termId = existingAttrs?.termId;
+      if (isEditing && termId) {
+        await updateGlossaryTerm(
+          courseId,
+          termId,
+          { term: termValue.trim(), definition: definitionValue.trim() },
+          actorId,
+          actorName
+        );
+      } else {
+        termId = await createGlossaryTerm(
+          courseId,
+          termValue.trim(),
+          definitionValue.trim(),
+          actorId,
+          actorName
+        );
+      }
+      editor
+        .chain()
+        .focus()
+        .setClinicalTerm({ termId, term: termValue.trim() })
+        .run();
+      onClose();
+    } catch (err: any) {
+      setError(err?.message ?? 'Failed to save term.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Escape key closes
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/30"
+      onMouseDown={onClose}
+    >
+      <div
+        className="bg-white rounded-lg border border-gray-200 shadow-lg p-4 w-80"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-1.5">
+            <BookOpen className="h-4 w-4 text-primary-600" strokeWidth={1.75} />
+            <span className="text-sm font-semibold text-gray-800">
+              {isEditing ? 'Edit Clinical Term' : 'Define Clinical Term'}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 p-0.5 rounded"
+            title="Close"
+          >
+            <X className="h-4 w-4" strokeWidth={1.75} />
+          </button>
+        </div>
+        <div className="space-y-3">
+          <div>
+            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">
+              Term
+            </label>
+            <input
+              type="text"
+              value={termValue}
+              onChange={(e) => setTermValue(e.target.value)}
+              className="w-full text-sm p-2 border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 outline-none bg-white text-gray-900"
+              disabled={loadingExisting || saving}
+              autoFocus
+            />
+          </div>
+          <div>
+            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">
+              Definition
+            </label>
+            <textarea
+              value={definitionValue}
+              onChange={(e) => setDefinitionValue(e.target.value)}
+              rows={4}
+              className="w-full text-sm p-2 border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 outline-none bg-white text-gray-900 resize-none"
+              disabled={loadingExisting || saving}
+              placeholder="1–3 sentences of plain text…"
+            />
+          </div>
+          {error && (
+            <p className="text-xs text-red-600">{error}</p>
+          )}
+          <div className="flex justify-end gap-2 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-xs px-3 py-1.5 rounded border border-gray-300 text-gray-600 hover:bg-gray-50"
+              disabled={saving}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              className="text-xs px-3 py-1.5 rounded bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-60"
+              disabled={loadingExisting || saving}
+            >
+              {saving ? 'Saving…' : isEditing ? 'Save Changes' : 'Add Term'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Re-export type for parent components that want it.
+export type { GlossaryTerm };

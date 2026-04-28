@@ -31,6 +31,7 @@ interface ModuleBuilderProps {
   courseId: string;
   moduleId?: string;
   userUid: string;
+  userName?: string;
   onBack: () => void;
 }
 
@@ -38,6 +39,7 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
   courseId,
   moduleId,
   userUid,
+  userName,
   onBack,
 }) => {
   const {
@@ -314,6 +316,9 @@ export const ModuleBuilder: React.FC<ModuleBuilderProps> = ({
                 onMoveDown={() => reorderBlocks(index, index + 1)}
                 isFirst={index === 0}
                 isLast={index === module.blocks.length - 1}
+                courseId={courseId}
+                actorId={userUid}
+                actorName={userName}
               />
             ))
           )}

@@ -20,8 +20,11 @@ import { getPublishedCourses } from '../services/courseService';
 import { getSavedCourseGrade } from '../services/courseGradeService';
 import { getUserCertificates, getCertificateDownloadUrl, issueCertificate } from '../services/certificateService';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { trackEvent } from '../services/analytics';
+import { usePageLoadTracking } from '../hooks/usePageLoadTracking';
 
 export const MyGrades: React.FC = () => {
+  usePageLoadTracking('my-grades');
   const { user } = useAuth();
   const { addToast } = useToast();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
@@ -93,6 +96,7 @@ export const MyGrades: React.FC = () => {
         const url = await getCertificateDownloadUrl(cert.pdfStoragePath);
         if (url) {
           window.open(url, '_blank');
+          trackEvent.certificateDownloaded(cert.certId);
           addToast({ type: 'success', title: 'Certificate downloaded' });
         } else {
           addToast({ type: 'info', title: 'Certificate issued', message: `Certificate ${cert.certId} — PDF generation pending.` });

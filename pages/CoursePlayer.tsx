@@ -57,6 +57,8 @@ import { db } from '../services/firebase';
 import { auditService } from '../services/auditService';
 import { LicenseGate } from '../components/clinical/LicenseGate';
 import { checkAvailability } from '../utils/availabilityUtils';
+import { getTermsForCourse, GlossaryTerm } from '../services/glossaryService';
+import { TermDefinitionPopover } from '../components/ui/TermDefinitionPopover';
 
 interface CoursePlayerProps {
   courseId: string;
@@ -101,6 +103,17 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
   // Fix 3.3: Course completion receipt
   const [courseGrade, setCourseGrade] = useState<CourseGradeCalculation | null>(null);
   const [showCourseComplete, setShowCourseComplete] = useState(false);
+
+  // Clinical-term popover (Guide 13 — Feature B)
+  const [termsCache, setTermsCache] = useState<Map<string, GlossaryTerm>>(new Map());
+  const [activePopover, setActivePopover] = useState<{
+    termId: string;
+    anchorEl: HTMLElement;
+  } | null>(null);
+
+  const handleTermClick = useCallback((termId: string, anchorEl: HTMLElement) => {
+    setActivePopover({ termId, anchorEl });
+  }, []);
 
   // Fix 1.3: IntersectionObserver refs
   const observedBlocksRef = useRef<Set<string>>(new Set());
@@ -171,6 +184,28 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
 
     loadModule();
   }, [courseId, moduleId]);
+
+  // Load glossary terms once per course; refresh whenever courseId changes
+  useEffect(() => {
+    if (!courseId) return;
+    let cancelled = false;
+    getTermsForCourse(courseId)
+      .then(terms => {
+        if (cancelled) return;
+        setTermsCache(new Map(terms.map(t => [t.id, t])));
+      })
+      .catch(() => {
+        if (!cancelled) setTermsCache(new Map());
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [courseId]);
+
+  // Close any open term popover when navigating between modules
+  useEffect(() => {
+    setActivePopover(null);
+  }, [moduleId]);
 
   // ============================================
   // FIX 1.1: DRAFT ANSWER PERSISTENCE
@@ -935,6 +970,7 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
                   block={block}
                   onQuizAnswer={handleQuizAnswer}
                   answers={answers}
+                  onTermClick={handleTermClick}
                 />
 
                 {/* Completion indicator for non-quiz blocks */}
@@ -1015,6 +1051,16 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {activePopover && (
+        <TermDefinitionPopover
+          termId={activePopover.termId}
+          courseId={courseId}
+          anchorEl={activePopover.anchorEl}
+          onClose={() => setActivePopover(null)}
+          termsCache={termsCache}
+        />
       )}
     </div>
     </LicenseGate>

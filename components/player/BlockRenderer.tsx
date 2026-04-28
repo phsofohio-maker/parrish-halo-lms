@@ -22,9 +22,12 @@ interface BlockRendererProps {
   block: ContentBlock;
   onQuizAnswer?: (blockId: string, questionIndex: number, answer: any) => void;
   answers?: Record<string, any[]>; // blockId -> array of answers per question (type varies)
+  // Optional — when provided, clinical-term spans inside text blocks are
+  // interactive and clicking them opens a definition popover.
+  onTermClick?: (termId: string, anchorEl: HTMLElement) => void;
 }
 
-export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, onQuizAnswer, answers }) => {
+export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, onQuizAnswer, answers, onTermClick }) => {
   const [showTranscript, setShowTranscript] = useState(false);
 
   switch (block.type) {
@@ -40,7 +43,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, onQuizAnswe
       const variant = textData.variant || 'paragraph';
 
       if (variant === 'paragraph') {
-        return <RichTextRenderer content={textData.content || ''} className="text-sm leading-relaxed mb-6" />;
+        return <RichTextRenderer content={textData.content || ''} className="text-sm leading-relaxed mb-6" onTermClick={onTermClick} />;
       }
 
       const styles = {
@@ -55,7 +58,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, onQuizAnswe
       return (
         <div className={cn("p-4 rounded-lg border flex gap-4 mb-6", styles.bg, styles.border)}>
           <Icon className={cn("h-5 w-5 shrink-0 mt-0.5", styles.iconColor)} />
-          <RichTextRenderer content={textData.content || ''} className={cn("text-sm leading-relaxed font-medium", styles.text)} />
+          <RichTextRenderer content={textData.content || ''} className={cn("text-sm leading-relaxed font-medium", styles.text)} onTermClick={onTermClick} />
         </div>
       );
 

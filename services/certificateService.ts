@@ -24,25 +24,11 @@ import { ref, getDownloadURL } from 'firebase/storage';
 import { db, storage } from './firebase';
 import { Certificate } from '../functions/src/types';
 import { auditService } from './auditService';
+import { generateCertId, certificateStoragePath } from '../utils/certificateId';
 
 const CERTIFICATES_COLLECTION = 'certificates';
 const ORG_COLLECTION = 'organizations';
 const DEFAULT_ORG_ID = 'parrish';
-
-// ============================================
-// CERTIFICATE ID GENERATION
-// ============================================
-
-/**
- * Generates a certificate ID per ADR-001:
- * Format: {ORG_PREFIX}-{YYYYMMDD}-{4-char hex}
- */
-const generateCertId = (orgPrefix: string): string => {
-  const now = new Date();
-  const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
-  const hex = Math.random().toString(16).substring(2, 6).toUpperCase();
-  return `${orgPrefix}-${dateStr}-${hex}`;
-};
 
 // ============================================
 // ORGANIZATION CONFIG
@@ -100,7 +86,7 @@ export const issueCertificate = async (params: {
 }): Promise<Certificate> => {
   const orgConfig = await getOrgConfig();
   const certId = generateCertId(orgConfig.certPrefix);
-  const storagePath = `certificates/${DEFAULT_ORG_ID}/${params.userId}/${params.courseId}/${certId}.pdf`;
+  const storagePath = certificateStoragePath(DEFAULT_ORG_ID, params.userId, params.courseId, certId);
 
   const certificate: Omit<Certificate, 'id'> & { createdAt: ReturnType<typeof serverTimestamp> } = {
     certId,

@@ -285,7 +285,13 @@ export type AuditActionType =
   | "CORRECTION_ENTRY"
   | "LICENSE_GATE_BLOCKED"
   | "CERTIFICATE_ISSUED"
-  | "CERTIFICATE_FAILED";
+  | "CERTIFICATE_FAILED"
+  | "CERTIFICATE_EMAIL_SENT"
+  | "POLICY_CREATE"
+  | "POLICY_UPDATE"
+  | "POLICY_VERSION_BUMP"
+  | "POLICY_SIGNED"
+  | "POLICY_REMINDER_SENT";
 
 export interface AuditLog {
   id: string;
@@ -420,6 +426,51 @@ export interface Certificate {
   templateDocId?: string;
   generatedDocId?: string;
   status: CertificateStatus;
+}
+
+// ============================================
+// POLICIES & E-SIGNATURES
+// ============================================
+
+export interface PolicyDocument {
+  id: string;
+  title: string;
+  /** Rich-text HTML body of the policy. */
+  content: string;
+  /** Semantic version, e.g., "2.1". A new version requires re-signing. */
+  version: string;
+  /** ISO 8601 effective date. */
+  effectiveDate: string;
+  createdBy: string;
+  createdByName: string;
+  createdAt: string;
+  updatedAt?: string;
+  /** Roles that must sign this policy. */
+  assignedRoles: UserRoleType[];
+  /** True once at least one signature has been recorded — locks edits. */
+  hasSignatures?: boolean;
+  /** Soft-archive flag — prior versions stay queryable. */
+  archived?: boolean;
+}
+
+export type SignatureMethod = "drawn" | "typed";
+
+export interface PolicySignature {
+  id: string;
+  policyId: string;
+  /** Version of the policy at the moment of signing. */
+  policyVersion: string;
+  userId: string;
+  userName: string;
+  signedAt: string;
+  /** Base64 PNG (drawn) or styled text payload (typed). */
+  signatureData: string;
+  signatureMethod: SignatureMethod;
+  /** Captured for legal validity. May be empty if blocked client-side. */
+  ipAddress?: string;
+  userAgent: string;
+  /** SHA-256 hex of the policy content at time of signing. */
+  documentHash: string;
 }
 
 // ============================================

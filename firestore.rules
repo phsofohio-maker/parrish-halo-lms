@@ -124,6 +124,21 @@ service cloud.firestore {
     }
     
     // ============================================
+    // GLOSSARY TERMS (per-course clinical term definitions)
+    // ============================================
+    match /glossary/{courseId}/terms/{termId} {
+      // All authenticated users can read terms (needed for CoursePlayer)
+      allow read: if isAuthenticated();
+
+      // Only content authors can create/update/delete terms
+      allow create: if canAuthorContent() &&
+        request.resource.data.keys().hasAll(['term', 'definition', 'courseId', 'createdBy']) &&
+        request.resource.data.createdBy == request.auth.uid;
+      allow update: if canAuthorContent();
+      allow delete: if canAuthorContent();
+    }
+
+    // ============================================
     // ENROLLMENTS
     // ============================================
     
@@ -310,6 +325,33 @@ service cloud.firestore {
     match /mail/{mailId} {
       allow create: if isAdmin();
       allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // ============================================
+    // POLICIES & E-SIGNATURES
+    // ============================================
+
+    // Policy documents — readable by any authenticated user (staff need
+    // to see what they're signing); only admins can create or edit.
+    match /policies/{policyId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    // Policy signatures — IMMUTABLE legal artifacts.
+    // - Read: admins, instructors (compliance), or the signing user.
+    // - Create: only by the user themselves, with userId == auth.uid.
+    // - Update/Delete: never.
+    match /policy_signatures/{signatureId} {
+      allow read: if isAuthenticated() && (
+        hasAnyRole(['admin', 'instructor']) ||
+        resource.data.userId == request.auth.uid
+      );
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid &&
+        hasRequiredFields(['policyId', 'policyVersion', 'userId', 'signatureData', 'documentHash']);
       allow update, delete: if false;
     }
 

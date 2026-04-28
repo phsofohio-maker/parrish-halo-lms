@@ -201,6 +201,7 @@ const AppContent: React.FC = () => {
         courseId={routeContext.courseId}
         moduleId={routeContext.moduleId}
         userUid={user.uid}
+        userName={user.displayName}
         onBack={() => {
           setCurrentPath('/course-editor');
           setRouteContext(prev => ({ ...prev, courseId: routeContext.courseId }));

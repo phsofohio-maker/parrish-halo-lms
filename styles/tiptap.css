@@ -122,3 +122,16 @@
   float: left;
   height: 0;
 }
+
+/* Clinical term highlight — author view (editor) and learner view (renderer) */
+.tiptap-content .clinical-term {
+  color: #0F6E56;                       /* primary-700 */
+  border-bottom: 1.5px dotted #1D9E75;  /* primary-500 */
+  cursor: help;
+  transition: background-color 0.15s;
+}
+
+.tiptap-content .clinical-term:hover {
+  background-color: #E1F5EE;            /* primary-50 */
+  border-radius: 2px;
+}
