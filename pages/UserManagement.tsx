@@ -8,8 +8,8 @@
  * @module pages/UserManagement
  */
 import React, { useState, useEffect, useCallback } from 'react';
-import { User, Enrollment, Course } from '../functions/src/types';
-import { Users, Search, MoreVertical, ShieldCheck, Mail, PlusCircle, Book, Loader2, RefreshCw, AlertCircle, UserPlus } from 'lucide-react';
+import { User, Enrollment, Course, UserRoleType } from '../functions/src/types';
+import { Users, Search, MoreVertical, ShieldCheck, Mail, PlusCircle, Book, Loader2, RefreshCw, AlertCircle, UserPlus, KeyRound, Copy, RefreshCcw, Check, X } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { cn } from '../utils';
 import { useAuth } from '../contexts/AuthContext';
@@ -18,6 +18,253 @@ import { useCourses } from '../hooks/useCourses';
 import { createEnrollment, getUserEnrollments } from '../services/enrollmentService';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../services/firebase';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+
+const TEMP_PW_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+const generateTempPassword = (): string => {
+  const arr = new Uint8Array(12);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, (b) => TEMP_PW_CHARS[b % TEMP_PW_CHARS.length]).join('');
+};
+
+interface CreateAccountModalProps {
+  onClose: () => void;
+  onCreated: () => void;
+}
+
+const CreateAccountModal: React.FC<CreateAccountModalProps> = ({ onClose, onCreated }) => {
+  const { addToast } = useToast();
+  const [email, setEmail] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [role, setRole] = useState<UserRoleType>('staff');
+  const [department, setDepartment] = useState('');
+  const [tempPassword, setTempPassword] = useState(() => generateTempPassword());
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<{ email: string; password: string; role: UserRoleType } | null>(null);
+  const [copied, setCopied] = useState<'password' | 'credentials' | null>(null);
+
+  const copyToClipboard = async (text: string, label: 'password' | 'credentials') => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(label);
+      setTimeout(() => setCopied(null), 1500);
+    } catch {
+      // Clipboard API can fail in non-secure contexts; silently ignore.
+    }
+  };
+
+  const handleSubmit = async () => {
+    setError(null);
+    if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email.trim())) {
+      setError('Enter a valid email address.');
+      return;
+    }
+    if (displayName.trim().length < 2) {
+      setError('Full name must be at least 2 characters.');
+      return;
+    }
+    if (tempPassword.length < 8) {
+      setError('Temporary password must be at least 8 characters.');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const functions = getFunctions();
+      const callable = httpsCallable<
+        { email: string; displayName: string; role: UserRoleType; department?: string; temporaryPassword: string },
+        { success: boolean; uid: string; email: string; role: UserRoleType }
+      >(functions, 'createDirectAccount');
+
+      const result = await callable({
+        email: email.trim(),
+        displayName: displayName.trim(),
+        role,
+        department: department.trim() || undefined,
+        temporaryPassword: tempPassword,
+      });
+
+      setSuccess({ email: result.data.email, password: tempPassword, role: result.data.role });
+      addToast({ type: 'success', title: `${displayName.trim()} account created`, message: `Provisioned as ${role}.` });
+      onCreated();
+    } catch (err: any) {
+      const msg = err?.message || 'Failed to create account.';
+      setError(msg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 animate-in zoom-in duration-200">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <KeyRound className="h-5 w-5 text-primary-600" />
+              {success ? 'Account Created' : 'Create Account (Direct)'}
+            </h3>
+            <p className="text-sm text-gray-500 mt-1">
+              {success
+                ? 'Hand these credentials to the new user. They will be required to set a permanent password on first login.'
+                : 'Provision a new account without sending an invitation email. Use this when email delivery is uncertain.'}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-gray-100 rounded text-gray-400"
+            aria-label="Close"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {success ? (
+          <div className="space-y-4">
+            <div className="rounded-lg border-2 border-emerald-200 bg-emerald-50 p-4">
+              <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">Temporary credentials</p>
+              <dl className="text-sm space-y-1">
+                <div className="flex justify-between gap-3">
+                  <dt className="text-gray-500">Email</dt>
+                  <dd className="font-mono text-gray-900">{success.email}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-gray-500">Password</dt>
+                  <dd className="font-mono text-gray-900">{success.password}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-gray-500">Role</dt>
+                  <dd className="font-mono text-gray-900">{success.role}</dd>
+                </div>
+              </dl>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                className="flex-1 gap-2"
+                onClick={() => copyToClipboard(
+                  `Email: ${success.email}\nTemporary password: ${success.password}\nRole: ${success.role}`,
+                  'credentials',
+                )}
+              >
+                {copied === 'credentials' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copied === 'credentials' ? 'Copied' : 'Copy Credentials'}
+              </Button>
+              <Button className="flex-1" onClick={onClose}>Done</Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1" htmlFor="ca-email">Email</label>
+              <input
+                id="ca-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={submitting}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50"
+                placeholder="nurse@harmonyhca.org"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1" htmlFor="ca-name">Full Name</label>
+              <input
+                id="ca-name"
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                disabled={submitting}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50"
+                placeholder="Jane Doe, RN"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1" htmlFor="ca-role">Role</label>
+                <select
+                  id="ca-role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value as UserRoleType)}
+                  disabled={submitting}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50 bg-white"
+                >
+                  <option value="staff">Staff</option>
+                  <option value="instructor">Instructor</option>
+                  <option value="admin">Admin</option>
+                  <option value="content_author">Content Author</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1" htmlFor="ca-dept">Department</label>
+                <input
+                  id="ca-dept"
+                  type="text"
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  disabled={submitting}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50"
+                  placeholder="Optional"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1" htmlFor="ca-pw">Temporary Password</label>
+              <div className="flex gap-2">
+                <input
+                  id="ca-pw"
+                  type="text"
+                  value={tempPassword}
+                  readOnly
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm font-mono bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(tempPassword, 'password')}
+                  disabled={submitting}
+                  className="px-3 py-2 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                  title="Copy password"
+                >
+                  {copied === 'password' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTempPassword(generateTempPassword())}
+                  disabled={submitting}
+                  className="px-3 py-2 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                  title="Regenerate password"
+                >
+                  <RefreshCcw className="h-4 w-4" />
+                </button>
+              </div>
+              <p className="text-[11px] text-gray-500 mt-1">
+                User will be required to set a permanent password on first login.
+              </p>
+            </div>
+
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-md flex items-start gap-2">
+                <AlertCircle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                <p className="text-xs text-red-800">{error}</p>
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-2">
+              <Button variant="outline" className="flex-1" onClick={onClose} disabled={submitting}>Cancel</Button>
+              <Button className="flex-1" onClick={handleSubmit} isLoading={submitting} disabled={submitting}>
+                Create Account
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 interface UserManagementProps {
   onNavigate?: (path: string) => void;
@@ -34,6 +281,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ onNavigate }) =>
   const [enrollModalUserId, setEnrollModalUserId] = useState<string | null>(null);
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
+  const [showCreateAccount, setShowCreateAccount] = useState(false);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -153,6 +401,12 @@ export const UserManagement: React.FC<UserManagementProps> = ({ onNavigate }) =>
   return (
     <div className="p-8 max-w-7xl mx-auto">
       {enrollModalUserId && renderEnrollModal(enrollModalUserId)}
+      {showCreateAccount && (
+        <CreateAccountModal
+          onClose={() => setShowCreateAccount(false)}
+          onCreated={fetchData}
+        />
+      )}
 
       <div className="flex justify-between items-end mb-8">
         <div>
@@ -166,6 +420,10 @@ export const UserManagement: React.FC<UserManagementProps> = ({ onNavigate }) =>
           <Button variant="outline" size="sm" onClick={fetchData} disabled={isLoading} className="gap-1.5">
             <RefreshCw className={cn('h-3.5 w-3.5', isLoading && 'animate-spin')} />
             Refresh
+          </Button>
+          <Button variant="outline" onClick={() => setShowCreateAccount(true)} className="gap-2">
+            <KeyRound className="h-4 w-4" />
+            Create Account
           </Button>
           <Button onClick={() => onNavigate?.('/invitations')} className="gap-2">
             <UserPlus className="h-4 w-4" />

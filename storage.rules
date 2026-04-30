@@ -95,6 +95,25 @@ service firebase.storage {
     }
     
     // ============================================
+    // IMPORT DOCUMENTS (Document-to-Course pipeline)
+    // ============================================
+
+    match /imports/{userId}/{importFile} {
+      // Only the uploading user (or admin) can read their own import
+      allow read: if isAuthenticated() &&
+        (request.auth.uid == userId || isAdmin());
+
+      // Only content authors can upload; PDF and DOCX only; 25MB max
+      allow write: if canAuthorContent() &&
+        request.auth.uid == userId &&
+        (isPDF() ||
+         request.resource.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') &&
+        isUnderSizeLimit(25);
+
+      allow delete: if canAuthorContent() && request.auth.uid == userId;
+    }
+
+    // ============================================
     // USER UPLOADS (Certificates, Profile Images)
     // ============================================
     

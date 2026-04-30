@@ -79,6 +79,7 @@ import {
         jobTitle: data.jobTitle,
         licenseNumber: data.licenseNumber,
         licenseExpiry: data.licenseExpiry,
+        requiresPasswordChange: data.requiresPasswordChange === true,
       } as User;
     } catch (error) {
       console.error('Error fetching user profile:', error);

@@ -240,6 +240,25 @@ service cloud.firestore {
     }
     
     // ============================================
+    // CERTIFICATES (CE Credit Vault — Legal Artifact)
+    // ============================================
+    // Staff issue their own certificates client-side upon course completion.
+    // The generateCertificate Cloud Function (Admin SDK) writes the PDF path
+    // and status post-render; those updates bypass these rules.
+    // Read: owner (for MyGrades / personal vault) or admin/instructor
+    // (for SkillGapDashboard, Reports, audit oversight).
+
+    match /certificates/{certId} {
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        hasAnyRole(['admin', 'instructor'])
+      );
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // ============================================
     // AUDIT LOGS (Immutable)
     // ============================================
     
@@ -353,6 +372,30 @@ service cloud.firestore {
         request.resource.data.userId == request.auth.uid &&
         hasRequiredFields(['policyId', 'policyVersion', 'userId', 'signatureData', 'documentHash']);
       allow update, delete: if false;
+    }
+
+    // ============================================
+    // COURSE IMPORTS (Staging collection for document pipeline)
+    // ============================================
+
+    match /courseImports/{importId} {
+      // Content authors can read their own imports only.
+      // Admin can read all (for oversight).
+      allow read: if isAdmin() ||
+        (canAuthorContent() && resource.data.uploadedBy == request.auth.uid);
+
+      // Create: content authors only, must be their own record.
+      allow create: if canAuthorContent() &&
+        request.resource.data.uploadedBy == request.auth.uid &&
+        request.resource.data.keys().hasAll(['uploadedBy', 'status', 'fileName', 'storagePath']);
+
+      // Update: content authors can update their own.
+      // Cloud Functions use Admin SDK and bypass these rules.
+      allow update: if canAuthorContent() &&
+        resource.data.uploadedBy == request.auth.uid;
+
+      // Never delete import records (audit trail).
+      allow delete: if false;
     }
 
     // ============================================

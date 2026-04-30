@@ -820,6 +820,155 @@ export const setUserRole = onCall(async (request) => {
 });
 
 // ============================================
+// FUNCTION: Create Direct Account (Admin Fallback Onboarding)
+// ============================================
+
+/**
+ * Strips undefined values from an object so Firestore writes don't fail.
+ * @param {Record<string, any>} obj - Object to sanitize
+ * @return {Record<string, any>} Object with undefined values removed
+ */
+function stripUndefined<T extends Record<string, any>>(obj: T): T {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v !== undefined)
+  ) as T;
+}
+
+/**
+ * Admin-callable function that provisions a fully functional account in
+ * one shot — Firebase Auth user + JWT custom claims + Firestore profile +
+ * audit log. Used as the deliverability fallback when the email-driven
+ * invitation pipeline cannot reach the recipient.
+ */
+export const createDirectAccount = onCall(async (request) => {
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "Authentication required.");
+  }
+  if (request.auth.token.role !== "admin") {
+    throw new HttpsError("permission-denied", "Only admins can create accounts.");
+  }
+
+  const { email, displayName, role, department, temporaryPassword } = request.data || {};
+
+  // 1. Validate inputs
+  if (!email || typeof email !== "string" || !/^\S+@\S+\.\S+$/.test(email)) {
+    throw new HttpsError("invalid-argument", "A valid email address is required.");
+  }
+  if (!displayName || typeof displayName !== "string" || displayName.trim().length < 2) {
+    throw new HttpsError("invalid-argument", "Full name is required (minimum 2 characters).");
+  }
+  const validRoles = ["admin", "instructor", "staff", "content_author"];
+  if (!role || !validRoles.includes(role)) {
+    throw new HttpsError(
+      "invalid-argument",
+      `Invalid role. Must be one of: ${validRoles.join(", ")}`
+    );
+  }
+  if (!temporaryPassword || typeof temporaryPassword !== "string" || temporaryPassword.length < 8) {
+    throw new HttpsError("invalid-argument", "Temporary password must be at least 8 characters.");
+  }
+
+  try {
+    // 2. Create Firebase Auth account
+    const userRecord = await admin.auth().createUser({
+      email,
+      password: temporaryPassword,
+      displayName: displayName.trim(),
+    });
+
+    // 3. Set JWT custom claims with the role
+    await admin.auth().setCustomUserClaims(userRecord.uid, { role });
+
+    // 4. Create Firestore user profile
+    await db.collection("users").doc(userRecord.uid).set(stripUndefined({
+      uid: userRecord.uid,
+      displayName: displayName.trim(),
+      email,
+      role,
+      department: department || null,
+      requiresPasswordChange: true,
+      createdAt: admin.firestore.Timestamp.now(),
+      createdVia: "admin_direct",
+      createdBy: request.auth.uid,
+    }));
+
+    // 5. Audit log
+    await createAuditLog(
+      request.auth.uid,
+      request.auth.token.name || "Admin",
+      "ACCOUNT_DIRECT_CREATE",
+      userRecord.uid,
+      `Direct account created for ${email} as ${role}.`,
+      {
+        targetUid: userRecord.uid,
+        email,
+        role,
+        department: department || null,
+      }
+    );
+
+    logger.info("Direct account created", {
+      uid: userRecord.uid,
+      email,
+      role,
+      createdBy: request.auth.uid,
+    });
+
+    return {
+      success: true,
+      uid: userRecord.uid,
+      email,
+      role,
+    };
+  } catch (error: any) {
+    if (error.code && typeof error.code === "string" && error.code.startsWith("functions/")) {
+      throw error;
+    }
+    if (error.code === "auth/email-already-exists") {
+      throw new HttpsError(
+        "already-exists",
+        "An account with this email already exists."
+      );
+    }
+    if (error.code === "auth/invalid-email") {
+      throw new HttpsError("invalid-argument", "The email address is not valid.");
+    }
+    if (error.code === "auth/invalid-password") {
+      throw new HttpsError("invalid-argument", "The password does not meet Firebase requirements.");
+    }
+    logger.error("Failed to create direct account:", error);
+    throw new HttpsError("internal", "Failed to create account. Please try again.");
+  }
+});
+
+// ============================================
+// FUNCTION: Force Password Change Audit (Callable)
+// ============================================
+
+/**
+ * Records a forced-password-change audit event after a user completes
+ * the first-login interstitial. Client also clears
+ * `requiresPasswordChange` on the user profile; this callable produces
+ * a server-side audit record that cannot be tampered with.
+ */
+export const recordForcedPasswordChange = onCall(async (request) => {
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "Authentication required.");
+  }
+
+  await createAuditLog(
+    request.auth.uid,
+    request.auth.token.name || "User",
+    "PASSWORD_CHANGE_FORCED",
+    request.auth.uid,
+    "User completed forced first-login password change.",
+    { uid: request.auth.uid }
+  );
+
+  return { success: true };
+});
+
+// ============================================
 // FUNCTION: Generate Certificate (CE Credit Vault)
 // ============================================
 

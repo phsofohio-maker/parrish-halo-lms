@@ -59,7 +59,15 @@ export type AuditActionType =
   | 'LICENSE_GATE_BLOCKED'
   | 'GLOSSARY_TERM_CREATE'
   | 'GLOSSARY_TERM_UPDATE'
-  | 'GLOSSARY_TERM_DELETE';
+  | 'GLOSSARY_TERM_DELETE'
+  | 'IMPORT_INITIATED'
+  | 'IMPORT_PROCESSING'
+  | 'IMPORT_APPROVED'
+  | 'IMPORT_REJECTED'
+  | 'IMPORT_FAILED'
+  | 'IMPORT_PROMOTED'
+  | 'ACCOUNT_DIRECT_CREATE'
+  | 'PASSWORD_CHANGE_FORCED';
 
 // Internal log structure for Firestore
 interface FirestoreAuditLog {

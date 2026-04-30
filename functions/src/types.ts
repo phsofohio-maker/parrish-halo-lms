@@ -13,6 +13,7 @@ export interface User {
   jobTitle?: string;
   licenseNumber?: string;
   licenseExpiry?: string;
+  requiresPasswordChange?: boolean;
 }
 
 // ============================================
@@ -291,7 +292,9 @@ export type AuditActionType =
   | "POLICY_UPDATE"
   | "POLICY_VERSION_BUMP"
   | "POLICY_SIGNED"
-  | "POLICY_REMINDER_SENT";
+  | "POLICY_REMINDER_SENT"
+  | "ACCOUNT_DIRECT_CREATE"
+  | "PASSWORD_CHANGE_FORCED";
 
 export interface AuditLog {
   id: string;
@@ -484,4 +487,76 @@ export interface Organization {
   certPrefix: string;
   logoUrl?: string;
   createdAt: string;
+}
+
+// ============================================
+// COURSE IMPORT PIPELINE (Guide 13 — Feature A)
+// ============================================
+
+export type CourseImportStatus =
+  // File being written to Storage
+  | "uploading"
+  // Cloud Function extracting content
+  | "processing"
+  // Extraction complete, awaiting instructor approval
+  | "pending_review"
+  // Instructor approved, promotion in progress
+  | "approved"
+  // Course + modules + blocks written to Firestore
+  | "promoted"
+  // Instructor rejected the import
+  | "rejected"
+  // Extraction or promotion failed
+  | "failed";
+
+export interface ExtractedBlock {
+  // Only these two types are extracted — no quiz generation
+  type: "heading" | "text";
+  // HTML string (heading text or rich-text body)
+  content: string;
+  order: number;
+}
+
+export interface ExtractedModule {
+  title: string;
+  description: string;
+  estimatedMinutes: number;
+  isCritical: boolean;
+  weight: number;
+  passingScore: number;
+  contentBlocks: ExtractedBlock[];
+}
+
+export interface ExtractedCourse {
+  title: string;
+  description: string;
+  category: CourseCategory;
+  ceCredits: number;
+  modules: ExtractedModule[];
+}
+
+export interface CourseImport {
+  id: string;
+  status: CourseImportStatus;
+
+  // Upload metadata
+  uploadedBy: string;
+  uploadedByName: string;
+  uploadedAt: string;
+  fileName: string;
+  fileType: "pdf" | "docx";
+  storagePath: string;
+
+  // Extraction result (null until processing complete)
+  extractedCourse: ExtractedCourse | null;
+  extractionError: string | null;
+
+  // Review metadata
+  reviewedBy: string | null;
+  reviewedByName: string | null;
+  reviewedAt: string | null;
+  rejectionReason: string | null;
+
+  // Promotion result (null until promoted)
+  promotedCourseId: string | null;
 }

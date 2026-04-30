@@ -22,6 +22,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { Sidebar } from './components/layout/Sidebar';
 import { Login } from './pages/Login';
+import { ForcePasswordChange } from './pages/ForcePasswordChange';
 import { Dashboard } from './pages/Dashboard';
 import { ModuleBuilder } from './pages/ModuleBuilder';
 import { AuditLogs } from './pages/AuditLogs';
@@ -54,7 +55,7 @@ const LoadingScreen: React.FC = () => (
 );
 
 const AppContent: React.FC = () => {
-  const { user, isLoading, isAuthenticated, logout } = useAuth();
+  const { user, isLoading, isAuthenticated, logout, requiresPasswordChange } = useAuth();
   const [currentPath, setCurrentPath] = useState('/');
 
   // Context for routes that need IDs
@@ -84,6 +85,9 @@ const AppContent: React.FC = () => {
   }
 
   if (!isAuthenticated || !user) return <Login />;
+
+  // First-login forced password change — intercepts ALL navigation until done.
+  if (requiresPasswordChange) return <ForcePasswordChange />;
 
   // Navigation handler
   const handleNavigate = (path: string, context?: Record<string, any>) => {

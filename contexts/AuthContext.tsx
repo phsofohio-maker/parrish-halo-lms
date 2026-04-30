@@ -32,6 +32,7 @@ interface AuthState {
   isLoading: boolean;
   isAuthenticated: boolean;
   error: string | null;
+  requiresPasswordChange: boolean;
 }
 
 // Context value shape
@@ -41,6 +42,7 @@ interface AuthContextValue extends AuthState {
   resetPassword: (email: string) => Promise<void>;
   clearError: () => void;
   hasRole: (roles: UserRoleType | UserRoleType[]) => boolean;
+  clearRequiresPasswordChange: () => void;
 }
 
 // Initial state
@@ -50,6 +52,7 @@ const initialState: AuthState = {
   isLoading: true,
   isAuthenticated: false,
   error: null,
+  requiresPasswordChange: false,
 };
 
 // Create context
@@ -90,6 +93,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               isLoading: false,
               isAuthenticated: true,
               error: null,
+              requiresPasswordChange: profile.requiresPasswordChange === true,
             });
           } else {
             // Auth exists but no profile
@@ -99,6 +103,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               isLoading: false,
               isAuthenticated: false,
               error: 'User profile not found. Contact administrator.',
+              requiresPasswordChange: false,
             });
           }
         } catch (err) {
@@ -108,6 +113,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             isLoading: false,
             isAuthenticated: false,
             error: 'Failed to load user profile.',
+            requiresPasswordChange: false,
           });
         }
       } else {
@@ -144,6 +150,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isLoading: false,
         isAuthenticated: true,
         error: null,
+        requiresPasswordChange: user.requiresPasswordChange === true,
       });
     } catch (err) {
       const message = err instanceof AuthServiceError
@@ -185,6 +192,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setState(prev => ({ ...prev, error: null }));
   }, []);
 
+  // Clear the forced-password-change flag after the user completes the
+  // first-login interstitial. AuthContext stays the source of truth so the
+  // App-level route guard releases without a remount.
+  const clearRequiresPasswordChange = useCallback(() => {
+    setState(prev => ({
+      ...prev,
+      requiresPasswordChange: false,
+      user: prev.user ? { ...prev.user, requiresPasswordChange: false } : prev.user,
+    }));
+  }, []);
+
   // Role check helper — uses the claims-derived role
   const hasRole = useCallback((roles: UserRoleType | UserRoleType[]) => {
     if (!state.role) return false;
@@ -200,7 +218,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     resetPassword,
     clearError,
     hasRole,
-  }), [state, login, logout, resetPassword, clearError, hasRole]);
+    clearRequiresPasswordChange,
+  }), [state, login, logout, resetPassword, clearError, hasRole, clearRequiresPasswordChange]);
 
   return (
     <AuthContext.Provider value={value}>
