@@ -192,7 +192,6 @@ Weighted grade calculation is a legal record. Performing it server-side via Clou
 |---|---|
 | Kobe | Developer & Project Owner |
 | Darrius | Developer Collaborator |
-| Miara Carpenter | Clinical Office Assistant — Lead Test User (Centennial Office) |
 
 **Client:** Parrish Health Systems  
 **Compliance target:** CMS audit standards for clinical staff training records
